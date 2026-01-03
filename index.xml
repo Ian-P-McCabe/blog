@@ -26,7 +26,7 @@
 <p>In <a href="https://ian-p-mccabe.github.io/shirt-color-space/">Part 1</a> and <a href="https://ian-p-mccabe.github.io/shirt-color-space/part_2/">Part 2</a> we explored the issues facing the Stonewall Dodgeball league when selecting shirt colors. In Part 1 we found the best way to add additional colors to the league and in Part 2 we explored heuristics for finding the best subset of colors for the league so no two colors are too similar.</p>
 <p>Part 3 will expand on part 2, introducing proper optimization methods for color selection. We will begin by showing how to select the best (most diverse) colors for the league and then expand on this by taking into account team preference.</p>
 <p>I have decided to keep all code cells hidden for this writeup, but feel free to expand any of the codeblocks on this page (denoted by “&gt; Code”). All the source code can be found on my GitHub.</p>
-<div id="5724af57" class="cell" data-execution_count="1">
+<div id="6cab7387" class="cell" data-execution_count="1">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
@@ -78,7 +78,7 @@ font-style: inherit;">"../../data/all_colors.csv"</span>)</span></code></pre></d
 <p>The dodgeball league provides 103 unique shirt colors to pick from.</p>
 <p>Eagle eyed readers will see that there are 110 colors lsited below, however I have removed a few duplicate colors from the pool.</p>
 <p><img src="https://Ian-P-McCabe.github.io/blog/posts/dodgeball-colors-3/assets/SolidColors.png" class="img-fluid" alt="Solid Colors"> <img src="https://Ian-P-McCabe.github.io/blog/posts/dodgeball-colors-3/assets/HeatherColors.png" class="img-fluid" alt="Heather Colors"></p>
-<div id="e79d50bb" class="cell" data-execution_count="2">
+<div id="55051b34" class="cell" data-execution_count="2">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1">lab_string <span class="op" style="color: #5E5E5E;
@@ -209,7 +209,7 @@ font-style: inherit;">in</span> lab_floats]</span></code></pre></div></div>
 <div class="g-col-6">
 <hr>
 <p>These two colors are <strong>2</strong> units apart:</p>
-<div id="5b43f786" class="cell" data-execution_count="3">
+<div id="cc830ecc" class="cell" data-execution_count="3">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><span class="im" style="color: #00769E;
@@ -229,13 +229,13 @@ font-style: inherit;">55</span>][<span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">'Hex'</span>]])</span></code></pre></div></div>
 </details>
-<div class="cell-output cell-output-display" data-execution_count="19">
+<div class="cell-output cell-output-display" data-execution_count="45">
 <div style="display: flex; align-items: center; gap: 10px;"><div style="display: flex; gap: 2px;"><div title="423A31" style="width: 40px; height: 40px; background-color: #423A31; border: 1px solid #ccc;"></div><div title="454038" style="width: 40px; height: 40px; background-color: #454038; border: 1px solid #ccc;"></div></div></div>
 </div>
 </div>
 <hr>
 <p>These two colors are <strong>10</strong> units apart:</p>
-<div id="35a92726" class="cell" data-execution_count="4">
+<div id="838e4a6a" class="cell" data-execution_count="4">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1">display_color_swatches([color_df.iloc[<span class="dv" style="color: #AD0000;
@@ -248,13 +248,13 @@ font-style: inherit;">46</span>][<span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">'Hex'</span>]])</span></code></pre></div></div>
 </details>
-<div class="cell-output cell-output-display" data-execution_count="20">
+<div class="cell-output cell-output-display" data-execution_count="46">
 <div style="display: flex; align-items: center; gap: 10px;"><div style="display: flex; gap: 2px;"><div title="4298B5" style="width: 40px; height: 40px; background-color: #4298B5; border: 1px solid #ccc;"></div><div title="00BFB2" style="width: 40px; height: 40px; background-color: #00BFB2; border: 1px solid #ccc;"></div></div></div>
 </div>
 </div>
 <hr>
 <p>These two colors are <strong>20</strong> units apart:</p>
-<div id="7f9b4637" class="cell" data-execution_count="5">
+<div id="93ec7a25" class="cell" data-execution_count="5">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1">display_color_swatches([color_df.iloc[<span class="dv" style="color: #AD0000;
@@ -267,7 +267,7 @@ font-style: inherit;">68</span>][<span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">'Hex'</span>]])</span></code></pre></div></div>
 </details>
-<div class="cell-output cell-output-display" data-execution_count="21">
+<div class="cell-output cell-output-display" data-execution_count="47">
 <div style="display: flex; align-items: center; gap: 10px;"><div style="display: flex; gap: 2px;"><div title="555D51" style="width: 40px; height: 40px; background-color: #555D51; border: 1px solid #ccc;"></div><div title="48655B" style="width: 40px; height: 40px; background-color: #48655B; border: 1px solid #ccc;"></div></div></div>
 </div>
 </div>
@@ -276,7 +276,7 @@ font-style: inherit;">'Hex'</span>]])</span></code></pre></div></div>
 <div class="g-col-6">
 <hr>
 <p>These two colors are <strong>30</strong> units apart:</p>
-<div id="368855d3" class="cell" data-execution_count="6">
+<div id="8f184219" class="cell" data-execution_count="6">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1">display_color_swatches([color_df.iloc[<span class="dv" style="color: #AD0000;
@@ -289,13 +289,13 @@ font-style: inherit;">1</span>][<span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">'Hex'</span>]])</span></code></pre></div></div>
 </details>
-<div class="cell-output cell-output-display" data-execution_count="22">
+<div class="cell-output cell-output-display" data-execution_count="48">
 <div style="display: flex; align-items: center; gap: 10px;"><div style="display: flex; gap: 2px;"><div title="4298B5" style="width: 40px; height: 40px; background-color: #4298B5; border: 1px solid #ccc;"></div><div title="555D51" style="width: 40px; height: 40px; background-color: #555D51; border: 1px solid #ccc;"></div></div></div>
 </div>
 </div>
 <hr>
 <p>And these two colors are <strong>80</strong> units apart:</p>
-<div id="30b97e69" class="cell" data-execution_count="7">
+<div id="da76b79e" class="cell" data-execution_count="7">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1">display_color_swatches([color_df.iloc[<span class="dv" style="color: #AD0000;
@@ -308,7 +308,7 @@ font-style: inherit;">46</span>][<span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">'Hex'</span>]])</span></code></pre></div></div>
 </details>
-<div class="cell-output cell-output-display" data-execution_count="23">
+<div class="cell-output cell-output-display" data-execution_count="49">
 <div style="display: flex; align-items: center; gap: 10px;"><div style="display: flex; gap: 2px;"><div title="C6057B" style="width: 40px; height: 40px; background-color: #C6057B; border: 1px solid #ccc;"></div><div title="00BFB2" style="width: 40px; height: 40px; background-color: #00BFB2; border: 1px solid #ccc;"></div></div></div>
 </div>
 </div>
@@ -332,7 +332,7 @@ font-style: inherit;">'Hex'</span>]])</span></code></pre></div></div>
 <p>While these are fun approximations (especially the convex hull visual), they pale in comparison to the power of proper optimization methods.</p>
 <p>We will use Google’s <strong>Operations Research Tools Constraint Programming - SAT Solver</strong> to systematically explore solutions to our color diversity problem.</p>
 <p>The CP-SAT solver is flexible enough to enable us to explore the original <strong>maximum pairwise distance</strong> approach as well as other measures such as <strong>maximum minimum distance</strong>.</p>
-<div id="715b5192" class="cell" data-execution_count="8">
+<div id="96632b8d" class="cell" data-execution_count="8">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><span class="im" style="color: #00769E;
@@ -357,58 +357,402 @@ background-color: null;
 font-style: inherit;">16</span></span></code></pre></div></div>
 </details>
 </div>
+<section id="maximum-pairwise-distance" class="level2">
+<h2 class="anchored" data-anchor-id="maximum-pairwise-distance">Maximum Pairwise Distance</h2>
+<p>Continuing where we left off in part 2, lets find the subset of colors with the greatest pairwise distance. This is the same metric used in the random, greedy, and convex hull approaches.</p>
+<p>After letting the model run for 5 minutes, we get the following:</p>
+<div id="8fb0b2d4" class="cell" data-cache="false" data-execution_count="9">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> dodgeball_colors_3 <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> ColorModel, display_palette, adjust_hue_for_rainbow, plot_distance_heatmap</span>
+<span id="cb9-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> ortools.sat.python <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> cp_model</span>
+<span id="cb9-3"></span>
+<span id="cb9-4">max_pairwise_model <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> ColorModel(num_colors, num_colors_to_select, distance_matrix)</span>
+<span id="cb9-5"></span>
+<span id="cb9-6">max_pairwise_model.build_max_pairwise_model()</span>
+<span id="cb9-7"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"Variables created: </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">len</span>(max_pairwise_model.color_vars)<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span>)  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Should print 103</span></span>
+<span id="cb9-8"></span>
+<span id="cb9-9"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Solve, use 30 secs for this example</span></span>
+<span id="cb9-10"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># max_pairwise_model.solve(time_limit=5)</span></span>
+<span id="cb9-11"></span>
+<span id="cb9-12"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Extract results</span></span>
+<span id="cb9-13">max_pairwise_selected_colors <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">6</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">12</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">16</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">18</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">19</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">24</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">25</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">35</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">36</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">46</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">47</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">49</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">53</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">62</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">72</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">88</span>]</span>
+<span id="cb9-14"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#max_pairwise_selected_colors = max_pairwise_model.analyze_solution(status, solver)</span></span></code></pre></div></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Variables created: 103</code></pre>
+</div>
+</div>
+<div id="374f75a5" class="cell" data-execution_count="10">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># selected_colors.sort(key=lambda c: adjust_hue_for_rainbow(color_df.iloc[c]['Hex']))</span></span>
+<span id="cb11-2"></span>
+<span id="cb11-3"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Plot palette and output</span></span>
+<span id="cb11-4">max_pairwise_selected_colors.sort(key<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">lambda</span> c: adjust_hue_for_rainbow(color_df.iloc[c][<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Hex'</span>]))</span>
+<span id="cb11-5"></span>
+<span id="cb11-6"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># display_palette(selected_colors=max_pairwise_selected_colors, color_df=color_df, filepath="assets/max_pairwise_palette.svg")</span></span>
+<span id="cb11-7"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># plot_distance_heatmap(max_pairwise_selected_colors, distance_matrix, color_df, filepath="assets/max_pairwise_heatmap.svg")</span></span></code></pre></div></div>
+</details>
+</div>
+<p>And we obtain the following palette:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://Ian-P-McCabe.github.io/blog/posts/dodgeball-colors-3/assets/max_pairwise_palette.svg" class="img-fluid figure-img"></p>
+<figcaption>Color Palette</figcaption>
+</figure>
+</div>
+<p>This is a great start! Broadly this palette contains a variety of colors that are quite different. However Charity Pink and Berry are a bit close, so are Maroon and Heather Cardinal as well as Gold and Maize Yellow.</p>
+<p>Lets make a heatmap showing how similar/different the colors are and take a closer look:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://Ian-P-McCabe.github.io/blog/posts/dodgeball-colors-3/assets/max_pairwise_heatmap.svg" class="img-fluid figure-img"></p>
+<figcaption>Heatmap Showing Pairwise Distances Between Colors</figcaption>
+</figure>
+</div>
+<p>Interesting. Generally the colors are quite distinct, however along x = -1 <strong>some of our colors are almost unacceptably close.</strong></p>
+<p>Maroon and Heather Cardinal are only 6 ∆E units apart, and there are quite a few pairs that are ~10 ∆E units away from each other.</p>
+<p>We also see that the solver status is <strong>FEASIBLE.</strong> Meaning we found a solution but <strong>we don’t know if it is the best.</strong></p>
+<p>To solve this issue, instead of maximizing total diversity, what if we tried to maximize the minimum distance between any two colors?</p>
+</section>
+<section id="maximize-the-minimum-distance" class="level2">
+<h2 class="anchored" data-anchor-id="maximize-the-minimum-distance">Maximize the Minimum Distance</h2>
+<p>We can run a similar optimization to the code above, however we tweak the objective function to maximize the minimum distance between any two points.</p>
+<div id="939a8961" class="cell" data-execution_count="11">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> random</span>
+<span id="cb12-2"></span>
+<span id="cb12-3">max_minimum_model <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> ColorModel(num_colors, num_colors_to_select, distance_matrix)</span>
+<span id="cb12-4"></span>
+<span id="cb12-5">max_minimum_model.build_max_minimum_model()</span>
+<span id="cb12-6"></span>
+<span id="cb12-7">max_minimum_colors <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">8</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">12</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">13</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">16</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">17</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">19</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">23</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">31</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">37</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">47</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">53</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">70</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">72</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">86</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">97</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">100</span>]</span>
+<span id="cb12-8"></span>
+<span id="cb12-9"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># optimal_paletts = max_minimum_model.max_min_solve_enumerate_optimal(max_solutions = 100000, known_optimal=22)</span></span>
+<span id="cb12-10"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># max_minimum_colors = random.choice(optimal_paletts)</span></span>
+<span id="cb12-11"></span>
+<span id="cb12-12"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># max_minimum_colors, known_max_min = max_minimum_model.solve(time_limit=5, log_progress=False)</span></span></code></pre></div></div>
+</details>
+</div>
+<p>We now obtain a new palette:</p>
+<div id="701c85ec" class="cell" data-execution_count="12">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># max_minimum_colors.sort(key=lambda c: adjust_hue_for_rainbow(color_df.iloc[c]['Hex']))</span></span>
+<span id="cb13-2"></span>
+<span id="cb13-3"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># display_palette(max_minimum_colors, color_df, filepath="assets/max_minimum_palette.svg")</span></span>
+<span id="cb13-4"></span>
+<span id="cb13-5"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># plot_distance_heatmap(max_minimum_colors, distance_matrix, color_df, filepath="assets/max_minimum_heatmap.svg")</span></span></code></pre></div></div>
+</details>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://Ian-P-McCabe.github.io/blog/posts/dodgeball-colors-3/assets/max_minimum_palette.svg" class="img-fluid figure-img"></p>
+<figcaption>Max Min Palette</figcaption>
+</figure>
+</div>
+<p>And can generate a new heatmap:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://Ian-P-McCabe.github.io/blog/posts/dodgeball-colors-3/assets/max_minimum_heatmap.svg" class="preview-image img-fluid figure-img"></p>
+<figcaption>Max Min Heatmap</figcaption>
+</figure>
+</div>
+<p>Much better! <strong>Now the closest colors are 22 ∆E units apart</strong>, this is a dramatic increase from ∆6 units from before.</p>
+<p>Looking at the solver output, we reached an OPTIMAL solution, this means that the solver found a solution and proved it is the best. In fact, <strong>there are 28,654 optimal solutions.</strong></p>
+<p>Quite a few ideal palettes to choose from!</p>
+<p>Before moving forward, let’s take a moment and compare the results of our different objective functions:</p>
+<div class="grid">
+<section id="maxmimize-total-distance" class="level3 g-col-6">
+<h3 class="anchored" data-anchor-id="maxmimize-total-distance">Maxmimize Total Distance</h3>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://Ian-P-McCabe.github.io/blog/posts/dodgeball-colors-3/assets/max_pairwise_heatmap.svg" class="img-fluid figure-img"></p>
+<figcaption>Maximize Total Distance Heatmap</figcaption>
+</figure>
+</div>
+<ul>
+<li>Colors are broadly more distant (plot is greener)</li>
+<li>Adjacent colors are very close togther</li>
+<li>Solution is FEASIBLE</li>
+<li>No optimal solution, billions of feasible solutions</li>
+</ul>
+</section>
+<section id="maximize-minimum-distance" class="level3 g-col-6">
+<h3 class="anchored" data-anchor-id="maximize-minimum-distance">Maximize Minimum Distance</h3>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://Ian-P-McCabe.github.io/blog/posts/dodgeball-colors-3/assets/max_minimum_heatmap.svg" class="img-fluid figure-img"></p>
+<figcaption>Maximize Minimum Distance Heatmap</figcaption>
+</figure>
+</div>
+<ul>
+<li>Colors are broadly a little more similar (plot is green/yellow)</li>
+<li>Adjacent colors are much further apart</li>
+<li>Solution is <strong>OPTIMAL</strong></li>
+<li>28,654 optimal solutions (for 16 colors)</li>
+</ul>
+</section>
+</div>
+<section id="hybrid-approach---finding-the-best-of-the-best" class="level3">
+<h3 class="anchored" data-anchor-id="hybrid-approach---finding-the-best-of-the-best">Hybrid Approach - Finding the Best of the Best</h3>
+<p>Since the solution from the Maximum Minimum approach resulted in a max-min of 22 ∆E units, we can rerun the total distance solver with an additional constraint that all pairs must be at least 22 ∆E units apart.</p>
+<p>After running the solver we get the following result:</p>
+<div id="d017e2ef" class="cell" data-execution_count="13">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1">hybrid_solver <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> ColorModel(num_colors, num_colors_to_select, distance_matrix)</span>
+<span id="cb14-2"></span>
+<span id="cb14-3"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># hybrid_solver.build_hybrid_model(optimal_max_min=known_max_min)</span></span>
+<span id="cb14-4"></span>
+<span id="cb14-5">best_hybrid_colors <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">4</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">8</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">11</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">12</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">13</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">16</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">17</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">19</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">35</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">47</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">49</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">53</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">70</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">72</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">88</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">100</span>]</span>
+<span id="cb14-6"></span>
+<span id="cb14-7"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># best_hybrid_colors, _ = hybrid_solver.solve()</span></span></code></pre></div></div>
+</details>
+</div>
+<p>And we obtain the following new palette</p>
+<div id="52164f6f" class="cell" data-execution_count="14">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1">best_hybrid_colors.sort(key<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">lambda</span> c: adjust_hue_for_rainbow(color_df.iloc[c][<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Hex'</span>]))</span>
+<span id="cb15-2"></span>
+<span id="cb15-3"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># display_palette(selected_colors=best_hybrid_colors, color_df=color_df, filepath="assets/hybrid_palette.svg")</span></span>
+<span id="cb15-4"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># plot_distance_heatmap(best_hybrid_colors, distance_matrix, color_df, filepath="assets/hybrid_heatmap.svg")</span></span></code></pre></div></div>
+</details>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://Ian-P-McCabe.github.io/blog/posts/dodgeball-colors-3/assets/hybrid_palette.svg" class="img-fluid figure-img"></p>
+<figcaption>Hybrid Algorithm Palette</figcaption>
+</figure>
+</div>
+<p>And get the following new heatmap:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://Ian-P-McCabe.github.io/blog/posts/dodgeball-colors-3/assets/hybrid_heatmap.svg" class="img-fluid figure-img"></p>
+<figcaption>Hybrid Algorithm Heatmap</figcaption>
+</figure>
+</div>
+<p>However it is definitely difficult to determine how this palette and heatmap compare to our other options, let’s compare all 3 side by side:</p>
+</section>
+<section id="comparing-approaches" class="level3">
+<h3 class="anchored" data-anchor-id="comparing-approaches">Comparing Approaches</h3>
+<p>Let’s compare our three palettes/results.</p>
+<p>If you are on mobile you will have to zoom in.</p>
+</section>
+<div class="grid">
+<section id="max-total" class="level3 g-col-4">
+<h3 class="anchored" data-anchor-id="max-total">Max Total</h3>
+<p><img src="https://Ian-P-McCabe.github.io/blog/posts/dodgeball-colors-3/assets/max_pairwise_palette.svg" class="img-fluid" alt="Alt text"> <img src="https://Ian-P-McCabe.github.io/blog/posts/dodgeball-colors-3/assets/max_pairwise_heatmap.svg" class="img-fluid" alt="Alt text"></p>
+</section>
+<section id="max-minimum" class="level3 g-col-4">
+<h3 class="anchored" data-anchor-id="max-minimum">Max Minimum</h3>
+<p><img src="https://Ian-P-McCabe.github.io/blog/posts/dodgeball-colors-3/assets/max_minimum_palette.svg" class="img-fluid" alt="Alt text"> <img src="https://Ian-P-McCabe.github.io/blog/posts/dodgeball-colors-3/assets/max_minimum_heatmap.svg" class="img-fluid" alt="Alt text"></p>
+</section>
+<section id="hybrid" class="level3 g-col-4">
+<h3 class="anchored" data-anchor-id="hybrid">Hybrid</h3>
+<p><img src="https://Ian-P-McCabe.github.io/blog/posts/dodgeball-colors-3/assets/hybrid_palette.svg" class="img-fluid" alt="Alt text"> <img src="https://Ian-P-McCabe.github.io/blog/posts/dodgeball-colors-3/assets/hybrid_heatmap.svg" class="img-fluid" alt="Alt text"></p>
+</section>
+</div>
+<ul>
+<li>Hybrid approach achieves greatest balance between global and adjacent diversity</li>
+<li>Hybrid colors are still at lest 22 ∆E units apart</li>
+<li>There is only one OPTIMAL hybrid solution (instead of ~28,000)</li>
+<li>Hybrid model runs in ~20 seconds (max total never solved and max-min takes ~2.5 min)</li>
+</ul>
 
 
 </section>
+</section>
 
  ]]></description>
+  <category>Dodgeball Colors</category>
   <guid>https://Ian-P-McCabe.github.io/blog/posts/dodgeball-colors-3/</guid>
   <pubDate>Mon, 05 Jan 2026 05:00:00 GMT</pubDate>
   <media:content url="https://Ian-P-McCabe.github.io/blog/posts/dodgeball-colors-3/assets/Part3HeaderImage.png" medium="image" type="image/png" height="73" width="144"/>
-</item>
-<item>
-  <title>Post With Code</title>
-  <dc:creator>Harlow Malloc</dc:creator>
-  <link>https://Ian-P-McCabe.github.io/blog/posts/post-with-code/</link>
-  <description><![CDATA[ 
-
-
-
-
-
-<p>This is a post with executable code.</p>
-
-
-
- ]]></description>
-  <category>news</category>
-  <category>code</category>
-  <category>analysis</category>
-  <guid>https://Ian-P-McCabe.github.io/blog/posts/post-with-code/</guid>
-  <pubDate>Thu, 01 Jan 2026 05:00:00 GMT</pubDate>
-  <media:content url="https://Ian-P-McCabe.github.io/blog/posts/post-with-code/image.jpg" medium="image" type="image/jpeg"/>
-</item>
-<item>
-  <title>Welcome To My Blog</title>
-  <dc:creator>Tristan O&#39;Malley</dc:creator>
-  <link>https://Ian-P-McCabe.github.io/blog/posts/welcome/</link>
-  <description><![CDATA[ 
-
-
-
-
-
-<p>This is the first post in a Quarto blog. Welcome!</p>
-<p><img src="https://Ian-P-McCabe.github.io/blog/posts/welcome/thumbnail.jpg" class="img-fluid"></p>
-<p>Since this post doesn’t specify an explicit <code>image</code>, the first image in the post will be used in the listing page of posts.</p>
-
-
-
- ]]></description>
-  <category>news</category>
-  <guid>https://Ian-P-McCabe.github.io/blog/posts/welcome/</guid>
-  <pubDate>Mon, 29 Dec 2025 05:00:00 GMT</pubDate>
-  <media:content url="https://Ian-P-McCabe.github.io/blog/posts/welcome/assets/Part3HeaderImage.png" medium="image" type="image/png"/>
 </item>
 </channel>
 </rss>
