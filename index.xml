@@ -5,12 +5,367 @@
       xmlns:dc="http://purl.org/dc/elements/1.1/" 
       version="2.0">
 <channel>
-<title>personal-blog</title>
+<title>Ian&#39;s Blog</title>
 <link>https://Ian-P-McCabe.github.io/blog/</link>
 <atom:link href="https://Ian-P-McCabe.github.io/blog/index.xml" rel="self" type="application/rss+xml"/>
 <description>A blog built with Quarto</description>
 <generator>quarto-1.8.26</generator>
-<lastBuildDate>Thu, 01 Jan 2026 05:00:00 GMT</lastBuildDate>
+<lastBuildDate>Mon, 05 Jan 2026 05:00:00 GMT</lastBuildDate>
+<item>
+  <title>Shirt Color Selection Problem Part 3</title>
+  <dc:creator>Ian McCabe</dc:creator>
+  <link>https://Ian-P-McCabe.github.io/blog/posts/dodgeball-colors-3/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<section id="overview" class="level1">
+<h1>Overview</h1>
+<p>In <a href="https://ian-p-mccabe.github.io/shirt-color-space/">Part 1</a> and <a href="https://ian-p-mccabe.github.io/shirt-color-space/part_2/">Part 2</a> we explored the issues facing the Stonewall Dodgeball league when selecting shirt colors. In Part 1 we found the best way to add additional colors to the league and in Part 2 we explored heuristics for finding the best subset of colors for the league so no two colors are too similar.</p>
+<p>Part 3 will expand on part 2, introducing proper optimization methods for color selection. We will begin by showing how to select the best (most diverse) colors for the league and then expand on this by taking into account team preference.</p>
+<p>I have decided to keep all code cells hidden for this writeup, but feel free to expand any of the codeblocks on this page (denoted by “&gt; Code”). All the source code can be found on my GitHub.</p>
+<div id="5724af57" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> numpy</span>
+<span id="cb1-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> pandas <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> pd</span>
+<span id="cb1-3"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> colormath <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> color_objects, color_diff</span>
+<span id="cb1-4"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> math</span>
+<span id="cb1-5"></span>
+<span id="cb1-6"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># This exists to resolve an issue with the colormath library </span></span>
+<span id="cb1-7"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> patch_asscalar(a):</span>
+<span id="cb1-8">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> a.item()</span>
+<span id="cb1-9"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">setattr</span>(numpy, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"asscalar"</span>, patch_asscalar)</span>
+<span id="cb1-10"></span>
+<span id="cb1-11">color_df <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pd.read_csv(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"../../data/all_colors.csv"</span>)</span></code></pre></div></div>
+</details>
+</div>
+</section>
+<section id="refresher" class="level1">
+<h1>Refresher</h1>
+<section id="there-are-a-lot-of-colors" class="level2">
+<h2 class="anchored" data-anchor-id="there-are-a-lot-of-colors">There are a lot of colors!</h2>
+<p>The dodgeball league provides 103 unique shirt colors to pick from.</p>
+<p>Eagle eyed readers will see that there are 110 colors lsited below, however I have removed a few duplicate colors from the pool.</p>
+<p><img src="https://Ian-P-McCabe.github.io/blog/posts/dodgeball-colors-3/assets/SolidColors.png" class="img-fluid" alt="Solid Colors"> <img src="https://Ian-P-McCabe.github.io/blog/posts/dodgeball-colors-3/assets/HeatherColors.png" class="img-fluid" alt="Heather Colors"></p>
+<div id="e79d50bb" class="cell" data-execution_count="2">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1">lab_string <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">list</span>(color_df[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"L*a*b Value"</span>])</span>
+<span id="cb2-2">lab_strings <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [color_string.split(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">", "</span>) <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> color_string <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> lab_string]</span>
+<span id="cb2-3"></span>
+<span id="cb2-4">lab_floats <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [[<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span>(x) <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> x <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> row] <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> row <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> lab_strings]</span>
+<span id="cb2-5"></span>
+<span id="cb2-6">lab_colors <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [color_objects.LabColor(lab_l<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>lab_color[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>], lab_a<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>lab_color[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>], lab_b<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>lab_color[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>]) <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> lab_color <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> lab_floats]</span></code></pre></div></div>
+</details>
+</div>
+</section>
+<section id="obtaining-lab-values" class="level2">
+<h2 class="anchored" data-anchor-id="obtaining-lab-values">Obtaining LAB Values</h2>
+<p>In order to accurately determine color difference, we will need to obtain the LAB values for each possible shirt color. The LAB color system is best for this analysis because it accurately represents how humans see and differentiate color.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://Ian-P-McCabe.github.io/blog/posts/dodgeball-colors-3/assets/ColorInfoProcess.png" class="img-fluid figure-img"></p>
+<figcaption>How I got LAB Color Info</figcaption>
+</figure>
+</div>
+<p>LAB color information for most colors can be obtained from the PMS (Pantone Matching System) code beneath the swatch on the color palette. Pantone provides LAB (and other color) information for each color with a PMS code. (For colors without a PMS code, I approximated a LAB value from the display RGB value)</p>
+</section>
+<section id="color-difference" class="level2">
+<h2 class="anchored" data-anchor-id="color-difference">Color Difference</h2>
+<p>Once we have our LAB values, we can easily compute color difference.</p>
+<p>For color difference calculations, will use the <a href="https://en.wikipedia.org/wiki/Color_difference#CIEDE2000">CIEDE2000 distance</a>. Color difference is returned as a ∆E value.</p>
+<section id="delta-e-values-and-color-difference-perceptibility" class="level3">
+<h3 class="anchored" data-anchor-id="delta-e-values-and-color-difference-perceptibility">Delta E Values and Color-Difference Perceptibility</h3>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Delta E (ΔE)</th>
+<th>Perceptibility</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>&lt; 1</td>
+<td>Imperceptible</td>
+<td>Colors appear identical to most observers</td>
+</tr>
+<tr class="even">
+<td>1–2</td>
+<td>Very Slight</td>
+<td>Only experts notice the difference</td>
+</tr>
+<tr class="odd">
+<td>2–10</td>
+<td>Noticeable</td>
+<td>Average person notices on close inspection</td>
+</tr>
+<tr class="even">
+<td>10–20</td>
+<td>Obvious</td>
+<td>Clearly different colors</td>
+</tr>
+<tr class="odd">
+<td>&gt; 20</td>
+<td>Very Distinct</td>
+<td>Colors are dramatically different</td>
+</tr>
+</tbody>
+</table>
+<p>For <strong>shirt color selection</strong>, we will use:</p>
+<ul>
+<li><strong>ΔE &lt; 5</strong>: Risk of confusion, too similar</li>
+<li><strong>ΔE 5–10</strong>: Acceptable if team choices are prioritized over maximum distinctness</li>
+<li><strong>ΔE &gt; 10</strong>: Safe choice, easily distinguishable in all conditions</li>
+<li><strong>∆E &gt; 20</strong>: Ideal choice, very distinct colors</li>
+</ul>
+</section>
+<section id="examples" class="level3">
+<h3 class="anchored" data-anchor-id="examples">Examples</h3>
+<div class="grid">
+<div class="g-col-6">
+<hr>
+<p>These two colors are <strong>2</strong> units apart:</p>
+<div id="5b43f786" class="cell" data-execution_count="3">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> dodgeball_colors_3 <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> display_color_swatches</span>
+<span id="cb3-2">display_color_swatches(hex_colors<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>[color_df.iloc[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">8</span>][<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Hex'</span>], color_df.iloc[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">55</span>][<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Hex'</span>]])</span></code></pre></div></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="19">
+<div style="display: flex; align-items: center; gap: 10px;"><div style="display: flex; gap: 2px;"><div title="423A31" style="width: 40px; height: 40px; background-color: #423A31; border: 1px solid #ccc;"></div><div title="454038" style="width: 40px; height: 40px; background-color: #454038; border: 1px solid #ccc;"></div></div></div>
+</div>
+</div>
+<hr>
+<p>These two colors are <strong>10</strong> units apart:</p>
+<div id="35a92726" class="cell" data-execution_count="4">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1">display_color_swatches([color_df.iloc[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>][<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Hex'</span>], color_df.iloc[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">46</span>][<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Hex'</span>]])</span></code></pre></div></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="20">
+<div style="display: flex; align-items: center; gap: 10px;"><div style="display: flex; gap: 2px;"><div title="4298B5" style="width: 40px; height: 40px; background-color: #4298B5; border: 1px solid #ccc;"></div><div title="00BFB2" style="width: 40px; height: 40px; background-color: #00BFB2; border: 1px solid #ccc;"></div></div></div>
+</div>
+</div>
+<hr>
+<p>These two colors are <strong>20</strong> units apart:</p>
+<div id="7f9b4637" class="cell" data-execution_count="5">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1">display_color_swatches([color_df.iloc[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>][<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Hex'</span>], color_df.iloc[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">68</span>][<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Hex'</span>]])</span></code></pre></div></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="21">
+<div style="display: flex; align-items: center; gap: 10px;"><div style="display: flex; gap: 2px;"><div title="555D51" style="width: 40px; height: 40px; background-color: #555D51; border: 1px solid #ccc;"></div><div title="48655B" style="width: 40px; height: 40px; background-color: #48655B; border: 1px solid #ccc;"></div></div></div>
+</div>
+</div>
+<hr>
+</div>
+<div class="g-col-6">
+<hr>
+<p>These two colors are <strong>30</strong> units apart:</p>
+<div id="368855d3" class="cell" data-execution_count="6">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1">display_color_swatches([color_df.iloc[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>][<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Hex'</span>], color_df.iloc[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>][<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Hex'</span>]])</span></code></pre></div></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="22">
+<div style="display: flex; align-items: center; gap: 10px;"><div style="display: flex; gap: 2px;"><div title="4298B5" style="width: 40px; height: 40px; background-color: #4298B5; border: 1px solid #ccc;"></div><div title="555D51" style="width: 40px; height: 40px; background-color: #555D51; border: 1px solid #ccc;"></div></div></div>
+</div>
+</div>
+<hr>
+<p>And these two colors are <strong>80</strong> units apart:</p>
+<div id="30b97e69" class="cell" data-execution_count="7">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1">display_color_swatches([color_df.iloc[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">6</span>][<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Hex'</span>], color_df.iloc[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">46</span>][<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Hex'</span>]])</span></code></pre></div></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="23">
+<div style="display: flex; align-items: center; gap: 10px;"><div style="display: flex; gap: 2px;"><div title="C6057B" style="width: 40px; height: 40px; background-color: #C6057B; border: 1px solid #ccc;"></div><div title="00BFB2" style="width: 40px; height: 40px; background-color: #00BFB2; border: 1px solid #ccc;"></div></div></div>
+</div>
+</div>
+<hr>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="finding-the-best-colors" class="level1">
+<h1>Finding the best colors</h1>
+<p>Now that we have our colors in a format we can properly analyze, we can return to answer our central question:</p>
+<p><strong>What is the best set of shirt colors for the dodgeball league?</strong></p>
+<p>In part 2 we covered why this isn’t super easy to compute:</p>
+<ul>
+<li>Analyzing the best combinations of 16 colors yeilds <strong>2,245,547,413,628,550,570</strong> possible combinations! (2 quintillion)</li>
+<li>Analyzing the best combinations of 24 colors, we must score <strong>178,409,928,551,259,450,861,900</strong> possible combinations! (178 sextillion)</li>
+</ul>
+<p>I framed the problem as a a subset of the Maximum Diversity Problem - how can we select the subset of colors that are most distant from each other on average?</p>
+<p>In Part 2 we used some heuristics to try an approximate the subset of colors with the highest average distance, these included random searches, greedy algorithms, and generating a convex hull of the LAB color space.</p>
+<p>While these are fun approximations (especially the convex hull visual), they pale in comparison to the power of proper optimization methods.</p>
+<p>We will use Google’s <strong>Operations Research Tools Constraint Programming - SAT Solver</strong> to systematically explore solutions to our color diversity problem.</p>
+<p>The CP-SAT solver is flexible enough to enable us to explore the original <strong>maximum pairwise distance</strong> approach as well as other measures such as <strong>maximum minimum distance</strong>.</p>
+<div id="715b5192" class="cell" data-execution_count="8">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> dodgeball_colors_3 <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> build_distance_matrix</span>
+<span id="cb8-2">  </span>
+<span id="cb8-3">distance_matrix <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> build_distance_matrix(lab_colors)</span>
+<span id="cb8-4"></span>
+<span id="cb8-5">num_colors <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">103</span></span>
+<span id="cb8-6">num_colors_to_select <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">16</span></span></code></pre></div></div>
+</details>
+</div>
+
+
+</section>
+
+ ]]></description>
+  <guid>https://Ian-P-McCabe.github.io/blog/posts/dodgeball-colors-3/</guid>
+  <pubDate>Mon, 05 Jan 2026 05:00:00 GMT</pubDate>
+  <media:content url="https://Ian-P-McCabe.github.io/blog/posts/dodgeball-colors-3/assets/Part3HeaderImage.png" medium="image" type="image/png" height="73" width="144"/>
+</item>
 <item>
   <title>Post With Code</title>
   <dc:creator>Harlow Malloc</dc:creator>

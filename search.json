@@ -7,11 +7,32 @@
     "text": "About this blog"
   },
   {
-    "objectID": "posts/welcome/index.html",
-    "href": "posts/welcome/index.html",
-    "title": "Welcome To My Blog",
+    "objectID": "posts/dodgeball-colors-3/index.html",
+    "href": "posts/dodgeball-colors-3/index.html",
+    "title": "Shirt Color Selection Problem Part 3",
     "section": "",
-    "text": "This is the first post in a Quarto blog. Welcome!\n\nSince this post doesn’t specify an explicit image, the first image in the post will be used in the listing page of posts."
+    "text": "In Part 1 and Part 2 we explored the issues facing the Stonewall Dodgeball league when selecting shirt colors. In Part 1 we found the best way to add additional colors to the league and in Part 2 we explored heuristics for finding the best subset of colors for the league so no two colors are too similar.\nPart 3 will expand on part 2, introducing proper optimization methods for color selection. We will begin by showing how to select the best (most diverse) colors for the league and then expand on this by taking into account team preference.\nI have decided to keep all code cells hidden for this writeup, but feel free to expand any of the codeblocks on this page (denoted by “&gt; Code”). All the source code can be found on my GitHub.\n\n\nCode\nimport numpy\nimport pandas as pd\nfrom colormath import color_objects, color_diff\nimport math\n\n# This exists to resolve an issue with the colormath library \ndef patch_asscalar(a):\n    return a.item()\nsetattr(numpy, \"asscalar\", patch_asscalar)\n\ncolor_df = pd.read_csv(\"../../data/all_colors.csv\")"
+  },
+  {
+    "objectID": "posts/dodgeball-colors-3/index.html#there-are-a-lot-of-colors",
+    "href": "posts/dodgeball-colors-3/index.html#there-are-a-lot-of-colors",
+    "title": "Shirt Color Selection Problem Part 3",
+    "section": "There are a lot of colors!",
+    "text": "There are a lot of colors!\nThe dodgeball league provides 103 unique shirt colors to pick from.\nEagle eyed readers will see that there are 110 colors lsited below, however I have removed a few duplicate colors from the pool.\n \n\n\nCode\nlab_string = list(color_df[\"L*a*b Value\"])\nlab_strings = [color_string.split(\", \") for color_string in lab_string]\n\nlab_floats = [[float(x) for x in row] for row in lab_strings]\n\nlab_colors = [color_objects.LabColor(lab_l=lab_color[0], lab_a=lab_color[1], lab_b=lab_color[2]) for lab_color in lab_floats]"
+  },
+  {
+    "objectID": "posts/dodgeball-colors-3/index.html#obtaining-lab-values",
+    "href": "posts/dodgeball-colors-3/index.html#obtaining-lab-values",
+    "title": "Shirt Color Selection Problem Part 3",
+    "section": "Obtaining LAB Values",
+    "text": "Obtaining LAB Values\nIn order to accurately determine color difference, we will need to obtain the LAB values for each possible shirt color. The LAB color system is best for this analysis because it accurately represents how humans see and differentiate color.\n\n\n\nHow I got LAB Color Info\n\n\nLAB color information for most colors can be obtained from the PMS (Pantone Matching System) code beneath the swatch on the color palette. Pantone provides LAB (and other color) information for each color with a PMS code. (For colors without a PMS code, I approximated a LAB value from the display RGB value)"
+  },
+  {
+    "objectID": "posts/dodgeball-colors-3/index.html#color-difference",
+    "href": "posts/dodgeball-colors-3/index.html#color-difference",
+    "title": "Shirt Color Selection Problem Part 3",
+    "section": "Color Difference",
+    "text": "Color Difference\nOnce we have our LAB values, we can easily compute color difference.\nFor color difference calculations, will use the CIEDE2000 distance. Color difference is returned as a ∆E value.\n\nDelta E Values and Color-Difference Perceptibility\n\n\n\nDelta E (ΔE)\nPerceptibility\nDescription\n\n\n\n\n&lt; 1\nImperceptible\nColors appear identical to most observers\n\n\n1–2\nVery Slight\nOnly experts notice the difference\n\n\n2–10\nNoticeable\nAverage person notices on close inspection\n\n\n10–20\nObvious\nClearly different colors\n\n\n&gt; 20\nVery Distinct\nColors are dramatically different\n\n\n\nFor shirt color selection, we will use:\n\nΔE &lt; 5: Risk of confusion, too similar\nΔE 5–10: Acceptable if team choices are prioritized over maximum distinctness\nΔE &gt; 10: Safe choice, easily distinguishable in all conditions\n∆E &gt; 20: Ideal choice, very distinct colors\n\n\n\nExamples\n\n\n\nThese two colors are 2 units apart:\n\n\nCode\nfrom dodgeball_colors_3 import display_color_swatches\ndisplay_color_swatches(hex_colors=[color_df.iloc[8]['Hex'], color_df.iloc[55]['Hex']])\n\n\n\n\n\n\nThese two colors are 10 units apart:\n\n\nCode\ndisplay_color_swatches([color_df.iloc[0]['Hex'], color_df.iloc[46]['Hex']])\n\n\n\n\n\n\nThese two colors are 20 units apart:\n\n\nCode\ndisplay_color_swatches([color_df.iloc[1]['Hex'], color_df.iloc[68]['Hex']])\n\n\n\n\n\n\n\n\n\nThese two colors are 30 units apart:\n\n\nCode\ndisplay_color_swatches([color_df.iloc[0]['Hex'], color_df.iloc[1]['Hex']])\n\n\n\n\n\n\nAnd these two colors are 80 units apart:\n\n\nCode\ndisplay_color_swatches([color_df.iloc[6]['Hex'], color_df.iloc[46]['Hex']])"
   },
   {
     "objectID": "posts/post-with-code/index.html",
@@ -21,10 +42,17 @@
     "text": "This is a post with executable code."
   },
   {
+    "objectID": "posts/welcome/index.html",
+    "href": "posts/welcome/index.html",
+    "title": "Welcome To My Blog",
+    "section": "",
+    "text": "This is the first post in a Quarto blog. Welcome!\n\nSince this post doesn’t specify an explicit image, the first image in the post will be used in the listing page of posts."
+  },
+  {
     "objectID": "index.html",
     "href": "index.html",
     "title": "Ian McCabe’s Blog",
     "section": "",
-    "text": "Post With Code\n\n\n\nnews\n\ncode\n\nanalysis\n\n\n\n\n\n\n\n\n\nJan 1, 2026\n\n\nHarlow Malloc\n\n\n\n\n\n\n\n\n\n\n\n\nWelcome To My Blog\n\n\n\nnews\n\n\n\n\n\n\n\n\n\nDec 29, 2025\n\n\nTristan O’Malley\n\n\n\n\n\nNo matching items"
+    "text": "Shirt Color Selection Problem Part 3\n\n\nProper Optimization\n\n\n\n\n\n\n\n\nJan 5, 2026\n\n\nIan McCabe\n\n\n\n\n\n\n\n\n\n\n\n\nPost With Code\n\n\n\n\n\n\nnews\n\ncode\n\nanalysis\n\n\n\n\n\n\n\n\n\nJan 1, 2026\n\n\nHarlow Malloc\n\n\n\n\n\n\n\n\n\n\n\n\nWelcome To My Blog\n\n\n\n\n\n\nnews\n\n\n\n\n\n\n\n\n\nDec 29, 2025\n\n\nTristan O’Malley\n\n\n\n\n\nNo matching items"
   }
 ]
