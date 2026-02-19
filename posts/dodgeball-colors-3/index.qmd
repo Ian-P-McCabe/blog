@@ -4,6 +4,7 @@ subtitle: Proper Optimization
 author: Ian McCabe
 date: 01/05/2026
 image: "assets/Part3HeaderImage.png"
+categories: ["Dodgeball Colors"]
 format:
   html:
     code-fold: true
@@ -183,5 +184,209 @@ num_colors = 103
 num_colors_to_select = 16
 ```
 
+## Maximum Pairwise Distance
+
+Continuing where we left off in part 2, lets find the subset of colors with the greatest pairwise distance. This is the same metric used in the random, greedy, and convex hull approaches. 
+
+After letting the model run for 5 minutes, we get the following:
+
+```{python}
+#| cache: false 
+#| output: true
+
+from dodgeball_colors_3 import ColorModel, display_palette, adjust_hue_for_rainbow, plot_distance_heatmap
+from ortools.sat.python import cp_model
+
+max_pairwise_model = ColorModel(num_colors, num_colors_to_select, distance_matrix)
+
+max_pairwise_model.build_max_pairwise_model()
+print(f"Variables created: {len(max_pairwise_model.color_vars)}")  # Should print 103
+
+# Solve, use 30 secs for this example
+# max_pairwise_model.solve(time_limit=5)
+
+# Extract results
+max_pairwise_selected_colors = [6, 12, 16, 18, 19, 24, 25, 35, 36, 46, 47, 49, 53, 62, 72, 88]
+#max_pairwise_selected_colors = max_pairwise_model.analyze_solution(status, solver)
+```
+
+```{python}
+#| output: false 
+# selected_colors.sort(key=lambda c: adjust_hue_for_rainbow(color_df.iloc[c]['Hex']))
+
+# Plot palette and output
+max_pairwise_selected_colors.sort(key=lambda c: adjust_hue_for_rainbow(color_df.iloc[c]['Hex']))
+
+# display_palette(selected_colors=max_pairwise_selected_colors, color_df=color_df, filepath="assets/max_pairwise_palette.svg")
+# plot_distance_heatmap(max_pairwise_selected_colors, distance_matrix, color_df, filepath="assets/max_pairwise_heatmap.svg")
+```
+
+And we obtain the following palette:
+
+![Color Palette](assets/max_pairwise_palette.svg)
+
+This is a great start! Broadly this palette contains a variety of colors that are quite different. However Charity Pink and Berry are a bit close, so are Maroon and Heather Cardinal as well as Gold and Maize Yellow.
+
+Lets make a heatmap showing how similar/different the colors are and take a closer look:
+
+![Heatmap Showing Pairwise Distances Between Colors](assets/max_pairwise_heatmap.svg)
+
+Interesting. Generally the colors are quite distinct, however along x = -1 **some of our colors are almost unacceptably close.** 
+
+Maroon and Heather Cardinal are only 6 ∆E units apart, and there are quite a few pairs that are ~10 ∆E units away from each other. 
+
+We also see that the solver status is **FEASIBLE.** Meaning we found a solution but **we don't know if it is the best.**
+
+To solve this issue, instead of maximizing total diversity, what if we tried to maximize the minimum distance between any two colors?
 
 
+## Maximize the Minimum Distance
+
+We can run a similar optimization to the code above, however we tweak the objective function to maximize the minimum distance between any two points. 
+
+```{python}
+#| output: true
+import random
+
+max_minimum_model = ColorModel(num_colors, num_colors_to_select, distance_matrix)
+
+max_minimum_model.build_max_minimum_model()
+
+max_minimum_colors = [8, 12, 13, 16, 17, 19, 23, 31, 37, 47, 53, 70, 72, 86, 97, 100]
+
+# optimal_paletts = max_minimum_model.max_min_solve_enumerate_optimal(max_solutions = 100000, known_optimal=22)
+# max_minimum_colors = random.choice(optimal_paletts)
+
+# max_minimum_colors, known_max_min = max_minimum_model.solve(time_limit=5, log_progress=False)
+
+```
+
+We now obtain a new palette:
+
+```{python}
+#|output: false 
+
+# max_minimum_colors.sort(key=lambda c: adjust_hue_for_rainbow(color_df.iloc[c]['Hex']))
+
+# display_palette(max_minimum_colors, color_df, filepath="assets/max_minimum_palette.svg")
+
+# plot_distance_heatmap(max_minimum_colors, distance_matrix, color_df, filepath="assets/max_minimum_heatmap.svg")
+```
+
+![Max Min Palette](assets/max_minimum_palette.svg)
+
+And can generate a new heatmap:
+
+![Max Min Heatmap](assets/max_minimum_heatmap.svg){.preview-image}
+
+Much better! **Now the closest colors are 22 ∆E units apart**, this is a dramatic increase from ∆6 units from before.
+
+Looking at the solver output, we reached an OPTIMAL solution, this means that the solver found a solution and proved it is the best. In fact, **there are 28,654 optimal solutions.**
+
+Quite a few ideal palettes to choose from!
+
+Before moving forward, let's take a moment and compare the results of our different objective functions:
+
+:::{.grid}
+
+::: {.g-col-6}
+
+### Maxmimize Total Distance
+![Maximize Total Distance Heatmap](assets/max_pairwise_heatmap.svg)
+
+- Colors are broadly more distant (plot is greener)
+- Adjacent colors are very close togther
+- Solution is FEASIBLE
+- No optimal solution, billions of feasible solutions
+:::
+
+::: {.g-col-6}
+
+### Maximize Minimum Distance
+![Maximize Minimum Distance Heatmap](assets/max_minimum_heatmap.svg)
+
+- Colors are broadly a little more similar (plot is green/yellow)
+- Adjacent colors are much further apart
+- Solution is **OPTIMAL**
+- 28,654 optimal solutions (for 16 colors)
+  
+:::
+
+:::
+
+
+### Hybrid Approach - Finding the Best of the Best
+
+Since the solution from the Maximum Minimum approach resulted in a max-min of 22 ∆E units, we can rerun the total distance solver with an additional constraint that all pairs must be at least 22 ∆E units apart.
+
+After running the solver we get the following result:
+
+```{python}
+#| code-fold: true
+#| output: true
+
+hybrid_solver = ColorModel(num_colors, num_colors_to_select, distance_matrix)
+
+# hybrid_solver.build_hybrid_model(optimal_max_min=known_max_min)
+
+best_hybrid_colors = [4, 8, 11, 12, 13, 16, 17, 19, 35, 47, 49, 53, 70, 72, 88, 100]
+
+# best_hybrid_colors, _ = hybrid_solver.solve()
+```
+
+And we obtain the following new palette
+
+```{python}
+#|output: false 
+
+best_hybrid_colors.sort(key=lambda c: adjust_hue_for_rainbow(color_df.iloc[c]['Hex']))
+
+# display_palette(selected_colors=best_hybrid_colors, color_df=color_df, filepath="assets/hybrid_palette.svg")
+# plot_distance_heatmap(best_hybrid_colors, distance_matrix, color_df, filepath="assets/hybrid_heatmap.svg")
+
+```
+
+![Hybrid Algorithm Palette](assets/hybrid_palette.svg)
+
+And get the following new heatmap:
+
+![Hybrid Algorithm Heatmap](assets/hybrid_heatmap.svg)
+
+However it is definitely difficult to determine how this palette and heatmap compare to our other options, let's compare all 3 side by side:
+
+
+### Comparing Approaches 
+
+Let's compare our three palettes/results. 
+
+If you are on mobile you will have to zoom in. 
+
+:::{.grid}
+
+::: {.g-col-4}
+### Max Total
+![Alt text](assets/max_pairwise_palette.svg)
+![Alt text](assets/max_pairwise_heatmap.svg)
+
+:::
+
+::: {.g-col-4}
+### Max Minimum
+![Alt text](assets/max_minimum_palette.svg)
+![Alt text](assets/max_minimum_heatmap.svg)
+
+:::
+
+::: {.g-col-4}
+### Hybrid
+![Alt text](assets/hybrid_palette.svg)
+![Alt text](assets/hybrid_heatmap.svg)
+
+:::
+
+:::
+
+- Hybrid approach achieves greatest balance between global and adjacent diversity
+- Hybrid colors are still at lest 22 ∆E units apart 
+- There is only one OPTIMAL hybrid solution (instead of ~28,000)
+- Hybrid model runs in ~20 seconds (max total never solved and max-min takes ~2.5 min)
