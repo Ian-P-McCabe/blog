@@ -2,7 +2,8 @@
 title: Shirt Color Selection Problem Part 3
 subtitle: Proper Optimization
 author: Ian McCabe
-date: January 2026
+date: 01/05/2026
+image: "assets/Part3HeaderImage.png"
 format:
   html:
     code-fold: true

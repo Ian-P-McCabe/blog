@@ -4,14 +4,12 @@ project:
 website:
   description: "A blog built with Quarto"
   site-url: https://Ian-P-McCabe.github.io/blog # you must change this appropriately for RSS feeds to work properly
-  title: "personal-blog"
+  title: "Ian's Blog"
   navbar:
     right:
       - about.qmd
       - icon: github
-        href: https://github.com/
-      - icon: twitter
-        href: https://twitter.com
+        href: https://github.com/Ian-P-McCabe
   open-graph: true
 format:
   html:
