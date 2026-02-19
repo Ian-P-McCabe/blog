@@ -1,3 +1,76 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# C extensions
+*.pyd
+*.dll
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+pip-wheel-metadata/
+
+# Virtual environments
+.env
+.venv/
+venv/
+ENV/
+env/
+
+# Testing and coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+*checkpoint.ipynb
+
+# VS Code
+.vscode/
+
+# PyCharm
+.idea/
+*.iml
+
+# macOS
+.DS_Store
+
+# Logs
+*.log
+
+# Type checking
+.mypy_cache/
+.pyre/
+
+# Data files (optional - uncomment if needed)
+# *.csv
+# *.xlsx
+
+# Sphinx documentation
+docs/_build/
+
+# Quarto
 /.quarto/
 **/*.quarto_ipynb
-/_site/
+_site/
+_freeze/
+_metadata.json
+*.html
+!index.html
+
+# Quarto cache and temporary files
+.quarto_cache/
+.quarto/
+*_files/
+*_cache/
+
+# Rendered outputs (if keeping only source)
+# Uncomment if you want to ignore rendered HTML files
+# *.html
+# !index.html
