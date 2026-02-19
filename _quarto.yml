@@ -10,6 +10,9 @@ website:
       - about.qmd
       - icon: github
         href: https://github.com/Ian-P-McCabe
+      - icon: linkedin
+        text: LinkedIn
+        href: https://www.linkedin.com/in/ianpmccabe/
   open-graph: true
 format:
   html:
