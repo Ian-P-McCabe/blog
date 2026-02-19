@@ -62,3 +62,125 @@ lab_floats = [[float(x) for x in row] for row in lab_strings]
 lab_colors = [color_objects.LabColor(lab_l=lab_color[0], lab_a=lab_color[1], lab_b=lab_color[2]) for lab_color in lab_floats]
 ```
 
+## Obtaining LAB Values
+
+In order to accurately determine color difference, we will need to obtain the LAB values for each possible shirt color. 
+The LAB color system is best for this analysis because it accurately represents how humans see and differentiate color. 
+
+![How I got LAB Color Info](./assets/ColorInfoProcess.png)
+
+LAB color information for most colors can be obtained from the PMS (Pantone Matching System) code beneath the swatch on the color palette. 
+Pantone provides LAB (and other color) information for each color with a PMS code. (For colors without a PMS code, I approximated a LAB value from the display RGB value)
+
+## Color Difference
+
+Once we have our LAB values, we can easily compute color difference.
+
+For color difference calculations, will use the [CIEDE2000 distance](https://en.wikipedia.org/wiki/Color_difference#CIEDE2000). Color difference is returned as a ∆E value. 
+
+
+### Delta E Values and Color-Difference Perceptibility
+
+| Delta E (ΔE) | Perceptibility | Description |
+|--------------|-----------------|-------------|
+| < 1 | Imperceptible | Colors appear identical to most observers |
+| 1–2 | Very Slight | Only experts notice the difference |
+| 2–10 | Noticeable | Average person notices on close inspection |
+| 10–20 | Obvious | Clearly different colors |
+| > 20 | Very Distinct | Colors are dramatically different |
+
+For **shirt color selection**, we will use:
+
+- **ΔE < 5**: Risk of confusion, too similar
+- **ΔE 5–10**: Acceptable if team choices are prioritized over maximum distinctness
+- **ΔE > 10**: Safe choice, easily distinguishable in all conditions
+- **∆E > 20**: Ideal choice, very distinct colors 
+
+### Examples
+
+::: {.grid}
+
+::: {.g-col-6}
+
+---
+These two colors are **2** units apart:
+```{python}
+#|output: true
+from dodgeball_colors_3 import display_color_swatches
+display_color_swatches(hex_colors=[color_df.iloc[8]['Hex'], color_df.iloc[55]['Hex']])
+```
+---
+
+
+These two colors are **10** units apart:
+```{python}
+#|output: true
+display_color_swatches([color_df.iloc[0]['Hex'], color_df.iloc[46]['Hex']])
+```
+---
+
+These two colors are **20** units apart:
+```{python}
+#|output: true
+display_color_swatches([color_df.iloc[1]['Hex'], color_df.iloc[68]['Hex']])
+```
+---
+
+:::
+
+::: {.g-col-6}
+
+---
+
+These two colors are **30** units apart:
+
+```{python}
+#| output: true
+display_color_swatches([color_df.iloc[0]['Hex'], color_df.iloc[1]['Hex']])
+```
+---
+
+And these two colors are **80** units apart:
+```{python}
+#| output: true
+display_color_swatches([color_df.iloc[6]['Hex'], color_df.iloc[46]['Hex']])
+```
+---
+
+:::
+
+:::
+
+# Finding the best colors
+
+Now that we have our colors in a format we can properly analyze, we can return to answer our central question:
+
+**What is the best set of shirt colors for the dodgeball league?**
+
+In part 2 we covered why this isn't super easy to compute:
+
+- Analyzing the best combinations of 16 colors yeilds **2,245,547,413,628,550,570** possible combinations! (2 quintillion)
+- Analyzing the best combinations of 24 colors, we must score **178,409,928,551,259,450,861,900** possible combinations! (178 sextillion)
+
+I framed the problem as a a subset of the Maximum Diversity Problem - how can we select the subset of colors that are most distant from each other on average?
+
+In Part 2 we used some heuristics to try an approximate the subset of colors with the highest average distance, these included random searches, greedy algorithms, and generating a convex hull of the LAB color space. 
+
+While these are fun approximations (especially the convex hull visual), they pale in comparison to the power of proper optimization methods. 
+
+We will use Google's **Operations Research Tools Constraint Programming - SAT Solver** to systematically explore solutions to our color diversity problem. 
+
+The CP-SAT solver is flexible enough to enable us to explore the original **maximum pairwise distance** approach as well as other measures such as **maximum minimum distance**.
+
+```{python}
+#| output: false
+from dodgeball_colors_3 import build_distance_matrix
+  
+distance_matrix = build_distance_matrix(lab_colors)
+
+num_colors = 103
+num_colors_to_select = 16
+```
+
+
+

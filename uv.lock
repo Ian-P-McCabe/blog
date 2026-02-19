@@ -161,7 +161,7 @@ css = [
 [[package]]
 name = "blog"
 version = "0.1.0"
-source = { virtual = "." }
+source = { editable = "." }
 dependencies = [
     { name = "absl-py" },
     { name = "anyio" },
