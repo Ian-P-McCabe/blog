@@ -5,10 +5,8 @@ about:
   template: jolla
   links:
     - icon: linkedin
-      text: LinkedIn
       href: https://www.linkedin.com/in/ianpmccabe/
     - icon: github
-      text: Github
       href: https://github.com/Ian-P-McCabe
 
 ---
