@@ -1,0 +1,64 @@
+---
+title: Shirt Color Selection Problem Part 3
+subtitle: Proper Optimization
+author: Ian McCabe
+date: January 2026
+format:
+  html:
+    code-fold: true
+    theme: 
+      - flatly
+execute: 
+  cache: false
+  eval: true
+jupyter: python3
+page-layout: full
+editor: 
+    render-on-save: true
+---
+
+# Overview
+
+In [Part 1](https://ian-p-mccabe.github.io/shirt-color-space/) and [Part 2](https://ian-p-mccabe.github.io/shirt-color-space/part_2/) we explored the issues facing the Stonewall Dodgeball league when selecting shirt colors. In Part 1 we found the best way to add additional colors to the league and in Part 2 we explored heuristics for finding the best subset of colors for the league so no two colors are too similar. 
+
+Part 3 will expand on part 2, introducing proper optimization methods for color selection. We will begin by showing how to select the best (most diverse) colors for the league and then expand on this by taking into account team preference.
+
+I have decided to keep all code cells hidden for this writeup, but feel free to expand any of the
+codeblocks on this page (denoted by "> Code"). All the source code can be found on my GitHub. 
+
+
+```{python}
+import numpy
+import pandas as pd
+from colormath import color_objects, color_diff
+import math
+
+# This exists to resolve an issue with the colormath library 
+def patch_asscalar(a):
+    return a.item()
+setattr(numpy, "asscalar", patch_asscalar)
+
+color_df = pd.read_csv("../../data/all_colors.csv")
+```
+
+# Refresher
+
+## There are a lot of colors!
+
+The dodgeball league provides 103 unique shirt colors to pick from. 
+
+Eagle eyed readers will see that there are 110 colors lsited below, however I have removed a few duplicate colors from the pool.
+
+![Solid Colors](./assets/SolidColors.png)
+![Heather Colors](./assets/HeatherColors.png)
+
+```{python}
+#| code-fold: true
+lab_string = list(color_df["L*a*b Value"])
+lab_strings = [color_string.split(", ") for color_string in lab_string]
+
+lab_floats = [[float(x) for x in row] for row in lab_strings]
+
+lab_colors = [color_objects.LabColor(lab_l=lab_color[0], lab_a=lab_color[1], lab_b=lab_color[2]) for lab_color in lab_floats]
+```
+
