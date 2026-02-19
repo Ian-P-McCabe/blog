@@ -8,7 +8,8 @@ about:
       href: https://www.linkedin.com/in/ianpmccabe/
     - icon: github
       href: https://github.com/Ian-P-McCabe
-
 ---
 
 About this blog.
+
+Adding some more text for testing purposes.
