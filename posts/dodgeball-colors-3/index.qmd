@@ -15,8 +15,6 @@ execute:
   eval: true
 jupyter: python3
 page-layout: full
-editor: 
-    render-on-save: true
 ---
 
 # Overview

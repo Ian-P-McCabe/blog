@@ -1,5 +1,10 @@
+execute:
+  freeze: auto
+
 project:
   type: website
+  preview:
+    port: 3438
 
 website:
   description: "A blog built with Quarto"

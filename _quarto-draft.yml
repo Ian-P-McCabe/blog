@@ -1,0 +1,7 @@
+# Draft profile — only renders posts, skipping the blog listing page.
+# Usage:  quarto preview --profile draft
+
+project:
+  render:
+    - "posts/**/*.qmd"
+    - "!index.qmd"
