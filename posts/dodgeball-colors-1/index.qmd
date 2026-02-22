@@ -1,0 +1,154 @@
+---
+title: Shirt Color Selection Problem Part 1
+subtitle: Simple Exploration
+author: Ian McCabe
+date: 01/03/2025
+date-modified: 02/19/2026
+categories: ["Dodgeball Colors"]
+format:
+  html:
+    code-fold: true
+    theme: 
+      - flatly
+execute: 
+  cache: true
+  eval: false
+jupyter: python3
+page-layout: full
+---
+
+Note: This article was originally published as pure HTML on my GitHub
+I have since migrated it to my Quarto blog for easier mantenance and updates.
+
+The Stonewall Dodgeball league in DC has a problem - we need to select more shirt 
+colors for additional teams, but it looks like we've already used the entire rainbow! 
+
+```{python}
+#| output: false
+import numpy
+import pandas as pd
+from colormath import color_objects, color_diff
+import math
+from dodgeball_colors_3 import display_palette
+
+def patch_asscalar(a):
+    return a.item()
+setattr(numpy, "asscalar", patch_asscalar)
+
+color_df = pd.read_csv("../../data/all_colors.csv")
+
+colors = [
+    "White",
+    "Gold",
+    "Yellow",
+    "Pink",
+    "Berry",
+    "Heather Ice Blue",
+    "Ash",
+    "Red",
+    "Heather Team Purple",
+    "Leaf",
+    "Heather Maroon",
+    "Oxblood Black",
+    "Heather True Royal",
+    "Evergreen",
+    "Deep Teal",
+    "Vintage Black",
+]
+
+indices = [int(color_df[color_df["Color Name"] == color].index[0]) for color in colors]
+
+display_palette(selected_colors=indices, color_df=color_df, filepath="assets/starting_palette.svg")
+```
+
+![A color palette with 16 colors](assets/starting_palette.svg)
+
+Luckily there are many other colors to pick from, you can see some below:
+
+![Heather color palette](assets/HeatherColors.png)
+
+But how do we figure out which color to pick?
+
+We can gather detailed information about the shirt color using the Pantone Matching System (PMS) codes beneath each shirt.
+
+The PMS provides a LAB color value, which is most useful to us.
+
+![Image showing Pantone Matching System Color Swatch](assets/Pantone_Gold.png)
+
+## What is LAB?
+
+ Think of LAB color as a way to describe colors that matches how our human eyes actually see them. LAB breaks color down into three parts that make more intuitive sense:
+
+- L - How light or dark something is (like adjusting the brightness on your TV)
+- A - How red or green something is
+- B - How blue or yellow something is
+
+Using LAB values, we can plot colors in 3D space! You can see the colors currently selected below. 
+
+## Explore The Current League Colors in 3D!
+```{python}
+
+import plotly.graph_objects as go
+import numpy as np
+
+
+def plot_3d_points(points, title="3D Point Plot", xlabel="X", ylabel="Y", zlabel="Z"):
+    """
+    Plot a collection of 3D points using Plotly.
+    
+    Args:
+        points: List or array of (x, y, z) tuples
+        title: Chart title
+        xlabel: X-axis label
+        ylabel: Y-axis label
+        zlabel: Z-axis label
+    
+    Returns:
+        go.Figure: Plotly figure object
+    """
+    points_array = np.array(points)
+    
+    fig = go.Figure(data=[go.Scatter3d(
+        x=points_array[:, 0],
+        y=points_array[:, 1],
+        z=points_array[:, 2],
+        mode='markers',
+        marker=dict(size=5)
+    )])
+    
+    fig.update_layout(
+        title=title,
+        scene=dict(
+            xaxis_title=xlabel,
+            yaxis_title=ylabel,
+            zaxis_title=zlabel,
+        )
+    )
+    
+    return fig
+random_points = np.random.uniform(-10, 10, size=(20, 3)).tolist()
+
+fig = plot_3d_points(random_points, title="Random 3D Points", xlabel="L", ylabel="a", zlabel="b")
+fig.show()
+```
+
+Since LAB is a *perceptually uniform* space, the 3D distance between colors represents how similar two colors are.
+
+For fun, we can also plot every color (you may want to zoom in): 
+
+
+## Picking New Colors
+
+Now that we have our colors in 3D space, we can begin our search for new colors.
+
+Our goal is to find ~10 colors that are the furthest from the current set of colors.
+
+While computing the distance in 3D space is an obvious solution. Special formulas have been developed for accurately depicting the distance between two colors. These are:
+
+- **ΔE CMC (1984): Used for textiles**
+- **CIE 2000: Industry standard**
+
+I have used both of these formulas to determine which colors are the furthest from those already chosen for the league.
+
+### Delta E-CMC Furthest Colors (From Most to Least Distant)
+
