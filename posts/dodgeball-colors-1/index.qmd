@@ -12,19 +12,25 @@ format:
       - flatly
 execute: 
   cache: true
-  eval: false
+  eval: true
 jupyter: python3
 page-layout: full
+editor: 
+  render-on-save: true
 ---
 
-Note: This article was originally published as pure HTML on my GitHub
-I have since migrated it to my Quarto blog for easier mantenance and updates.
+**Note: This article was originally published as pure HTML on my GitHub
+I have since migrated it to my Quarto blog for easier mantenance and updates.**
 
 The Stonewall Dodgeball league in DC has a problem - we need to select more shirt 
 colors for additional teams, but it looks like we've already used the entire rainbow! 
 
 ```{python}
 #| output: false
+
+%load_ext autoreload
+%autoreload 2
+
 import numpy
 import pandas as pd
 from colormath import color_objects, color_diff
@@ -56,9 +62,9 @@ colors = [
     "Vintage Black",
 ]
 
-indices = [int(color_df[color_df["Color Name"] == color].index[0]) for color in colors]
+current_color_indices = [int(color_df[color_df["Color Name"] == color].index[0]) for color in colors]
 
-display_palette(selected_colors=indices, color_df=color_df, filepath="assets/starting_palette.svg")
+display_palette(selected_colors=current_color_indices, color_df=color_df, filepath="assets/starting_palette.svg")
 ```
 
 ![A color palette with 16 colors](assets/starting_palette.svg)
@@ -87,68 +93,140 @@ Using LAB values, we can plot colors in 3D space! You can see the colors current
 
 ## Explore The Current League Colors in 3D!
 ```{python}
+#|eval: true 
+#|output: true
+#|cache: false  
+from dodgeball_colors_3 import generate_lab_3d_all_colors
+import random
 
-import plotly.graph_objects as go
-import numpy as np
+filtered_df = color_df.iloc[current_color_indices].copy()
 
-
-def plot_3d_points(points, title="3D Point Plot", xlabel="X", ylabel="Y", zlabel="Z"):
-    """
-    Plot a collection of 3D points using Plotly.
-    
-    Args:
-        points: List or array of (x, y, z) tuples
-        title: Chart title
-        xlabel: X-axis label
-        ylabel: Y-axis label
-        zlabel: Z-axis label
-    
-    Returns:
-        go.Figure: Plotly figure object
-    """
-    points_array = np.array(points)
-    
-    fig = go.Figure(data=[go.Scatter3d(
-        x=points_array[:, 0],
-        y=points_array[:, 1],
-        z=points_array[:, 2],
-        mode='markers',
-        marker=dict(size=5)
-    )])
-    
-    fig.update_layout(
-        title=title,
-        scene=dict(
-            xaxis_title=xlabel,
-            yaxis_title=ylabel,
-            zaxis_title=zlabel,
-        )
-    )
-    
-    return fig
-random_points = np.random.uniform(-10, 10, size=(20, 3)).tolist()
-
-fig = plot_3d_points(random_points, title="Random 3D Points", xlabel="L", ylabel="a", zlabel="b")
-fig.show()
+generate_lab_3d_all_colors(df=filtered_df, figure_title="Current League Colors in 3D")
 ```
+
 
 Since LAB is a *perceptually uniform* space, the 3D distance between colors represents how similar two colors are.
 
 For fun, we can also plot every color (you may want to zoom in): 
 
+```{python}
+#| cache: true 
+generate_lab_3d_all_colors(df=color_df, figure_title="All Color Options in 3D")
+```
 
 ## Picking New Colors
 
 Now that we have our colors in 3D space, we can begin our search for new colors.
 
-Our goal is to find ~10 colors that are the furthest from the current set of colors.
+Our goal is to find ~8 colors that are the furthest from the current set of colors.
 
-While computing the distance in 3D space is an obvious solution. Special formulas have been developed for accurately depicting the distance between two colors. These are:
+While computing the distance in 3D space is an obvious solution (and how the first ΔE formula worked). Special formulas have been developed for accurately depicting the distance between two colors. These are:
 
 - **ΔE CMC (1984): Used for textiles**
 - **CIE 2000: Industry standard**
 
 I have used both of these formulas to determine which colors are the furthest from those already chosen for the league.
 
-### Delta E-CMC Furthest Colors (From Most to Least Distant)
+```{python}
+#| output: false
+import colormath.color_objects as co 
+import colormath.color_diff as cdiff
 
+def compute_average_distance(row):
+    color_Lab = None
+
+    color_Lab = co.LabColor(*map(float, row["L*a*b Value"].split(", ")))
+
+    cmc_distances = []
+    cie_distances = []
+    #Compute all distances from chosen colors
+    for index, row_remaining in color_df.iterrows():
+        if index == row.name:
+          continue
+        other_color = co.LabColor(*map(float, row_remaining["L*a*b Value"].split(", ")))
+
+        cmc_distance = cdiff.delta_e_cmc(other_color, color_Lab , pl=2, pc=1)
+
+        cie_distance = cdiff.delta_e_cie2000(color_Lab, other_color,Kl=2, Kc=1, Kh=1)
+
+        cmc_distances += [cmc_distance]
+        cie_distances += [cie_distance]
+
+
+    average_cmc_distance = sum(cmc_distances)/(len(color_df) - 1)
+    average_cie_distance = sum(cie_distances)/(len(color_df) - 1)
+
+    row["average_cmc"] = average_cmc_distance
+    row["average_cie"] = average_cie_distance
+    return row
+
+color_df = color_df.apply(compute_average_distance, axis=1)
+```
+
+### Delta E-CMC Furthest Colors (From Most to Least Distant)
+```{python}
+#| output: false
+
+#1. new df without the existing colors
+#2. sort df by average_cmc and obtain top 8 indices
+#3. sort df by average cie and obtain top 8 indices 
+
+mask = ~color_df['Color Name'].isin(colors)
+filtered_df = color_df[mask].copy()
+
+top_8_cmc_indices = filtered_df.nlargest(8, 'average_cmc').index.tolist()
+top_8_cie_indices = filtered_df.nlargest(8, 'average_cie').index.tolist()
+
+display_palette(selected_colors=top_8_cmc_indices, color_df=color_df, cols=4, filepath="assets/top_cmc.svg", sort_rainbow=True)
+
+display_palette(selected_colors=top_8_cie_indices, color_df=color_df, cols= 4, filepath="assets/top_cie.svg", sort_rainbow=True)
+```
+
+![Top 8 Most Distant Colors using ΔE CMC](assets/top_cmc.svg)
+
+**Explore the new colors in 3D below, new colors are marked with an asterisk \* **
+
+```{python}
+#| cache: true 
+selected_mask = color_df['Color Name'].isin(colors)
+selected_colors = color_df[selected_mask].copy()
+
+top_8_cmc_df = filtered_df.nlargest(8, 'average_cmc')
+top_8_cmc_df['Color Name'] = '*' + top_8_cmc_df['Color Name']
+
+combined_cmc_df = pd.concat([selected_colors, top_8_cmc_df])
+
+generate_lab_3d_all_colors(df=combined_cmc_df, figure_title="Current Colors with Potential CMC Additions")
+```
+
+### Delta E-CIE 2000 Furthest Colors (Most to Least Distant)
+
+![Top 8 Most Distant Colors by ΔE CIE 2000](assets/top_cie.svg)
+
+```{python}
+#|cache: true
+
+top_8_cie_df = filtered_df.nlargest(8, 'average_cie')
+top_8_cie_df['Color Name'] = '*' + top_8_cie_df['Color Name']
+
+combined_cie_df = pd.concat([selected_colors, top_8_cie_df])
+
+generate_lab_3d_all_colors(df=combined_cie_df, figure_title="Current Colors with Potential CIE Additions")
+```
+
+Taking a quick look at both palettes side by side:
+
+::: {.grid}
+
+::: {.g-col-6}
+![Top 8 Most Distant Colors using ΔE CMC](assets/top_cmc.svg)
+
+:::
+
+::: {.g-col-6}
+![Top 8 Most Distant Colors by ΔE CIE 2000](assets/top_cie.svg)
+:::
+
+:::
+
+We see that the league just needs some more blue or orange this season :)

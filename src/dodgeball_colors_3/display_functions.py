@@ -3,8 +3,15 @@ import matplotlib.patches as patches
 import seaborn as sns
 import pandas as pd 
 from IPython.display import HTML
+from dodgeball_colors_3.color_sorting import adjust_hue_for_rainbow
 
-def display_palette(selected_colors: list[int], color_df: pd.DataFrame, filepath: str, cols=None):
+def display_palette(selected_colors: list[int], color_df: pd.DataFrame, filepath: str, cols=None, sort_rainbow: bool = False):
+
+    if sort_rainbow:
+        selected_colors = sorted(
+            selected_colors,
+            key=lambda c: adjust_hue_for_rainbow(color_df.iloc[c]['Hex'])
+        )
 
     hex_colors = [color_df.iloc[c]['Hex'] for c in selected_colors]
     color_names = [color_df.iloc[c]['Color Name'] for c in selected_colors]

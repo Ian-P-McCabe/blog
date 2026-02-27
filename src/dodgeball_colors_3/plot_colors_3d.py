@@ -1,7 +1,8 @@
 import plotly.graph_objects as go
+import pandas as pd
 import numpy as np
 
-def generate_lab_3d_all_colors(df, figure_title, output_filename=None):
+def generate_lab_3d_all_colors(df: pd.DataFrame, figure_title:str, output_filename=None):
     # Parse the L*a*b values from the string format
     df[['L', 'a', 'b']] = df['L*a*b Value'].str.split(', ', expand=True).astype(float)
 
@@ -45,8 +46,8 @@ def generate_lab_3d_all_colors(df, figure_title, output_filename=None):
             yaxis=dict(range=[0, 100]),
             zaxis=dict(range=[-128, 128])
         ),
-        showlegend=True,
-        margin=dict(l=1, r=1, t=1, b=1)
+        showlegend=False,
+        #margin=dict(l=1, r=1, t=1, b=1)
     )
 
     # Add better camera angle
