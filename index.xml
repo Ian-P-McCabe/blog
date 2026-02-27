@@ -26,7 +26,7 @@
 <p>In <a href="https://ian-p-mccabe.github.io/shirt-color-space/">Part 1</a> and <a href="https://ian-p-mccabe.github.io/shirt-color-space/part_2/">Part 2</a> we explored the issues facing the Stonewall Dodgeball league when selecting shirt colors. In Part 1 we found the best way to add additional colors to the league and in Part 2 we explored heuristics for finding the best subset of colors for the league so no two colors are too similar.</p>
 <p>Part 3 will expand on part 2, introducing proper optimization methods for color selection. We will begin by showing how to select the best (most diverse) colors for the league and then expand on this by taking into account team preference.</p>
 <p>I have decided to keep all code cells hidden for this writeup, but feel free to expand any of the codeblocks on this page (denoted by “&gt; Code”). All the source code can be found on my GitHub.</p>
-<div id="6cab7387" class="cell" data-execution_count="1">
+<div id="ba5702a0" class="cell" data-execution_count="1">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
@@ -78,7 +78,7 @@ font-style: inherit;">"../../data/all_colors.csv"</span>)</span></code></pre></d
 <p>The dodgeball league provides 103 unique shirt colors to pick from.</p>
 <p>Eagle eyed readers will see that there are 110 colors lsited below, however I have removed a few duplicate colors from the pool.</p>
 <p><img src="https://Ian-P-McCabe.github.io/blog/posts/dodgeball-colors-3/assets/SolidColors.png" class="img-fluid" alt="Solid Colors"> <img src="https://Ian-P-McCabe.github.io/blog/posts/dodgeball-colors-3/assets/HeatherColors.png" class="img-fluid" alt="Heather Colors"></p>
-<div id="55051b34" class="cell" data-execution_count="2">
+<div id="0bcd5c50" class="cell" data-execution_count="2">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1">lab_string <span class="op" style="color: #5E5E5E;
@@ -209,7 +209,7 @@ font-style: inherit;">in</span> lab_floats]</span></code></pre></div></div>
 <div class="g-col-6">
 <hr>
 <p>These two colors are <strong>2</strong> units apart:</p>
-<div id="cc830ecc" class="cell" data-execution_count="3">
+<div id="46e0684e" class="cell" data-execution_count="3">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><span class="im" style="color: #00769E;
@@ -229,13 +229,13 @@ font-style: inherit;">55</span>][<span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">'Hex'</span>]])</span></code></pre></div></div>
 </details>
-<div class="cell-output cell-output-display" data-execution_count="45">
+<div class="cell-output cell-output-display" data-execution_count="3">
 <div style="display: flex; align-items: center; gap: 10px;"><div style="display: flex; gap: 2px;"><div title="423A31" style="width: 40px; height: 40px; background-color: #423A31; border: 1px solid #ccc;"></div><div title="454038" style="width: 40px; height: 40px; background-color: #454038; border: 1px solid #ccc;"></div></div></div>
 </div>
 </div>
 <hr>
 <p>These two colors are <strong>10</strong> units apart:</p>
-<div id="838e4a6a" class="cell" data-execution_count="4">
+<div id="d81d4496" class="cell" data-execution_count="4">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1">display_color_swatches([color_df.iloc[<span class="dv" style="color: #AD0000;
@@ -248,13 +248,13 @@ font-style: inherit;">46</span>][<span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">'Hex'</span>]])</span></code></pre></div></div>
 </details>
-<div class="cell-output cell-output-display" data-execution_count="46">
+<div class="cell-output cell-output-display" data-execution_count="4">
 <div style="display: flex; align-items: center; gap: 10px;"><div style="display: flex; gap: 2px;"><div title="4298B5" style="width: 40px; height: 40px; background-color: #4298B5; border: 1px solid #ccc;"></div><div title="00BFB2" style="width: 40px; height: 40px; background-color: #00BFB2; border: 1px solid #ccc;"></div></div></div>
 </div>
 </div>
 <hr>
 <p>These two colors are <strong>20</strong> units apart:</p>
-<div id="93ec7a25" class="cell" data-execution_count="5">
+<div id="f6793514" class="cell" data-execution_count="5">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1">display_color_swatches([color_df.iloc[<span class="dv" style="color: #AD0000;
@@ -267,7 +267,7 @@ font-style: inherit;">68</span>][<span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">'Hex'</span>]])</span></code></pre></div></div>
 </details>
-<div class="cell-output cell-output-display" data-execution_count="47">
+<div class="cell-output cell-output-display" data-execution_count="5">
 <div style="display: flex; align-items: center; gap: 10px;"><div style="display: flex; gap: 2px;"><div title="555D51" style="width: 40px; height: 40px; background-color: #555D51; border: 1px solid #ccc;"></div><div title="48655B" style="width: 40px; height: 40px; background-color: #48655B; border: 1px solid #ccc;"></div></div></div>
 </div>
 </div>
@@ -276,7 +276,7 @@ font-style: inherit;">'Hex'</span>]])</span></code></pre></div></div>
 <div class="g-col-6">
 <hr>
 <p>These two colors are <strong>30</strong> units apart:</p>
-<div id="8f184219" class="cell" data-execution_count="6">
+<div id="0463f691" class="cell" data-execution_count="6">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1">display_color_swatches([color_df.iloc[<span class="dv" style="color: #AD0000;
@@ -289,13 +289,13 @@ font-style: inherit;">1</span>][<span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">'Hex'</span>]])</span></code></pre></div></div>
 </details>
-<div class="cell-output cell-output-display" data-execution_count="48">
+<div class="cell-output cell-output-display" data-execution_count="6">
 <div style="display: flex; align-items: center; gap: 10px;"><div style="display: flex; gap: 2px;"><div title="4298B5" style="width: 40px; height: 40px; background-color: #4298B5; border: 1px solid #ccc;"></div><div title="555D51" style="width: 40px; height: 40px; background-color: #555D51; border: 1px solid #ccc;"></div></div></div>
 </div>
 </div>
 <hr>
 <p>And these two colors are <strong>80</strong> units apart:</p>
-<div id="da76b79e" class="cell" data-execution_count="7">
+<div id="a9de0231" class="cell" data-execution_count="7">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1">display_color_swatches([color_df.iloc[<span class="dv" style="color: #AD0000;
@@ -308,7 +308,7 @@ font-style: inherit;">46</span>][<span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">'Hex'</span>]])</span></code></pre></div></div>
 </details>
-<div class="cell-output cell-output-display" data-execution_count="49">
+<div class="cell-output cell-output-display" data-execution_count="7">
 <div style="display: flex; align-items: center; gap: 10px;"><div style="display: flex; gap: 2px;"><div title="C6057B" style="width: 40px; height: 40px; background-color: #C6057B; border: 1px solid #ccc;"></div><div title="00BFB2" style="width: 40px; height: 40px; background-color: #00BFB2; border: 1px solid #ccc;"></div></div></div>
 </div>
 </div>
@@ -332,7 +332,7 @@ font-style: inherit;">'Hex'</span>]])</span></code></pre></div></div>
 <p>While these are fun approximations (especially the convex hull visual), they pale in comparison to the power of proper optimization methods.</p>
 <p>We will use Google’s <strong>Operations Research Tools Constraint Programming - SAT Solver</strong> to systematically explore solutions to our color diversity problem.</p>
 <p>The CP-SAT solver is flexible enough to enable us to explore the original <strong>maximum pairwise distance</strong> approach as well as other measures such as <strong>maximum minimum distance</strong>.</p>
-<div id="96632b8d" class="cell" data-execution_count="8">
+<div id="e483cf8b" class="cell" data-execution_count="8">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><span class="im" style="color: #00769E;
@@ -361,7 +361,7 @@ font-style: inherit;">16</span></span></code></pre></div></div>
 <h2 class="anchored" data-anchor-id="maximum-pairwise-distance">Maximum Pairwise Distance</h2>
 <p>Continuing where we left off in part 2, lets find the subset of colors with the greatest pairwise distance. This is the same metric used in the random, greedy, and convex hull approaches.</p>
 <p>After letting the model run for 5 minutes, we get the following:</p>
-<div id="8fb0b2d4" class="cell" data-cache="false" data-execution_count="9">
+<div id="a4c10318" class="cell" data-cache="false" data-execution_count="9">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><span class="im" style="color: #00769E;
@@ -449,7 +449,7 @@ font-style: inherit;">#max_pairwise_selected_colors = max_pairwise_model.analyze
 <pre><code>Variables created: 103</code></pre>
 </div>
 </div>
-<div id="374f75a5" class="cell" data-execution_count="10">
+<div id="54562861" class="cell" data-execution_count="10">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><span class="co" style="color: #5E5E5E;
@@ -499,7 +499,7 @@ font-style: inherit;"># plot_distance_heatmap(max_pairwise_selected_colors, dist
 <section id="maximize-the-minimum-distance" class="level2">
 <h2 class="anchored" data-anchor-id="maximize-the-minimum-distance">Maximize the Minimum Distance</h2>
 <p>We can run a similar optimization to the code above, however we tweak the objective function to maximize the minimum distance between any two points.</p>
-<div id="939a8961" class="cell" data-execution_count="11">
+<div id="23d200c4" class="cell" data-execution_count="11">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><span class="im" style="color: #00769E;
@@ -561,7 +561,7 @@ font-style: inherit;"># max_minimum_colors, known_max_min = max_minimum_model.so
 </details>
 </div>
 <p>We now obtain a new palette:</p>
-<div id="701c85ec" class="cell" data-execution_count="12">
+<div id="a35911f2" class="cell" data-execution_count="12">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><span class="co" style="color: #5E5E5E;
@@ -630,7 +630,7 @@ font-style: inherit;"># plot_distance_heatmap(max_minimum_colors, distance_matri
 <h3 class="anchored" data-anchor-id="hybrid-approach---finding-the-best-of-the-best">Hybrid Approach - Finding the Best of the Best</h3>
 <p>Since the solution from the Maximum Minimum approach resulted in a max-min of 22 ∆E units, we can rerun the total distance solver with an additional constraint that all pairs must be at least 22 ∆E units apart.</p>
 <p>After running the solver we get the following result:</p>
-<div id="d017e2ef" class="cell" data-execution_count="13">
+<div id="8b4e7684" class="cell" data-execution_count="13">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1">hybrid_solver <span class="op" style="color: #5E5E5E;
@@ -683,7 +683,7 @@ font-style: inherit;"># best_hybrid_colors, _ = hybrid_solver.solve()</span></sp
 </details>
 </div>
 <p>And we obtain the following new palette</p>
-<div id="52164f6f" class="cell" data-execution_count="14">
+<div id="278d7cac" class="cell" data-execution_count="14">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1">best_hybrid_colors.sort(key<span class="op" style="color: #5E5E5E;
@@ -753,6 +753,721 @@ font-style: inherit;"># plot_distance_heatmap(best_hybrid_colors, distance_matri
   <guid>https://Ian-P-McCabe.github.io/blog/posts/dodgeball-colors-3/</guid>
   <pubDate>Mon, 05 Jan 2026 05:00:00 GMT</pubDate>
   <media:content url="https://Ian-P-McCabe.github.io/blog/posts/dodgeball-colors-3/assets/Part3HeaderImage.png" medium="image" type="image/png" height="73" width="144"/>
+</item>
+<item>
+  <title>Shirt Color Selection Problem Part 1</title>
+  <dc:creator>Ian McCabe</dc:creator>
+  <link>https://Ian-P-McCabe.github.io/blog/posts/dodgeball-colors-1/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<p>The Stonewall Dodgeball league in DC has a problem - we need to select more shirt colors for additional teams, but it looks like we’ve already used the entire rainbow!</p>
+<p><strong>Note: This article was originally published as pure HTML on my GitHub. I have since migrated it to my Quarto blog for easier maintenance and updates.</strong></p>
+<div id="6de176b8" class="cell" data-execution_count="2">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%</span>load_ext autoreload</span>
+<span id="cb1-2"><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%</span>autoreload <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span></span>
+<span id="cb1-3"></span>
+<span id="cb1-4"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> numpy</span>
+<span id="cb1-5"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> pandas <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> pd</span>
+<span id="cb1-6"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> colormath <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> color_objects, color_diff</span>
+<span id="cb1-7"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> math</span>
+<span id="cb1-8"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> dodgeball_colors_3 <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> display_palette</span>
+<span id="cb1-9"></span>
+<span id="cb1-10"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> patch_asscalar(a):</span>
+<span id="cb1-11">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> a.item()</span>
+<span id="cb1-12"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">setattr</span>(numpy, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"asscalar"</span>, patch_asscalar)</span>
+<span id="cb1-13"></span>
+<span id="cb1-14">color_df <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pd.read_csv(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"../../data/all_colors.csv"</span>)</span>
+<span id="cb1-15"></span>
+<span id="cb1-16">colors <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [</span>
+<span id="cb1-17">    <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"White"</span>,</span>
+<span id="cb1-18">    <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Gold"</span>,</span>
+<span id="cb1-19">    <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Yellow"</span>,</span>
+<span id="cb1-20">    <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Pink"</span>,</span>
+<span id="cb1-21">    <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Berry"</span>,</span>
+<span id="cb1-22">    <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Heather Ice Blue"</span>,</span>
+<span id="cb1-23">    <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Ash"</span>,</span>
+<span id="cb1-24">    <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Red"</span>,</span>
+<span id="cb1-25">    <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Heather Team Purple"</span>,</span>
+<span id="cb1-26">    <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Leaf"</span>,</span>
+<span id="cb1-27">    <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Heather Maroon"</span>,</span>
+<span id="cb1-28">    <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Oxblood Black"</span>,</span>
+<span id="cb1-29">    <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Heather True Royal"</span>,</span>
+<span id="cb1-30">    <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Evergreen"</span>,</span>
+<span id="cb1-31">    <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Deep Teal"</span>,</span>
+<span id="cb1-32">    <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Vintage Black"</span>,</span>
+<span id="cb1-33">]</span>
+<span id="cb1-34"></span>
+<span id="cb1-35">current_color_indices <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">int</span>(color_df[color_df[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Color Name"</span>] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span> color].index[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>]) <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> color <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> colors]</span>
+<span id="cb1-36"></span>
+<span id="cb1-37">display_palette(selected_colors<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>current_color_indices, color_df<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>color_df, filepath<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"assets/starting_palette.svg"</span>)</span></code></pre></div></div>
+</details>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://Ian-P-McCabe.github.io/blog/posts/dodgeball-colors-1/assets/starting_palette.svg" class="img-fluid figure-img"></p>
+<figcaption>A color palette with 16 colors</figcaption>
+</figure>
+</div>
+<p>Luckily there are many other colors to pick from, you can see some below:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://Ian-P-McCabe.github.io/blog/posts/dodgeball-colors-1/assets/HeatherColors.png" class="img-fluid figure-img"></p>
+<figcaption>Heather color palette</figcaption>
+</figure>
+</div>
+<p>But how do we figure out which color to pick?</p>
+<p>We can gather detailed information about the shirt color using the Pantone Matching System (PMS) codes beneath each shirt.</p>
+<p>The PMS provides a LAB color value, which is most useful to us.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://Ian-P-McCabe.github.io/blog/posts/dodgeball-colors-1/assets/Pantone_Gold.png" class="img-fluid figure-img"></p>
+<figcaption>Image showing Pantone Matching System Color Swatch</figcaption>
+</figure>
+</div>
+<section id="what-is-lab" class="level2">
+<h2 class="anchored" data-anchor-id="what-is-lab">What is LAB?</h2>
+<p>Think of LAB color as a way to describe colors that matches how our human eyes actually see them. LAB breaks color down into three parts that make more intuitive sense:</p>
+<ul>
+<li>L - How light or dark something is (like adjusting the brightness on your TV)</li>
+<li>A - How red or green something is</li>
+<li>B - How blue or yellow something is</li>
+</ul>
+<p>Using LAB values, we can plot colors in 3D space! You can see the colors currently selected below.</p>
+</section>
+<section id="explore-the-current-league-colors-in-3d" class="level2">
+<h2 class="anchored" data-anchor-id="explore-the-current-league-colors-in-3d">Explore The Current League Colors in 3D!</h2>
+<div id="33a6167c" class="cell" data-cache="false" data-execution_count="3">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> dodgeball_colors_3 <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> generate_lab_3d_all_colors</span>
+<span id="cb2-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> random</span>
+<span id="cb2-3"></span>
+<span id="cb2-4">filtered_df <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> color_df.iloc[current_color_indices].copy()</span>
+<span id="cb2-5"></span>
+<span id="cb2-6">generate_lab_3d_all_colors(df<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>filtered_df, figure_title<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Current League Colors in 3D"</span>)</span></code></pre></div></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>            <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_SVG"></script><script type="text/javascript">if (window.MathJax && window.MathJax.Hub && window.MathJax.Hub.Config) {window.MathJax.Hub.Config({SVG: {font: "STIX-Web"}});}</script>                <script type="text/javascript">window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
+        <script charset="utf-8" src="https://cdn.plot.ly/plotly-3.3.0.min.js" integrity="sha256-bO3dS6yCpk9aK4gUpNELtCiDeSYvGYnK7jFI58NQnHI=" crossorigin="anonymous"></script>                <div id="df22baf0-1b02-488c-8511-e43e8106825e" class="plotly-graph-div" style="height:525px; width:100%;"></div>            <script type="text/javascript">                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("df22baf0-1b02-488c-8511-e43e8106825e")) {                    Plotly.newPlot(                        "df22baf0-1b02-488c-8511-e43e8106825e",                        [{"hovertemplate":"\u003cb\u003e%{text}\u003c\u002fb\u003e\u003cbr\u003eL*: %{y:.1f}\u003cbr\u003ea*: %{x:.1f}\u003cbr\u003eb*: %{z:.1f}\u003cbr\u003e","marker":{"color":["#FFFFFF","#FFA400","#F6EB69","#F7CED7","#C6057B","#BDDDD9","#BDC4C2","#BA0C2F","#7D55C7","#729364","#603147","#55394D","#2B7BBB","#115740","#005876","#212322"],"opacity":1.0,"size":7},"mode":"markers+text","text":["White","Gold","Yellow","Pink","Berry","Heather Ice Blue","Ash","Red","Heather Team Purple","Leaf","Heather Maroon","Oxblood Black","Heather True Royal","Evergreen","Deep Teal","Vintage Black"],"textfont":{"size":8},"textposition":"top center","x":{"dtype":"f8","bdata":"AAAAAAAAAACkcD0K1yM\u002fQFK4HoXrURvAAAAAAABAMED2KFyPwvVRQMP1KFyPwibAH4XrUbgeAcC4HoXrUWhQQOF6FK5HQUFApHA9CtcjMsD2KFyPwjU5QHsUrkfhOjBAMzMzMzMzHcCkcD0K1+M6wHE9CtejMDfAexSuR+F68L8="},"y":{"dtype":"f8","bdata":"AAAAAAAAWUCuR+F6FB5TQPYoXI\u002fCBVdAMzMzMzOzVUBxPQrXo7BGQJqZmZmZaVVAAAAAAACgU0DXo3A9CrdEQJqZmZmZuUZACtejcD2qTEDD9Shcj8I7QOF6FK5HITxA16NwPQpXSEBmZmZmZuY\u002fQJqZmZmZOUBAMzMzMzOzKkA="},"z":{"dtype":"f8","bdata":"AAAAAAAAAAApXI\u002fC9WhUQPYoXI\u002fCNU9ACtejcD0K9z8zMzMzMzMdwJqZmZmZmQHA16NwPQrX078UrkfhehRBQDMzMzMzc0rAuB6F61H4M0DhehSuR+EGwPYoXI\u002fC9RnAmpmZmZkZRcBSuB6F61EZQD0K16NwPTvAzczMzMzM3D8="},"type":"scatter3d"}],                        {"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"},"margin":{"b":0,"l":0,"r":0,"t":30}}},"scene":{"aspectratio":{"x":1,"y":1,"z":1},"xaxis":{"title":{"text":"a* (green to red)"},"range":[-128,128]},"yaxis":{"title":{"text":"L* (black to white)"},"range":[0,100]},"zaxis":{"title":{"text":"b* (blue to yellow)"},"range":[-128,128]},"camera":{"up":{"x":0,"y":1,"z":0},"center":{"x":0,"y":0,"z":0},"eye":{"x":1.5,"y":1.5,"z":1.5}}},"title":{"text":"Current League Colors in 3D"},"showlegend":false},                        {"responsive": true}                    ).then(function(){
+                            
+var gd = document.getElementById('df22baf0-1b02-488c-8511-e43e8106825e');
+var x = new MutationObserver(function (mutations, observer) {{
+        var display = window.getComputedStyle(gd).display;
+        if (!display || display === 'none') {{
+            console.log([gd, 'removed!']);
+            Plotly.purge(gd);
+            observer.disconnect();
+        }}
+}});
+
+// Listen for the removal of the full notebook cells
+var notebookContainer = gd.closest('#notebook-container');
+if (notebookContainer) {{
+    x.observe(notebookContainer, {childList: true});
+}}
+
+// Listen for the clearing of the current output cell
+var outputEl = gd.closest('.output');
+if (outputEl) {{
+    x.observe(outputEl, {childList: true});
+}}
+
+                        })                };            </script>        </div>
+</div>
+</div>
+<p>Since LAB is a <em>perceptually uniform</em> space, the 3D distance between colors represents how similar two colors are.</p>
+<p>For fun, we can also plot every color (you may want to zoom in):</p>
+<div id="9b047127" class="cell" data-cache="true" data-execution_count="4">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1">generate_lab_3d_all_colors(df<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>color_df, figure_title<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"All Color Options in 3D"</span>)</span></code></pre></div></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>            <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_SVG"></script><script type="text/javascript">if (window.MathJax && window.MathJax.Hub && window.MathJax.Hub.Config) {window.MathJax.Hub.Config({SVG: {font: "STIX-Web"}});}</script>                <script type="text/javascript">window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
+        <script charset="utf-8" src="https://cdn.plot.ly/plotly-3.3.0.min.js" integrity="sha256-bO3dS6yCpk9aK4gUpNELtCiDeSYvGYnK7jFI58NQnHI=" crossorigin="anonymous"></script>                <div id="f91b465e-cb62-4456-b9d4-cab0ce0b9bcc" class="plotly-graph-div" style="height:525px; width:100%;"></div>            <script type="text/javascript">                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("f91b465e-cb62-4456-b9d4-cab0ce0b9bcc")) {                    Plotly.newPlot(                        "f91b465e-cb62-4456-b9d4-cab0ce0b9bcc",                        [{"hovertemplate":"\u003cb\u003e%{text}\u003c\u002fb\u003e\u003cbr\u003eL*: %{y:.1f}\u003cbr\u003ea*: %{x:.1f}\u003cbr\u003eb*: %{z:.1f}\u003cbr\u003e","marker":{"color":["#4298B5","#555D51","#BDC4C2","#6C6864","#A05729","#89B2BD","#C6057B","#2D2926","#423A31","#CB6015","#9D2235","#9B2743","#DE5795","#FF8870","#38484E","#4A493B","#005876","#115740","#183029","#FFA400","#007A53","#729364","#A6BBC8","#DEBBD5","#F2CA00","#672E45","#A36D6A","#60705E","#C29951","#E2D0A0","#202A44","#66A5B5","#474C21","#FF6A39","#55394D","#F7CED7","#E10600","#BA0C2F","#9E483F","#C7C9C7","#DECA9E","#EFDAC8","#678096","#757870","#E37F57","#AEA282","#00BFB2","#2E1A47","#4C619C","#00AFD7","#212322","#DFDDD6","#FFFFFF","#F6EB69","#ACB3B8","#454038","#545859","#75726F","#48A9C5","#A26C53","#8E9FBC","#5D4B3C","#651C32","#A26859","#658BCC","#34657F","#DCD2C4","#8FAD9F","#48655B","#447961","#79863C","#BDDDD9","#00965E","#65649E","#603147","#A06A62","#343A4A","#6C6E60","#A8D5BA","#CCA55C","#3B4559","#827752","#AA939C","#F2BD79","#BCC0D2","#92ACA0","#B3D2B5","#CAA0AE","#A0DAB3","#D6D2BE","#EABEB0","#EA905D","#AF4D64","#BF0D3E","#00BAB3","#5C6E76","#908878","#76797A","#E88467","#958A73","#7D55C7","#2B7BBB","#FDD26E"],"opacity":1.0,"size":7},"mode":"markers+text","text":["Aqua","Army","Ash","Asphalt","Autumn","Baby Blue","Berry","Black","Brown","Burnt Orange","Canvas Red","Cardinal","Charity Pink","Coral","Dark Grey","Dark Olive","Deep Teal","Evergreen","Forest","Gold","Kelly","Leaf","Light Blue","Lilac","Maize Yellow","Maroon","Mauve","Military Green","Mustard","Natural","Navy","Ocean Blue","Olive","Orange","Oxblood Black","Pink","Poppy","Red","Rust","Silver","Soft Cream","Soft Pink","Steel Blue","Storm","Sunset","Tan","Teal","Team Purple","True Royal","Turquoise","Vintage Black","Vintage White","White","Yellow","Athletic Heather","Black Heather","Dark Grey Heather","Deep Heather","Heather Aqua","Heather Autumn","Heather Blue","Heather Brown","Heather Cardinal","Heather Clay","Heather Columbia Blue","Heather Deep Teal","Heather Dust","Heather Dusty Blue","Heather Forest","Heather Grass Green","Heather Green","Heather Ice Blue","Heather Kelly","Heather Lapis","Heather Maroon","Heather Mauve","Heather Midnight Navy","Heather Military Green","Heather Mint","Heather Mustard","Heather Navy","Heather Olive","Heather Orchid","Heather Peach","Heather Prism Blue","Heather Prism Dusty Blue","Heather Prism Ice Blue","Heather Prism Lilac","Heather Prism Mint","Heather Prism Natural","Heather Prism Peach","Heather Prism Sunset","Heather Raspberry","Heather Red","Heather Sea Green","Heather Slate","Heather Stone","Heather Storm","Heather Sunset","Heather Tan","Heather Team Purple","Heather True Royal","Heather Yellow Gold"],"textfont":{"size":8},"textposition":"top center","x":{"dtype":"f8","bdata":"pHA9CtdjNMDhehSuR+EOwB+F61G4HgHAhetRuB6F8z\u002f2KFyPwrVCQClcj8L1KCjA9ihcj8L1UUCkcD0K16P0P6RwPQrXowpAhetRuB7FRUD2KFyPwnVKQM3MzMzMDElAcT0K16PQTUCuR+F6FA5HQM3MzMzMzBLA9ihcj8L1AsBxPQrXozA3wKRwPQrX4zrAmpmZmZkZKMCkcD0K1yM\u002fQK5H4XoULkjApHA9CtcjMsBxPQrXo3AUwFyPwvUo3DBACtejcD0KFECPwvUoXE89QHsUrkfhujZAzczMzMzMIMDXo3A9CtcbQK5H4XoUrgFAj8L1KFyPBEDhehSuR2ExwIXrUbgehRvAcT0K16MwTUB7FK5H4TowQAAAAAAAQDBASOF6FK7HUkC4HoXrUWhQQJqZmZmZ+UJAPQrXo3A92r\u002fsUbgehesJQB+F61G4HhhA16NwPQrXEsC4HoXrUbjuv+F6FK5HwUNAKVyPwvUoAEAK16NwPapNwNejcD0KlzFApHA9CtejF0CF61G4HuVAwHsUrkfhevC\u002fmpmZmZmZ4b8AAAAAAAAAAFK4HoXrURvACtejcD0K+7+PwvUoXI8EQBSuR+F6FO6\u002fCtejcD0K+z9cj8L1KNw2wFK4HoXrkTJAj8L1KFyP4r97FK5H4XobQHsUrkfh2kFApHA9CtfjOEDNzMzMzMzcP9ejcD0K1yXASOF6FK5H8T9xPQrXo\u002fAnwBSuR+F6FCrAexSuR+G6NsAfhetRuJ4qwMP1KFyPwibA16NwPQpXUMAzMzMzM7MtQPYoXI\u002fCNTlA7FG4HoXrNkDNzMzMzMz0Pylcj8L1KAbArkfhehTuMsBmZmZmZmYWQAAAAAAAANA\u002f16NwPQrX8z\u002fD9Shcj0IkQIXrUbgehS9AH4XrUbgeAUApXI\u002fC9agmwArXo3A9iizA4XoUrkfhMkCuR+F6FK44wFK4HoXrUQDAFK5H4XoULkDNzMzMzAxBQFK4HoXrUUZAKVyPwvWIUEDXo3A9ChdHwNejcD0K1xXAhetRuB6F+z\u002fhehSuR+HKP1K4HoXr0UNAKVyPwvUozD\u002fhehSuR0FBQDMzMzMzMx3AH4XrUbieIEA="},"y":{"dtype":"f8","bdata":"cT0K16MQTUDhehSuR0FDQAAAAAAAoFNAMzMzMzMzRkBmZmZmZiZIQNejcD0KZ1FAcT0K16OwRkCPwvUoXA8xQM3MzMzMDDlA16NwPQo3S0CamZmZmVlCQK5H4XoUjkJA9ihcj8L1TEAUrkfherRRQHsUrkfhOj1AexSuR+G6PkCamZmZmTlAQGZmZmZm5j9ACtejcD2KMUCuR+F6FB5TQD0K16NwnUVACtejcD2qTECPwvUoXJ9SQMP1KFyP4lNAKVyPwvXIVECF61G4HgU8QJqZmZmZGUpA4XoUrkehRkC4HoXrUWhQQFK4HoXrEVVAPQrXo3D9MEAK16NwPcpPQEjhehSuBz9AXI\u002fC9ShsUEDhehSuRyE8QDMzMzMzs1VAmpmZmZm5SEDXo3A9CrdEQDMzMzMzU0VAXI\u002fC9SgsVEC4HoXrUZhUQKRwPQrXI1ZA9ihcj8IVSkCPwvUoXO9IQGZmZmZmNlBASOF6FK7HUEBcj8L1KJxQQIXrUbgehSxA4XoUrkehREAfhetRuP5PQDMzMzMzsypA9ihcj8IFVkAAAAAAAABZQPYoXI\u002fCBVdAMzMzMzMjUkBI4XoUrkc7QFK4HoXrcUJAKVyPwvUoSEC4HoXrUfhPQD0K16NwXUlAFK5H4Xo0UEBcj8L1KNxAQClcj8L1KDhAZmZmZmZGSUCkcD0K12NMQLgehetR+ENAKVyPwvUoVUAUrkfhevRQQIXrUbgeBURA9ihcj8I1R0AAAAAAAMBKQJqZmZmZaVVAZmZmZmbmSUA9CtejcF1GQMP1KFyPwjtAMzMzMzNzSUAK16NwPUo4QAAAAAAAAEdA16NwPQpHVED2KFyPwnVRQB+F61G43jxAMzMzMzMzSUC4HoXrUZhPQFyPwvUoLFRAmpmZmZl5U0DNzMzMzPxQQB+F61G4TlRASOF6FK6XUUD2KFyPwnVUQOF6FK5HAVVAw\u002fUoXI9CVED2KFyPwlVRQOxRuB6Fi0dAhetRuB5lRUCkcD0K17NQQFK4HoXrkUZA16NwPQqXTECkcD0K10NJQJqZmZmZqVBAzczMzMzsTECamZmZmblGQNejcD0KV0hAexSuR+GqVUA="},"z":{"dtype":"f8","bdata":"rkfhehQuOMB7FK5H4XoVQNejcD0K19O\u002fFK5H4XoUCkDD9ShcjwJIQKRwPQrXIybAMzMzMzMzHcBSuB6F61EEQI\u002fC9ShcjxpAj8L1KFxPTUAzMzMzMzM3QDMzMzMzMy5A16NwPQrXD8AAAAAAAOBBQK5H4XoUrhjAmpmZmZkZIUA9CtejcD07wFK4HoXrURlAMzMzMzMz8z8pXI\u002fC9WhUQOxRuB6F6yNAuB6F61H4M0BmZmZmZmYjwDMzMzMzsyDA4XoUrkdBVUDXo3A9Ctfrv1K4HoXrUSdAPQrXo3A9HkBxPQrXo5BFQKRwPQrXYzpA4XoUrkehMsBcj8L1KBwwwOF6FK5H4TdAMzMzMzNTTUD2KFyPwvUZwArXo3A9Cvc\u002fPQrXo3DNUEAUrkfhehRBQJqZmZmZmThAhetRuB6F2z97FK5H4bo4QFyPwvUo3CZA9ihcj8J1LsApXI\u002fC9SgKQPYoXI\u002fCFURAKVyPwvUoMkCamZmZmRkowK5H4XoULjjA4XoUrkcBQsCamZmZmXlBwM3MzMzMzNw\u002fXI\u002fC9ShcDUAAAAAAAAAAAPYoXI\u002fCNU9ACtejcD0KC8D2KFyPwvUVQI\u002fC9Shcj\u002f6\u002fZmZmZmZm+j\u002f2KFyPwrU4wHsUrkfhujZAj8L1KFzPMcC4HoXrUTgoQB+F61G4HhlA9ihcj8K1MkCamZmZmVlDwOxRuB6FazTA16NwPQpXIEDD9Shcj8IFQOxRuB6F6\u002f0\u002fuB6F61G4GkAfhetRuJ5CQJqZmZmZmQHAmpmZmZkZLUAUrkfhelQ\u002fwOF6FK5H4QbAw\u002fUoXI\u002fCK0AK16NwPQomwD0K16NwPR9ApHA9CtejHEDNzMzMzGxFQFK4HoXr0SvA9ihcj8J1NUAfhetRuB75vxSuR+F69ERAcT0K16PwIsAzMzMzMzMDQIXrUbgeBSRApHA9Ctej8L+amZmZmRkoQM3MzMzMzCRAXI\u002fC9SjcK0AfhetRuD5FQHsUrkfh+iBAw\u002fUoXI\u002fCO0ApXI\u002fC9aglwI\u002fC9ShcjxzAw\u002fUoXI\u002fCIkDXo3A9Ctf3vylcj8L1CEFAKVyPwvWoK0AzMzMzM3NKwJqZmZmZGUXAcT0K16NQS0A="},"type":"scatter3d"}],                        {"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"},"margin":{"b":0,"l":0,"r":0,"t":30}}},"scene":{"aspectratio":{"x":1,"y":1,"z":1},"xaxis":{"title":{"text":"a* (green to red)"},"range":[-128,128]},"yaxis":{"title":{"text":"L* (black to white)"},"range":[0,100]},"zaxis":{"title":{"text":"b* (blue to yellow)"},"range":[-128,128]},"camera":{"up":{"x":0,"y":1,"z":0},"center":{"x":0,"y":0,"z":0},"eye":{"x":1.5,"y":1.5,"z":1.5}}},"title":{"text":"All Color Options in 3D"},"showlegend":false},                        {"responsive": true}                    ).then(function(){
+                            
+var gd = document.getElementById('f91b465e-cb62-4456-b9d4-cab0ce0b9bcc');
+var x = new MutationObserver(function (mutations, observer) {{
+        var display = window.getComputedStyle(gd).display;
+        if (!display || display === 'none') {{
+            console.log([gd, 'removed!']);
+            Plotly.purge(gd);
+            observer.disconnect();
+        }}
+}});
+
+// Listen for the removal of the full notebook cells
+var notebookContainer = gd.closest('#notebook-container');
+if (notebookContainer) {{
+    x.observe(notebookContainer, {childList: true});
+}}
+
+// Listen for the clearing of the current output cell
+var outputEl = gd.closest('.output');
+if (outputEl) {{
+    x.observe(outputEl, {childList: true});
+}}
+
+                        })                };            </script>        </div>
+</div>
+</div>
+</section>
+<section id="picking-new-colors" class="level2">
+<h2 class="anchored" data-anchor-id="picking-new-colors">Picking New Colors</h2>
+<p>Now that we have our colors in 3D space, we can begin our search for new colors.</p>
+<p>Our goal is to find ~8 colors that are the furthest from the current set of colors.</p>
+<p>While computing the distance in 3D space is an obvious solution (and how the first ΔE formula worked), special formulas have been developed for more accurately depicting the distance between two colors. These are:</p>
+<ul>
+<li><strong>ΔE CMC (1984): Used for textiles</strong></li>
+<li><strong>CIE 2000: Industry standard</strong></li>
+</ul>
+<p>I have used both of these formulas to determine which colors are the furthest from those already chosen for the league.</p>
+<div id="4d021bb6" class="cell" data-execution_count="5">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> colormath.color_objects <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> co </span>
+<span id="cb4-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> colormath.color_diff <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> cdiff</span>
+<span id="cb4-3"></span>
+<span id="cb4-4"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> compute_average_distance(row):</span>
+<span id="cb4-5">    color_Lab <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">None</span></span>
+<span id="cb4-6"></span>
+<span id="cb4-7">    color_Lab <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> co.LabColor(<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">map</span>(<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span>, row[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"L*a*b Value"</span>].split(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">", "</span>)))</span>
+<span id="cb4-8"></span>
+<span id="cb4-9">    cmc_distances <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> []</span>
+<span id="cb4-10">    cie_distances <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> []</span>
+<span id="cb4-11">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#Compute all distances from chosen colors</span></span>
+<span id="cb4-12">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> index, row_remaining <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> color_df.iterrows():</span>
+<span id="cb4-13">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">if</span> index <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span> row.name:</span>
+<span id="cb4-14">          <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">continue</span></span>
+<span id="cb4-15">        other_color <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> co.LabColor(<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">map</span>(<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span>, row_remaining[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"L*a*b Value"</span>].split(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">", "</span>)))</span>
+<span id="cb4-16"></span>
+<span id="cb4-17">        cmc_distance <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> cdiff.delta_e_cmc(other_color, color_Lab , pl<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>, pc<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)</span>
+<span id="cb4-18"></span>
+<span id="cb4-19">        cie_distance <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> cdiff.delta_e_cie2000(color_Lab, other_color,Kl<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>, Kc<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, Kh<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)</span>
+<span id="cb4-20"></span>
+<span id="cb4-21">        cmc_distances <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+=</span> [cmc_distance]</span>
+<span id="cb4-22">        cie_distances <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+=</span> [cie_distance]</span>
+<span id="cb4-23"></span>
+<span id="cb4-24"></span>
+<span id="cb4-25">    average_cmc_distance <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">sum</span>(cmc_distances)<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span>(<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">len</span>(color_df) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)</span>
+<span id="cb4-26">    average_cie_distance <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">sum</span>(cie_distances)<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span>(<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">len</span>(color_df) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)</span>
+<span id="cb4-27"></span>
+<span id="cb4-28">    row[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"average_cmc"</span>] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> average_cmc_distance</span>
+<span id="cb4-29">    row[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"average_cie"</span>] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> average_cie_distance</span>
+<span id="cb4-30">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> row</span>
+<span id="cb4-31"></span>
+<span id="cb4-32">color_df <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> color_df.<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">apply</span>(compute_average_distance, axis<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)</span></code></pre></div></div>
+</details>
+</div>
+<section id="delta-e-cmc-furthest-colors-from-most-to-least-distant" class="level3">
+<h3 class="anchored" data-anchor-id="delta-e-cmc-furthest-colors-from-most-to-least-distant">Delta E-CMC Furthest Colors (From Most to Least Distant)</h3>
+<div id="da872012" class="cell" data-execution_count="6">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#1. new df without the existing colors</span></span>
+<span id="cb5-2"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#2. sort df by average_cmc and obtain top 8 indices</span></span>
+<span id="cb5-3"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#3. sort df by average cie and obtain top 8 indices </span></span>
+<span id="cb5-4"></span>
+<span id="cb5-5">mask <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">~</span>color_df[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Color Name'</span>].isin(colors)</span>
+<span id="cb5-6">filtered_df <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> color_df[mask].copy()</span>
+<span id="cb5-7"></span>
+<span id="cb5-8">top_8_cmc_indices <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> filtered_df.nlargest(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">8</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'average_cmc'</span>).index.tolist()</span>
+<span id="cb5-9">top_8_cie_indices <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> filtered_df.nlargest(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">8</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'average_cie'</span>).index.tolist()</span>
+<span id="cb5-10"></span>
+<span id="cb5-11">display_palette(selected_colors<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>top_8_cmc_indices, color_df<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>color_df, cols<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">4</span>, filepath<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"assets/top_cmc.svg"</span>, sort_rainbow<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>)</span>
+<span id="cb5-12"></span>
+<span id="cb5-13">display_palette(selected_colors<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>top_8_cie_indices, color_df<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>color_df, cols<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">4</span>, filepath<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"assets/top_cie.svg"</span>, sort_rainbow<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>)</span></code></pre></div></div>
+</details>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://Ian-P-McCabe.github.io/blog/posts/dodgeball-colors-1/assets/top_cmc.svg" class="img-fluid figure-img"></p>
+<figcaption>Top 8 Most Distant Colors using ΔE CMC</figcaption>
+</figure>
+</div>
+<p><strong>Explore the new colors in 3D below, new colors are marked with an asterisk * </strong></p>
+<div id="13a73db9" class="cell" data-cache="true" data-execution_count="7">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1">selected_mask <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> color_df[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Color Name'</span>].isin(colors)</span>
+<span id="cb6-2">selected_colors <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> color_df[selected_mask].copy()</span>
+<span id="cb6-3"></span>
+<span id="cb6-4">top_8_cmc_df <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> filtered_df.nlargest(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">8</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'average_cmc'</span>)</span>
+<span id="cb6-5">top_8_cmc_df[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Color Name'</span>] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'*'</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> top_8_cmc_df[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Color Name'</span>]</span>
+<span id="cb6-6"></span>
+<span id="cb6-7">combined_cmc_df <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pd.concat([selected_colors, top_8_cmc_df])</span>
+<span id="cb6-8"></span>
+<span id="cb6-9">generate_lab_3d_all_colors(df<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>combined_cmc_df, figure_title<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Current Colors with Potential CMC Additions"</span>)</span></code></pre></div></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>            <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_SVG"></script><script type="text/javascript">if (window.MathJax && window.MathJax.Hub && window.MathJax.Hub.Config) {window.MathJax.Hub.Config({SVG: {font: "STIX-Web"}});}</script>                <script type="text/javascript">window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
+        <script charset="utf-8" src="https://cdn.plot.ly/plotly-3.3.0.min.js" integrity="sha256-bO3dS6yCpk9aK4gUpNELtCiDeSYvGYnK7jFI58NQnHI=" crossorigin="anonymous"></script>                <div id="7542f299-a133-473a-81d6-a6b1977c0c04" class="plotly-graph-div" style="height:525px; width:100%;"></div>            <script type="text/javascript">                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("7542f299-a133-473a-81d6-a6b1977c0c04")) {                    Plotly.newPlot(                        "7542f299-a133-473a-81d6-a6b1977c0c04",                        [{"hovertemplate":"\u003cb\u003e%{text}\u003c\u002fb\u003e\u003cbr\u003eL*: %{y:.1f}\u003cbr\u003ea*: %{x:.1f}\u003cbr\u003eb*: %{z:.1f}\u003cbr\u003e","marker":{"color":["#BDC4C2","#C6057B","#005876","#115740","#FFA400","#729364","#55394D","#F7CED7","#BA0C2F","#212322","#FFFFFF","#F6EB69","#BDDDD9","#603147","#7D55C7","#2B7BBB","#E10600","#F2CA00","#00965E","#00BFB2","#FF6A39","#BF0D3E","#00AFD7","#CB6015"],"opacity":1.0,"size":7},"mode":"markers+text","text":["Ash","Berry","Deep Teal","Evergreen","Gold","Leaf","Oxblood Black","Pink","Red","Vintage Black","White","Yellow","Heather Ice Blue","Heather Maroon","Heather Team Purple","Heather True Royal","*Poppy","*Maize Yellow","*Heather Kelly","*Teal","*Orange","*Heather Red","*Turquoise","*Burnt Orange"],"textfont":{"size":8},"textposition":"top center","x":{"dtype":"f8","bdata":"H4XrUbgeAcD2KFyPwvVRQHE9CtejMDfApHA9CtfjOsCkcD0K1yM\u002fQKRwPQrXIzLAexSuR+E6MEAAAAAAAEAwQLgehetRaFBAexSuR+F68L8AAAAAAAAAAFK4HoXrURvAw\u002fUoXI\u002fCJsD2KFyPwjU5QOF6FK5HQUFAMzMzMzMzHcBI4XoUrsdSQArXo3A9ChRA16NwPQpXUMAK16NwPapNwHE9CtejME1AKVyPwvWIUECF61G4HuVAwIXrUbgexUVA"},"y":{"dtype":"f8","bdata":"AAAAAACgU0BxPQrXo7BGQJqZmZmZOUBAZmZmZmbmP0CuR+F6FB5TQArXo3A9qkxA4XoUrkchPEAzMzMzM7NVQNejcD0Kt0RAMzMzMzOzKkAAAAAAAABZQPYoXI\u002fCBVdAmpmZmZlpVUDD9Shcj8I7QJqZmZmZuUZA16NwPQpXSECamZmZmblIQClcj8L1yFRAZmZmZmbmSUBcj8L1KJxQQFyPwvUobFBAhetRuB5lRUAfhetRuP5PQNejcD0KN0tA"},"z":{"dtype":"f8","bdata":"16NwPQrX078zMzMzMzMdwD0K16NwPTvAUrgehetRGUApXI\u002fC9WhUQLgehetR+DNA9ihcj8L1GcAK16NwPQr3PxSuR+F6FEFAzczMzMzM3D8AAAAAAAAAAPYoXI\u002fCNU9AmpmZmZmZAcDhehSuR+EGwDMzMzMzc0rAmpmZmZkZRcA9CtejcM1QQOF6FK5HQVVAmpmZmZkZLUCamZmZmRkowDMzMzMzU01Aw\u002fUoXI\u002fCO0CamZmZmXlBwI\u002fC9ShcT01A"},"type":"scatter3d"}],                        {"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"},"margin":{"b":0,"l":0,"r":0,"t":30}}},"scene":{"aspectratio":{"x":1,"y":1,"z":1},"xaxis":{"title":{"text":"a* (green to red)"},"range":[-128,128]},"yaxis":{"title":{"text":"L* (black to white)"},"range":[0,100]},"zaxis":{"title":{"text":"b* (blue to yellow)"},"range":[-128,128]},"camera":{"up":{"x":0,"y":1,"z":0},"center":{"x":0,"y":0,"z":0},"eye":{"x":1.5,"y":1.5,"z":1.5}}},"title":{"text":"Current Colors with Potential CMC Additions"},"showlegend":false},                        {"responsive": true}                    ).then(function(){
+                            
+var gd = document.getElementById('7542f299-a133-473a-81d6-a6b1977c0c04');
+var x = new MutationObserver(function (mutations, observer) {{
+        var display = window.getComputedStyle(gd).display;
+        if (!display || display === 'none') {{
+            console.log([gd, 'removed!']);
+            Plotly.purge(gd);
+            observer.disconnect();
+        }}
+}});
+
+// Listen for the removal of the full notebook cells
+var notebookContainer = gd.closest('#notebook-container');
+if (notebookContainer) {{
+    x.observe(notebookContainer, {childList: true});
+}}
+
+// Listen for the clearing of the current output cell
+var outputEl = gd.closest('.output');
+if (outputEl) {{
+    x.observe(outputEl, {childList: true});
+}}
+
+                        })                };            </script>        </div>
+</div>
+</div>
+</section>
+<section id="delta-e-cie-2000-furthest-colors-most-to-least-distant" class="level3">
+<h3 class="anchored" data-anchor-id="delta-e-cie-2000-furthest-colors-most-to-least-distant">Delta E-CIE 2000 Furthest Colors (Most to Least Distant)</h3>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://Ian-P-McCabe.github.io/blog/posts/dodgeball-colors-1/assets/top_cie.svg" class="img-fluid figure-img"></p>
+<figcaption>Top 8 Most Distant Colors by ΔE CIE 2000</figcaption>
+</figure>
+</div>
+<div id="c32ebd53" class="cell" data-cache="true" data-execution_count="8">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1">top_8_cie_df <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> filtered_df.nlargest(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">8</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'average_cie'</span>)</span>
+<span id="cb7-2">top_8_cie_df[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Color Name'</span>] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'*'</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> top_8_cie_df[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Color Name'</span>]</span>
+<span id="cb7-3"></span>
+<span id="cb7-4">combined_cie_df <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pd.concat([selected_colors, top_8_cie_df])</span>
+<span id="cb7-5"></span>
+<span id="cb7-6">generate_lab_3d_all_colors(df<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>combined_cie_df, figure_title<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Current Colors with Potential CIE Additions"</span>)</span></code></pre></div></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>            <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_SVG"></script><script type="text/javascript">if (window.MathJax && window.MathJax.Hub && window.MathJax.Hub.Config) {window.MathJax.Hub.Config({SVG: {font: "STIX-Web"}});}</script>                <script type="text/javascript">window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
+        <script charset="utf-8" src="https://cdn.plot.ly/plotly-3.3.0.min.js" integrity="sha256-bO3dS6yCpk9aK4gUpNELtCiDeSYvGYnK7jFI58NQnHI=" crossorigin="anonymous"></script>                <div id="6d75e943-3a6d-4d55-920c-8d972b05fe78" class="plotly-graph-div" style="height:525px; width:100%;"></div>            <script type="text/javascript">                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("6d75e943-3a6d-4d55-920c-8d972b05fe78")) {                    Plotly.newPlot(                        "6d75e943-3a6d-4d55-920c-8d972b05fe78",                        [{"hovertemplate":"\u003cb\u003e%{text}\u003c\u002fb\u003e\u003cbr\u003eL*: %{y:.1f}\u003cbr\u003ea*: %{x:.1f}\u003cbr\u003eb*: %{z:.1f}\u003cbr\u003e","marker":{"color":["#BDC4C2","#C6057B","#005876","#115740","#FFA400","#729364","#55394D","#F7CED7","#BA0C2F","#212322","#FFFFFF","#F6EB69","#BDDDD9","#603147","#7D55C7","#2B7BBB","#00965E","#00BFB2","#00AFD7","#F2CA00","#E10600","#007A53","#00BAB3","#DE5795"],"opacity":1.0,"size":7},"mode":"markers+text","text":["Ash","Berry","Deep Teal","Evergreen","Gold","Leaf","Oxblood Black","Pink","Red","Vintage Black","White","Yellow","Heather Ice Blue","Heather Maroon","Heather Team Purple","Heather True Royal","*Heather Kelly","*Teal","*Turquoise","*Maize Yellow","*Poppy","*Kelly","*Heather Sea Green","*Charity Pink"],"textfont":{"size":8},"textposition":"top center","x":{"dtype":"f8","bdata":"H4XrUbgeAcD2KFyPwvVRQHE9CtejMDfApHA9CtfjOsCkcD0K1yM\u002fQKRwPQrXIzLAexSuR+E6MEAAAAAAAEAwQLgehetRaFBAexSuR+F68L8AAAAAAAAAAFK4HoXrURvAw\u002fUoXI\u002fCJsD2KFyPwjU5QOF6FK5HQUFAMzMzMzMzHcDXo3A9CldQwArXo3A9qk3AhetRuB7lQMAK16NwPQoUQEjhehSux1JArkfhehQuSMDXo3A9ChdHwHE9Ctej0E1A"},"y":{"dtype":"f8","bdata":"AAAAAACgU0BxPQrXo7BGQJqZmZmZOUBAZmZmZmbmP0CuR+F6FB5TQArXo3A9qkxA4XoUrkchPEAzMzMzM7NVQNejcD0Kt0RAMzMzMzOzKkAAAAAAAABZQPYoXI\u002fCBVdAmpmZmZlpVUDD9Shcj8I7QJqZmZmZuUZA16NwPQpXSEBmZmZmZuZJQFyPwvUonFBAH4XrUbj+T0ApXI\u002fC9chUQJqZmZmZuUhAPQrXo3CdRUCkcD0K17NQQPYoXI\u002fC9UxA"},"z":{"dtype":"f8","bdata":"16NwPQrX078zMzMzMzMdwD0K16NwPTvAUrgehetRGUApXI\u002fC9WhUQLgehetR+DNA9ihcj8L1GcAK16NwPQr3PxSuR+F6FEFAzczMzMzM3D8AAAAAAAAAAPYoXI\u002fCNU9AmpmZmZmZAcDhehSuR+EGwDMzMzMzc0rAmpmZmZkZRcCamZmZmRktQJqZmZmZGSjAmpmZmZl5QcDhehSuR0FVQD0K16NwzVBA7FG4HoXrI0ApXI\u002fC9aglwNejcD0K1w\u002fA"},"type":"scatter3d"}],                        {"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"},"margin":{"b":0,"l":0,"r":0,"t":30}}},"scene":{"aspectratio":{"x":1,"y":1,"z":1},"xaxis":{"title":{"text":"a* (green to red)"},"range":[-128,128]},"yaxis":{"title":{"text":"L* (black to white)"},"range":[0,100]},"zaxis":{"title":{"text":"b* (blue to yellow)"},"range":[-128,128]},"camera":{"up":{"x":0,"y":1,"z":0},"center":{"x":0,"y":0,"z":0},"eye":{"x":1.5,"y":1.5,"z":1.5}}},"title":{"text":"Current Colors with Potential CIE Additions"},"showlegend":false},                        {"responsive": true}                    ).then(function(){
+                            
+var gd = document.getElementById('6d75e943-3a6d-4d55-920c-8d972b05fe78');
+var x = new MutationObserver(function (mutations, observer) {{
+        var display = window.getComputedStyle(gd).display;
+        if (!display || display === 'none') {{
+            console.log([gd, 'removed!']);
+            Plotly.purge(gd);
+            observer.disconnect();
+        }}
+}});
+
+// Listen for the removal of the full notebook cells
+var notebookContainer = gd.closest('#notebook-container');
+if (notebookContainer) {{
+    x.observe(notebookContainer, {childList: true});
+}}
+
+// Listen for the clearing of the current output cell
+var outputEl = gd.closest('.output');
+if (outputEl) {{
+    x.observe(outputEl, {childList: true});
+}}
+
+                        })                };            </script>        </div>
+</div>
+</div>
+<p>Taking a quick look at both palettes side by side:</p>
+<div class="grid">
+<div class="g-col-6">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://Ian-P-McCabe.github.io/blog/posts/dodgeball-colors-1/assets/top_cmc.svg" class="img-fluid figure-img"></p>
+<figcaption>Top 8 Most Distant Colors using ΔE CMC</figcaption>
+</figure>
+</div>
+</div>
+<div class="g-col-6">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://Ian-P-McCabe.github.io/blog/posts/dodgeball-colors-1/assets/top_cie.svg" class="img-fluid figure-img"></p>
+<figcaption>Top 8 Most Distant Colors by ΔE CIE 2000</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>We see that the league just needs some more blue or orange this season :)</p>
+
+
+</section>
+</section>
+
+ ]]></description>
+  <category>Dodgeball Colors</category>
+  <guid>https://Ian-P-McCabe.github.io/blog/posts/dodgeball-colors-1/</guid>
+  <pubDate>Fri, 03 Jan 2025 05:00:00 GMT</pubDate>
+  <media:content url="https://Ian-P-McCabe.github.io/blog/posts/dodgeball-colors-1/assets/Pantone_Gold.png" medium="image" type="image/png" height="105" width="144"/>
 </item>
 </channel>
 </rss>

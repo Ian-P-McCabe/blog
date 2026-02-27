@@ -4,7 +4,35 @@
     "href": "about.html",
     "title": "About Ian",
     "section": "",
-    "text": "About this blog."
+    "text": "About this blog.\nAdding some more text for testing purposes."
+  },
+  {
+    "objectID": "posts/dodgeball-colors-1/index.html",
+    "href": "posts/dodgeball-colors-1/index.html",
+    "title": "Shirt Color Selection Problem Part 1",
+    "section": "",
+    "text": "The Stonewall Dodgeball league in DC has a problem - we need to select more shirt colors for additional teams, but it looks like we’ve already used the entire rainbow!\nNote: This article was originally published as pure HTML on my GitHub. I have since migrated it to my Quarto blog for easier maintenance and updates.\nCode\n%load_ext autoreload\n%autoreload 2\n\nimport numpy\nimport pandas as pd\nfrom colormath import color_objects, color_diff\nimport math\nfrom dodgeball_colors_3 import display_palette\n\ndef patch_asscalar(a):\n    return a.item()\nsetattr(numpy, \"asscalar\", patch_asscalar)\n\ncolor_df = pd.read_csv(\"../../data/all_colors.csv\")\n\ncolors = [\n    \"White\",\n    \"Gold\",\n    \"Yellow\",\n    \"Pink\",\n    \"Berry\",\n    \"Heather Ice Blue\",\n    \"Ash\",\n    \"Red\",\n    \"Heather Team Purple\",\n    \"Leaf\",\n    \"Heather Maroon\",\n    \"Oxblood Black\",\n    \"Heather True Royal\",\n    \"Evergreen\",\n    \"Deep Teal\",\n    \"Vintage Black\",\n]\n\ncurrent_color_indices = [int(color_df[color_df[\"Color Name\"] == color].index[0]) for color in colors]\n\ndisplay_palette(selected_colors=current_color_indices, color_df=color_df, filepath=\"assets/starting_palette.svg\")\nLuckily there are many other colors to pick from, you can see some below:\nBut how do we figure out which color to pick?\nWe can gather detailed information about the shirt color using the Pantone Matching System (PMS) codes beneath each shirt.\nThe PMS provides a LAB color value, which is most useful to us."
+  },
+  {
+    "objectID": "posts/dodgeball-colors-1/index.html#what-is-lab",
+    "href": "posts/dodgeball-colors-1/index.html#what-is-lab",
+    "title": "Shirt Color Selection Problem Part 1",
+    "section": "What is LAB?",
+    "text": "What is LAB?\nThink of LAB color as a way to describe colors that matches how our human eyes actually see them. LAB breaks color down into three parts that make more intuitive sense:\n\nL - How light or dark something is (like adjusting the brightness on your TV)\nA - How red or green something is\nB - How blue or yellow something is\n\nUsing LAB values, we can plot colors in 3D space! You can see the colors currently selected below."
+  },
+  {
+    "objectID": "posts/dodgeball-colors-1/index.html#explore-the-current-league-colors-in-3d",
+    "href": "posts/dodgeball-colors-1/index.html#explore-the-current-league-colors-in-3d",
+    "title": "Shirt Color Selection Problem Part 1",
+    "section": "Explore The Current League Colors in 3D!",
+    "text": "Explore The Current League Colors in 3D!\n\n\nCode\nfrom dodgeball_colors_3 import generate_lab_3d_all_colors\nimport random\n\nfiltered_df = color_df.iloc[current_color_indices].copy()\n\ngenerate_lab_3d_all_colors(df=filtered_df, figure_title=\"Current League Colors in 3D\")\n\n\n                            \n                                            \n\n\nSince LAB is a perceptually uniform space, the 3D distance between colors represents how similar two colors are.\nFor fun, we can also plot every color (you may want to zoom in):\n\n\nCode\ngenerate_lab_3d_all_colors(df=color_df, figure_title=\"All Color Options in 3D\")"
+  },
+  {
+    "objectID": "posts/dodgeball-colors-1/index.html#picking-new-colors",
+    "href": "posts/dodgeball-colors-1/index.html#picking-new-colors",
+    "title": "Shirt Color Selection Problem Part 1",
+    "section": "Picking New Colors",
+    "text": "Picking New Colors\nNow that we have our colors in 3D space, we can begin our search for new colors.\nOur goal is to find ~8 colors that are the furthest from the current set of colors.\nWhile computing the distance in 3D space is an obvious solution (and how the first ΔE formula worked), special formulas have been developed for more accurately depicting the distance between two colors. These are:\n\nΔE CMC (1984): Used for textiles\nCIE 2000: Industry standard\n\nI have used both of these formulas to determine which colors are the furthest from those already chosen for the league.\n\n\nCode\nimport colormath.color_objects as co \nimport colormath.color_diff as cdiff\n\ndef compute_average_distance(row):\n    color_Lab = None\n\n    color_Lab = co.LabColor(*map(float, row[\"L*a*b Value\"].split(\", \")))\n\n    cmc_distances = []\n    cie_distances = []\n    #Compute all distances from chosen colors\n    for index, row_remaining in color_df.iterrows():\n        if index == row.name:\n          continue\n        other_color = co.LabColor(*map(float, row_remaining[\"L*a*b Value\"].split(\", \")))\n\n        cmc_distance = cdiff.delta_e_cmc(other_color, color_Lab , pl=2, pc=1)\n\n        cie_distance = cdiff.delta_e_cie2000(color_Lab, other_color,Kl=2, Kc=1, Kh=1)\n\n        cmc_distances += [cmc_distance]\n        cie_distances += [cie_distance]\n\n\n    average_cmc_distance = sum(cmc_distances)/(len(color_df) - 1)\n    average_cie_distance = sum(cie_distances)/(len(color_df) - 1)\n\n    row[\"average_cmc\"] = average_cmc_distance\n    row[\"average_cie\"] = average_cie_distance\n    return row\n\ncolor_df = color_df.apply(compute_average_distance, axis=1)\n\n\n\nDelta E-CMC Furthest Colors (From Most to Least Distant)\n\n\nCode\n#1. new df without the existing colors\n#2. sort df by average_cmc and obtain top 8 indices\n#3. sort df by average cie and obtain top 8 indices \n\nmask = ~color_df['Color Name'].isin(colors)\nfiltered_df = color_df[mask].copy()\n\ntop_8_cmc_indices = filtered_df.nlargest(8, 'average_cmc').index.tolist()\ntop_8_cie_indices = filtered_df.nlargest(8, 'average_cie').index.tolist()\n\ndisplay_palette(selected_colors=top_8_cmc_indices, color_df=color_df, cols=4, filepath=\"assets/top_cmc.svg\", sort_rainbow=True)\n\ndisplay_palette(selected_colors=top_8_cie_indices, color_df=color_df, cols= 4, filepath=\"assets/top_cie.svg\", sort_rainbow=True)\n\n\n\n\n\nTop 8 Most Distant Colors using ΔE CMC\n\n\nExplore the new colors in 3D below, new colors are marked with an asterisk * \n\n\nCode\nselected_mask = color_df['Color Name'].isin(colors)\nselected_colors = color_df[selected_mask].copy()\n\ntop_8_cmc_df = filtered_df.nlargest(8, 'average_cmc')\ntop_8_cmc_df['Color Name'] = '*' + top_8_cmc_df['Color Name']\n\ncombined_cmc_df = pd.concat([selected_colors, top_8_cmc_df])\n\ngenerate_lab_3d_all_colors(df=combined_cmc_df, figure_title=\"Current Colors with Potential CMC Additions\")\n\n\n                            \n                                            \n\n\n\n\nDelta E-CIE 2000 Furthest Colors (Most to Least Distant)\n\n\n\nTop 8 Most Distant Colors by ΔE CIE 2000\n\n\n\n\nCode\ntop_8_cie_df = filtered_df.nlargest(8, 'average_cie')\ntop_8_cie_df['Color Name'] = '*' + top_8_cie_df['Color Name']\n\ncombined_cie_df = pd.concat([selected_colors, top_8_cie_df])\n\ngenerate_lab_3d_all_colors(df=combined_cie_df, figure_title=\"Current Colors with Potential CIE Additions\")\n\n\n                            \n                                            \n\n\nTaking a quick look at both palettes side by side:\n\n\n\n\n\nTop 8 Most Distant Colors using ΔE CMC\n\n\n\n\n\n\n\nTop 8 Most Distant Colors by ΔE CIE 2000\n\n\n\n\nWe see that the league just needs some more blue or orange this season :)"
   },
   {
     "objectID": "posts/dodgeball-colors-3/index.html",
@@ -53,6 +81,6 @@
     "href": "index.html",
     "title": "Ian McCabe’s Blog",
     "section": "",
-    "text": "Shirt Color Selection Problem Part 3\n\n\nProper Optimization\n\n\n\nDodgeball Colors\n\n\n\n\n\n\n\n\n\nJan 5, 2026\n\n\nIan McCabe\n\n\n\n\n\nNo matching items"
+    "text": "Shirt Color Selection Problem Part 3\n\n\nProper Optimization\n\n\n\nDodgeball Colors\n\n\n\n\n\n\n\n\n\nJan 5, 2026\n\n\nIan McCabe\n\n\n\n\n\n\n\n\n\n\n\n\nShirt Color Selection Problem Part 1\n\n\nSimple Exploration\n\n\n\nDodgeball Colors\n\n\n\n\n\n\n\n\n\nJan 3, 2025\n\n\nIan McCabe\n\n\n\n\n\nNo matching items"
   }
 ]
