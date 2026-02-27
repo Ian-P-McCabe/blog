@@ -19,8 +19,8 @@ editor:
   render-on-save: true
 ---
 
-**Note: This article was originally published as pure HTML on my GitHub
-I have since migrated it to my Quarto blog for easier mantenance and updates.**
+**Note: This article was originally published as pure HTML on my GitHub.
+I have since migrated it to my Quarto blog for easier maintenance and updates.**
 
 The Stonewall Dodgeball league in DC has a problem - we need to select more shirt 
 colors for additional teams, but it looks like we've already used the entire rainbow! 
@@ -83,7 +83,7 @@ The PMS provides a LAB color value, which is most useful to us.
 
 ## What is LAB?
 
- Think of LAB color as a way to describe colors that matches how our human eyes actually see them. LAB breaks color down into three parts that make more intuitive sense:
+Think of LAB color as a way to describe colors that matches how our human eyes actually see them. LAB breaks color down into three parts that make more intuitive sense:
 
 - L - How light or dark something is (like adjusting the brightness on your TV)
 - A - How red or green something is
@@ -120,7 +120,7 @@ Now that we have our colors in 3D space, we can begin our search for new colors.
 
 Our goal is to find ~8 colors that are the furthest from the current set of colors.
 
-While computing the distance in 3D space is an obvious solution (and how the first ΔE formula worked). Special formulas have been developed for accurately depicting the distance between two colors. These are:
+While computing the distance in 3D space is an obvious solution (and how the first ΔE formula worked), special formulas have been developed for more accurately depicting the distance between two colors. These are:
 
 - **ΔE CMC (1984): Used for textiles**
 - **CIE 2000: Industry standard**
