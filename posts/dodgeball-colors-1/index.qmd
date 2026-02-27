@@ -4,6 +4,7 @@ subtitle: Simple Exploration
 author: Ian McCabe
 date: 01/03/2025
 date-modified: 02/19/2026
+image: "assets/Pantone_Gold.png"
 categories: ["Dodgeball Colors"]
 format:
   html:
@@ -19,11 +20,11 @@ editor:
   render-on-save: true
 ---
 
-**Note: This article was originally published as pure HTML on my GitHub.
-I have since migrated it to my Quarto blog for easier maintenance and updates.**
-
 The Stonewall Dodgeball league in DC has a problem - we need to select more shirt 
 colors for additional teams, but it looks like we've already used the entire rainbow! 
+
+**Note: This article was originally published as pure HTML on my GitHub.
+I have since migrated it to my Quarto blog for easier maintenance and updates.**
 
 ```{python}
 #| output: false
