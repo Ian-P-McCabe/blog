@@ -73,6 +73,35 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="index_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="index_files/libs/bootstrap/bootstrap-82a8e0681529fff444bbc39736ff6b3a.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -138,7 +167,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>What we’re attempting to do, finding a subset of colors with an optimal distance between them, is a variation of the <a href="https://grafo.etsii.urjc.es/optsicom/mdp.html">Maximum Diversity Problem</a>.</p>
 <p>The Maximum Diversity Problem falls into a class of computer science problems that are NP-Hard, or functionally unsolvable. We see the NP-Hard characteristics of our color selection problem when the compute time goes from 10 days to 2175 years by adding 8 additional colors to the number of colors we are selecting.</p>
 <p>We can work around the complexity of our problem with a heuristic. A heuristic is a problem-solving technique that uses shortcuts to find an approximate solution quickly.</p>
-<div id="6ca1e345" class="cell" data-execution_count="1">
+<div id="419774e1" class="cell" data-execution_count="1">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>load_ext autoreload</span>
@@ -168,7 +197,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="heuristic-1-randomly-select-colors">Heuristic 1: Randomly Select Colors</h2>
 <p>A simple heuristic we can use is randomly selecting colors from the set of 103. This likely won’t yield the best results, but scoring these random selections provides a useful baseline for future algorithms.</p>
 <p>I selected 1,000,000 random color combinations and calcualted the average, lowest, and highest score:</p>
-<div id="497360d6" class="cell" data-cache="true" data-execution_count="2">
+<div id="7d77ba59" class="cell" data-cache="true" data-execution_count="2">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> dodgeball_colors_3 <span class="im">import</span> build_distance_matrix</span>
@@ -215,7 +244,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>    }))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
-<div id="098a3f0e" class="cell" data-execution_count="3">
+<div id="604f5447" class="cell" data-execution_count="3">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> dodgeball_colors_3 <span class="im">import</span> display_palette</span>
@@ -272,7 +301,29 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </table>
 </div>
 </div>
-<p>Here is the low scoring palette:</p>
+<p>Here is the score distribution (in Heathe Prism Dusty Blue):</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="assets/score_distribution.svg" class="img-fluid figure-img"></p>
+<figcaption>Random Palette Score Distribution Plot</figcaption>
+</figure>
+</div>
+<div id="fda51706" class="cell" data-execution_count="4">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> dodgeball_colors_3 <span class="im">import</span> plot_score_histogram</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>plot_score_histogram(</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    scores<span class="op">=</span><span class="bu">list</span>(scored_samples.values()),</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    filepath<span class="op">=</span><span class="st">"assets/score_distribution.svg"</span>,</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    bins<span class="op">=</span><span class="dv">50</span>,</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    title<span class="op">=</span><span class="st">"Distribution of 1,000,000 Random Palette Scores"</span>,</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    color<span class="op">=</span><span class="st">'#92ACA0'</span>,</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    hide_output<span class="op">=</span><span class="va">True</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p>Here is the low scoring palette (avg 17.03 ∆E):</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="assets/worst_random.svg" class="img-fluid figure-img"></p>
@@ -280,7 +331,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </figure>
 </div>
 <p>How drab.</p>
-<p>Here is the high scoring palette:</p>
+<p>Here is the high scoring palette (avg 40.77 ∆E) :</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="assets/best_random.svg" class="img-fluid figure-img"></p>
@@ -288,6 +339,24 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </figure>
 </div>
 <p>How vibrant! But can we do better?</p>
+</section>
+<section id="heuristic-2-greedy-algorithms" class="level2">
+<h2 class="anchored" data-anchor-id="heuristic-2-greedy-algorithms">Heuristic 2: Greedy Algorithms</h2>
+<p>Greedy algorithms work by picking the best option at each step of the algorithm. In our case, the greedy algorithm will take two points and then iteratively select the 14 points that have the greatest minimum distance from the current set.</p>
+<p>We can easily run this algorithm on our set of points as <span class="math inline">\(\binom{103}{2} = 5{,}253\)</span></p>
+<div id="c3a7886d" class="cell" data-execution_count="5">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>total <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i, j <span class="kw">in</span> combinations(<span class="bu">range</span>(<span class="dv">0</span>,<span class="dv">103</span>),<span class="dv">2</span>):</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    total <span class="op">+=</span> <span class="dv">1</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(total)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>5253</code></pre>
+</div>
+</div>
 </section>
 
 

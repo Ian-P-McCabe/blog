@@ -116,3 +116,16 @@ def display_color_swatches(hex_colors, names=None, size="40px", label=None):
     html += "</div></div>"
     
     return HTML(html)
+
+
+def plot_score_histogram(scores: list[float], filepath: str, bins: int = 50, title: str = "Distribution of Palette Scores", color: str = 'steelblue', hide_output: bool = False):
+    """Plot a histogram of palette scores."""
+    fig, ax = plt.subplots(figsize=(10, 6))
+    ax.hist(scores, bins=bins, edgecolor='black', linewidth=0.5, color=color)
+    ax.set_xlabel('Average ΔE Score')
+    ax.set_ylabel('Count')
+    ax.set_title(title)
+    plt.tight_layout()
+    plt.savefig(filepath)
+    if hide_output:
+        plt.close(fig)

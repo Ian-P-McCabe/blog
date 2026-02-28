@@ -149,14 +149,46 @@ display_palette(selected_colors=list(best), color_df=color_df, filepath="assets/
 display_palette(selected_colors=list(worst), color_df=color_df, filepath="assets/worst_random.svg", sort_rainbow=True, hide_output=True)
 ```
 
-Here is the low scoring palette:
+Here is the score distribution (in Heathe Prism Dusty Blue):
+
+![Random Palette Score Distribution Plot](assets/score_distribution.svg)
+
+```{python}
+from dodgeball_colors_3 import plot_score_histogram
+
+plot_score_histogram(
+    scores=list(scored_samples.values()),
+    filepath="assets/score_distribution.svg",
+    bins=50,
+    title="Distribution of 1,000,000 Random Palette Scores",
+    color='#92ACA0',
+    hide_output=True
+)
+```
+
+Here is the low scoring palette (avg 17.03 ∆E):
 
 ![Low Scoring Random Palette](assets/worst_random.svg)
 
 How drab.
 
-Here is the high scoring palette:
+Here is the high scoring palette (avg 40.77 ∆E) :
 
 ![High Scoring Random Palette](assets/best_random.svg)
 
 How vibrant! But can we do better?
+
+## Heuristic 2: Greedy Algorithms
+
+Greedy algorithms work by picking the best option at each step of the algorithm. In our case, the greedy algorithm will take two points and then iteratively select the 14 points that have the greatest minimum distance from the current set.
+
+We can easily run this algorithm on our set of points as $\binom{103}{2} = 5{,}253$
+
+```{python}
+total = 0
+for i, j in combinations(range(0,103),2):
+    total += 1
+
+print(total)
+```
+
