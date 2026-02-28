@@ -1,0 +1,162 @@
+---
+title: Shirt Color Selection Problem Part 2
+subtitle: Working with Heuristics
+author: Ian McCabe
+date: 03/03/2025
+date-modified: 03/15/2026
+image: ""
+categories: ["Dodgeball Colors"]
+format:
+  html:
+    code-fold: true
+    theme: 
+      - flatly
+execute: 
+  cache: true
+  freeze: auto
+jupyter: python3
+page-layout: full
+editor: 
+  render-on-save: true
+---
+
+ In part one, we determined which team colors would be best to add to the upcoming dodgeball season. We wanted to select colors that would be different from those already chosen, as teams with similar colors are hard to tell apart. We used LAB-Color-Distance formulas to select colors that are most distant and chose from those.
+
+The similar-color-problem in Part 1 arose because teams are allowed to select from 103 shirt colors. Many of these colors are very similar, so it is easy for teams to select colors that are hard to tell apart. What if we wanted to avoid this situation entirely?
+
+Instead of letting teams pick from 103 colors, we gave them 16 or 24 colors to select from, and we guaranteed that all the colors are far enough apart to not appear too similar. 
+
+
+## Lots of Combinations
+
+One way to approach this problem is to select the 16 colors that have the greatest average distance between them. This would work, however...
+
+If we want to pick 16 colors, we must score **2,245,547,413,628,550,570** possible combinations! (2 quintillion)
+
+And if we want to pick 24 colors, we must score **178,409,928,551,259,450,861,900** possible combinations! (178 sextillion)
+
+To put those numbers into context, it would take ~10 days of compute time to find the 16 best colors, and **~2175 years, 328 days, and 17 hours of compute time to find the 24 best colors\*!**^[Assuming we're running on an Apple M1 Chip]
+
+## The Maximum Diversity Problem
+
+What we're attempting to do, finding a subset of colors with an optimal distance between them, is a variation of the [Maximum Diversity Problem](https://grafo.etsii.urjc.es/optsicom/mdp.html). 
+
+The Maximum Diversity Problem falls into a class of computer science problems that are NP-Hard, or functionally unsolvable. We see the NP-Hard characteristics of our color selection problem when the compute time goes from 10 days to 2175 years by adding 8 additional colors to the number of colors we are selecting.
+
+We can work around the complexity of our problem with a heuristic. A heuristic is a problem-solving technique that uses shortcuts to find an approximate solution quickly. 
+
+```{python}
+#| output: false
+
+%load_ext autoreload
+%autoreload 2
+
+# This cell exists just to setup the python environment
+import pandas as pd
+import numpy
+from colormath import color_objects, color_diff
+import random
+from itertools import combinations
+from math import comb
+import time
+from IPython.display import display, Markdown
+import pickle
+from pathlib import Path
+
+
+# Fixes issue with the colormath library
+def patch_asscalar(a):
+    return a.item()
+setattr(numpy, "asscalar", patch_asscalar)
+```
+
+## Heuristic 1: Randomly Select Colors
+
+A simple heuristic we can use is randomly selecting colors from the set of 103. This likely won't yield the best results, but scoring these random selections provides a useful baseline for future algorithms.
+
+I selected 1,000,000 random color combinations and calcualted the average, lowest, and highest score: 
+
+
+```{python}
+#| code-fold: true
+#| cache: true 
+#| output: false
+
+from dodgeball_colors_3 import build_distance_matrix
+
+color_df = pd.read_csv("../../data/all_colors.csv")
+
+lab_string = list(color_df["L*a*b Value"])
+lab_strings = [color_string.split(", ") for color_string in lab_string]
+
+lab_floats = [[float(x) for x in row] for row in lab_strings]
+
+lab_colors = [color_objects.LabColor(lab_l=lab_color[0], lab_a=lab_color[1], lab_b=lab_color[2]) for lab_color in lab_floats]
+
+distance_matrix = build_distance_matrix(lab_colors)
+
+def compute_score(color_indices: list[int], distance_matrix) -> float:
+    """
+    Returns the average CIE 2000 distance between input colors.
+    """
+    total_distance = 0
+    for i, j in combinations(color_indices, 2):
+        total_distance += abs(distance_matrix[(i,j)])
+
+    total_pairs = comb(len(color_indices), 2)
+
+    average_distance = total_distance/total_pairs
+
+    return average_distance
+
+cache_file = Path("assets/scored_samples.pkl")
+RERUN = False 
+if cache_file.exists() and not RERUN:
+    cached = pickle.loads(cache_file.read_bytes())
+    scored_samples = cached["scored_samples"]
+    elapsed_time = cached["elapsed_time"]
+else:
+    start_time = time.time()
+    samples = [random.sample(range(103), 16) for _ in range(1_000_000)]
+    scored_samples = {tuple(s): compute_score(s, distance_matrix) for s in samples}
+    elapsed_time = time.time() - start_time
+    cache_file.write_bytes(pickle.dumps({
+        "scored_samples": scored_samples,
+        "elapsed_time": elapsed_time,
+    }))
+```
+
+
+```{python}
+from dodgeball_colors_3 import display_palette
+
+best = max(scored_samples, key=scored_samples.get)
+worst = min(scored_samples, key=scored_samples.get)
+
+table = f"""
+| Metric | Score | Unit |
+|---|---|---|
+| Total Runtime | {elapsed_time:.2f} | Seconds |
+| Average Score | {sum(scored_samples.values()) / len(scored_samples):.2f} | Perceived LAB Color Distance |
+| Lowest Score | {scored_samples[worst]:.2f} | Perceived LAB Color Distance |
+| Highest Score | {scored_samples[best]:.2f} | Perceived LAB Color Distance |
+"""
+
+display(Markdown(table))
+
+display_palette(selected_colors=list(best), color_df=color_df, filepath="assets/best_random.svg", sort_rainbow=True, hide_output=True)
+
+display_palette(selected_colors=list(worst), color_df=color_df, filepath="assets/worst_random.svg", sort_rainbow=True, hide_output=True)
+```
+
+Here is the low scoring palette:
+
+![Low Scoring Random Palette](assets/worst_random.svg)
+
+How drab.
+
+Here is the high scoring palette:
+
+![High Scoring Random Palette](assets/best_random.svg)
+
+How vibrant! But can we do better?

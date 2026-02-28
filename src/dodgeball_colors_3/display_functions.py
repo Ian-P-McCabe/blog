@@ -5,7 +5,7 @@ import pandas as pd
 from IPython.display import HTML
 from dodgeball_colors_3.color_sorting import adjust_hue_for_rainbow
 
-def display_palette(selected_colors: list[int], color_df: pd.DataFrame, filepath: str, cols=None, sort_rainbow: bool = False):
+def display_palette(selected_colors: list[int], color_df: pd.DataFrame, filepath: str, cols=None, sort_rainbow: bool = False, hide_output: bool = False):
 
     if sort_rainbow:
         selected_colors = sorted(
@@ -55,6 +55,8 @@ def display_palette(selected_colors: list[int], color_df: pd.DataFrame, filepath
     
     plt.tight_layout()
     plt.savefig(filepath)
+    if hide_output:
+        plt.close(fig)
 
 
 def plot_distance_heatmap(selected_colors: list[int], distance_matrix, color_df: pd.DataFrame, filepath: str):

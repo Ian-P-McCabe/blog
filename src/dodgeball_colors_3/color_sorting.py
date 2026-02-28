@@ -16,13 +16,13 @@ def adjust_hue_for_rainbow(hex_color):
     return (h, s, v)   
 
 
-def build_distance_matrix(lab_colors):
+def build_distance_matrix(lab_colors) -> dict[tuple[int, int], int]:
   distance_matrix = {}
   for i, color1 in enumerate(lab_colors):
       for j, color2 in enumerate(lab_colors):
           if i != j:
             distance_matrix[(i, j)] = round( #Want integer values
-              color_diff.delta_e_cie2000(color1=color1, color2=color2)
+              color_diff.delta_e_cie2000(color1=color1, color2=color2, Kl=2)
               )
   
   return distance_matrix
