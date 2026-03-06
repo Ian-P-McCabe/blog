@@ -162,8 +162,10 @@ plot_score_histogram(
     bins=50,
     title="Distribution of 1,000,000 Random Palette Scores",
     color='#92ACA0',
-    hide_output=True
-)
+    hide_output=True,
+    min_x=15,
+    max_x=45
+)  
 ```
 
 Here is the low scoring palette (avg 17.03 ∆E):
@@ -182,13 +184,11 @@ How vibrant! But can we do better? Heather Red, Cardinal, and Heather Raspberry 
 
 Greedy algorithms work by picking the best option at each step of the algorithm. In our case, the greedy algorithm will take two points and then iteratively select the 14 points that have the greatest minimum distance from the current set.
 
-We can easily run this algorithm on our set of points as $\binom{103}{2} = 5{,}253$
+We can easily run this algorithm on our set of points as there are only $\binom{103}{2} = 5{,}253$ possible starting combinations. 
 
 ```{python}
-total = 0
-for i, j in combinations(range(0,103),2):
-    total += 1
-
+#| cache: true
+#| 
 def parse_lab(lab_string: str) -> color_objects.LabColor:
     L, a, b = (float(x) for x in lab_string.split(", "))
     return color_objects.LabColor(lab_l=L, lab_a=a, lab_b=b)
@@ -207,21 +207,131 @@ def greedy_search(colors: pd.DataFrame, distance_matrix, num_colors: int, start_
 
         for i in range(n):
             if i not in selected:
-                min_dist = min(distance_matrix[(i,j)] for j in selected)
+                min_dist = min(distance_matrix[(i, j)] for j in selected)
                 if min_dist > max_min_dist:
                     max_min_dist = min_dist
                     best_point = i
 
         selected.add(best_point)
-    
+
     return list(selected)
 
 
-len(color_df)
+cache_file = Path("assets/greedy_results.pkl")
+GREEDY_RERUN = False 
+if cache_file.exists() and not RERUN:
+    cached = pickle.loads(cache_file.read_bytes())
+    greedy_scores = cached["greedy_scores"]
+    greedy_elapsed_time = cached["greedy_elapsed_time"]
+else:
+    greedy_start_time = time.time()
+    greedy_results = []
+    for i, j in combinations(range(0,103),2):
+        result = greedy_search(colors=color_df, distance_matrix=distance_matrix, num_colors=16, start_a=i, start_b=j)
+        greedy_results.append(result)
+    greedy_scores = {tuple(s): compute_score(s, distance_matrix) for s in greedy_results}
+    greedy_elapsed_time = time.time() - greedy_start_time
+    cache_file.write_bytes(pickle.dumps({
+        "greedy_scores": greedy_scores,
+        "greedy_elapsed_time": greedy_elapsed_time,
+    }))
 
 ```
 
-Greedy algorithm steps
+```{python}
+best = max(greedy_scores, key=greedy_scores.get)
+worst = min(greedy_scores, key=greedy_scores.get)
 
-Take current pair
-Find the point with the greatest minimum distance to the current set
+table = f"""
+| Metric | Score | Unit |
+|---|---|---|
+| Total Runtime | {greedy_elapsed_time:.2f} | Seconds |
+| Average Score | {sum(greedy_scores.values()) / len(greedy_scores):.2f} | Perceived LAB Color Distance |
+| Lowest Score | {greedy_scores[worst]:.2f} | Perceived LAB Color Distance |
+| Highest Score | {greedy_scores[best]:.2f} | Perceived LAB Color Distance |
+"""
+
+display(Markdown(table))
+
+display_palette(selected_colors=list(best), color_df=color_df, filepath="assets/best_greedy.svg", sort_rainbow=True, hide_output=True)
+
+display_palette(selected_colors=list(worst), color_df=color_df, filepath="assets/worst_greedy.svg", sort_rainbow=True, hide_output=True)
+
+plot_score_histogram(
+    scores=list(greedy_scores.values()),
+    filepath="assets/greedy_score_distribution.svg",
+    bins=50,
+    title="Distribution of Greedy Palette Scores",
+    color='#92ACA0',
+    hide_output=True,
+    min_x=15,
+    max_x=45
+)
+```
+
+Here is the score distribution:
+
+![Greedy Palette Score Distribution Plot](assets/greedy_score_distribution.svg)
+
+The greedy data isn't as smooth since there's only ~5000 samples instead of 1,000,000. However, we 
+can still see that the greedy curve is shifted to the right of the random curve; on average 
+greedy samples are better.
+
+Here is the worst greedy palette (avg. ∆E of 32.73)
+
+![Worst Greedy Color Palette](assets/worst_greedy.svg)
+
+Feels a little washed out.
+
+Here is the best greedy palette (average ∆E of 39.02)
+
+![Best Greedy Color Palette](assets/best_greedy.svg)
+
+While not as diverse on average as the random palette, maximizing the minimum distance within the greedy
+algorithm steps helps keep any two points far apart.^[You may notice the greedy palettes here are not the same as those found when I originally published this article. When updating the article I opted to use the CIE ∆E distance over the Euclidean ∆E distance.]
+
+But can we do even better?
+
+## Heuristic 3: A Convex Hull
+
+What is a Convex Hull? The formal definition is "The intersection of all convex sets containing a given subset of Euclidean space."
+
+What?
+
+An image outlining what the convex hull of a set of points looks like is far more intuitive: 
+
+![Convex Hull Example from Geeks for Geeks](assets/Convex-Hull.jpg)
+
+In 2 dimensions, the convex hull of points is represented by the green line. Each point that touches the green line is a vertex of the convex hull. 
+
+**Can we take the convex hull of our color space and obtain a color set from the vertices?**
+
+We can take the convex hull of the point cloud of league colors:
+
+```{python}
+#|cache: true 
+from dodgeball_colors_3 import generate_lab_3d_all_colors
+
+generate_lab_3d_all_colors(df=color_df, figure_title="All Colors in 3D")
+```
+
+```{python}
+
+from scipy.spatial import ConvexHull
+from dodgeball_colors_3 import generate_lab_3d_all_colors_hull
+
+lab_points = color_df['L*a*b Value'].str.split(", ", expand=True).astype(float).values.tolist()
+
+hull = ConvexHull(points=lab_points)
+
+hull_result = list(int(value) for value in hull.vertices)
+
+hull_df = color_df.iloc[hull.vertices].copy()
+
+generate_lab_3d_all_colors_hull(df=color_df, figure_title="Convex Hull of All Colors", hull_df=hull_df)
+
+#display_palette(selected_colors=hull.vertices, color_df=color_df, filepath='ConvexColors.svg', cols=4, sort_rainbow=True)
+
+
+
+```

@@ -118,10 +118,11 @@ def display_color_swatches(hex_colors, names=None, size="40px", label=None):
     return HTML(html)
 
 
-def plot_score_histogram(scores: list[float], filepath: str, bins: int = 50, title: str = "Distribution of Palette Scores", color: str = 'steelblue', hide_output: bool = False):
+def plot_score_histogram(scores: list[float], filepath: str, bins: int = 50, title: str = "Distribution of Palette Scores", color: str = 'steelblue', hide_output: bool = False, min_x: float | None = None, max_x: float | None = None):
     """Plot a histogram of palette scores."""
     fig, ax = plt.subplots(figsize=(10, 6))
-    ax.hist(scores, bins=bins, edgecolor='black', linewidth=0.5, color=color)
+    hist_range = (min_x if min_x is not None else min(scores), max_x if max_x is not None else max(scores))
+    ax.hist(scores, bins=bins, range=hist_range, edgecolor='black', linewidth=0.5, color=color)
     ax.set_xlabel('Average ΔE Score')
     ax.set_ylabel('Count')
     ax.set_title(title)
