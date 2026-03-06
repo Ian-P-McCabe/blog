@@ -5,7 +5,7 @@ This blog is created with [Quarto](https://quarto.org/) an open source scientifi
 ## Preview 
 
 - Full Website: ```quarto preview```
-- Drafting/Specific File: ```quarto preview --profile draft {qmd filename}```
+- Drafting/Specific File: ```quarto preview {.qmd} --profile draft --port 1234```
 
 Use interactive notebook window for code output and HTML preview for text updates. 
 

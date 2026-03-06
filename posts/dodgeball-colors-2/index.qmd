@@ -176,7 +176,7 @@ Here is the high scoring palette (avg 40.77 ∆E) :
 
 ![High Scoring Random Palette](assets/best_random.svg)
 
-How vibrant! But can we do better?
+How vibrant! But can we do better? Heather Red, Cardinal, and Heather Raspberry appear quite similar. 
 
 ## Heuristic 2: Greedy Algorithms
 
@@ -189,6 +189,39 @@ total = 0
 for i, j in combinations(range(0,103),2):
     total += 1
 
-print(total)
+def parse_lab(lab_string: str) -> color_objects.LabColor:
+    L, a, b = (float(x) for x in lab_string.split(", "))
+    return color_objects.LabColor(lab_l=L, lab_a=a, lab_b=b)
+
+color_df["LabColor"] = color_df["L*a*b Value"].apply(parse_lab)
+
+def greedy_search(colors: pd.DataFrame, distance_matrix, num_colors: int, start_a: int, start_b: int):
+    n = len(colors)
+    selected = set()
+    selected.add(start_a)
+    selected.add(start_b)
+
+    while len(selected) < num_colors:
+        max_min_dist = -1
+        best_point = -1
+
+        for i in range(n):
+            if i not in selected:
+                min_dist = min(distance_matrix[(i,j)] for j in selected)
+                if min_dist > max_min_dist:
+                    max_min_dist = min_dist
+                    best_point = i
+
+        selected.add(best_point)
+    
+    return list(selected)
+
+
+len(color_df)
+
 ```
 
+Greedy algorithm steps
+
+Take current pair
+Find the point with the greatest minimum distance to the current set

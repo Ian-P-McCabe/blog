@@ -167,7 +167,7 @@ window.Quarto = {
 <p>What we’re attempting to do, finding a subset of colors with an optimal distance between them, is a variation of the <a href="https://grafo.etsii.urjc.es/optsicom/mdp.html">Maximum Diversity Problem</a>.</p>
 <p>The Maximum Diversity Problem falls into a class of computer science problems that are NP-Hard, or functionally unsolvable. We see the NP-Hard characteristics of our color selection problem when the compute time goes from 10 days to 2175 years by adding 8 additional colors to the number of colors we are selecting.</p>
 <p>We can work around the complexity of our problem with a heuristic. A heuristic is a problem-solving technique that uses shortcuts to find an approximate solution quickly.</p>
-<div id="419774e1" class="cell" data-execution_count="1">
+<div id="6701d409" class="cell" data-execution_count="1">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>load_ext autoreload</span>
@@ -197,7 +197,7 @@ window.Quarto = {
 <h2 class="anchored" data-anchor-id="heuristic-1-randomly-select-colors">Heuristic 1: Randomly Select Colors</h2>
 <p>A simple heuristic we can use is randomly selecting colors from the set of 103. This likely won’t yield the best results, but scoring these random selections provides a useful baseline for future algorithms.</p>
 <p>I selected 1,000,000 random color combinations and calcualted the average, lowest, and highest score:</p>
-<div id="7d77ba59" class="cell" data-cache="true" data-execution_count="2">
+<div id="5bd3ab86" class="cell" data-cache="true" data-execution_count="2">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> dodgeball_colors_3 <span class="im">import</span> build_distance_matrix</span>
@@ -244,7 +244,7 @@ window.Quarto = {
 <span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>    }))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
-<div id="604f5447" class="cell" data-execution_count="3">
+<div id="b490bf55" class="cell" data-execution_count="3">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> dodgeball_colors_3 <span class="im">import</span> display_palette</span>
@@ -308,7 +308,7 @@ window.Quarto = {
 <figcaption>Random Palette Score Distribution Plot</figcaption>
 </figure>
 </div>
-<div id="fda51706" class="cell" data-execution_count="4">
+<div id="28fe1839" class="cell" data-execution_count="4">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> dodgeball_colors_3 <span class="im">import</span> plot_score_histogram</span>
@@ -338,25 +338,55 @@ window.Quarto = {
 <figcaption>High Scoring Random Palette</figcaption>
 </figure>
 </div>
-<p>How vibrant! But can we do better?</p>
+<p>How vibrant! But can we do better? Heather Red, Cardinal, and Heather Raspberry appear quite similar.</p>
 </section>
 <section id="heuristic-2-greedy-algorithms" class="level2">
 <h2 class="anchored" data-anchor-id="heuristic-2-greedy-algorithms">Heuristic 2: Greedy Algorithms</h2>
 <p>Greedy algorithms work by picking the best option at each step of the algorithm. In our case, the greedy algorithm will take two points and then iteratively select the 14 points that have the greatest minimum distance from the current set.</p>
 <p>We can easily run this algorithm on our set of points as <span class="math inline">\(\binom{103}{2} = 5{,}253\)</span></p>
-<div id="c3a7886d" class="cell" data-execution_count="5">
+<div id="ba339112" class="cell" data-execution_count="5">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>total <span class="op">=</span> <span class="dv">0</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i, j <span class="kw">in</span> combinations(<span class="bu">range</span>(<span class="dv">0</span>,<span class="dv">103</span>),<span class="dv">2</span>):</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    total <span class="op">+=</span> <span class="dv">1</span></span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(total)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> parse_lab(lab_string: <span class="bu">str</span>) <span class="op">-&gt;</span> color_objects.LabColor:</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    L, a, b <span class="op">=</span> (<span class="bu">float</span>(x) <span class="cf">for</span> x <span class="kw">in</span> lab_string.split(<span class="st">", "</span>))</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> color_objects.LabColor(lab_l<span class="op">=</span>L, lab_a<span class="op">=</span>a, lab_b<span class="op">=</span>b)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>color_df[<span class="st">"LabColor"</span>] <span class="op">=</span> color_df[<span class="st">"L*a*b Value"</span>].<span class="bu">apply</span>(parse_lab)</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> greedy_search(colors: pd.DataFrame, distance_matrix, num_colors: <span class="bu">int</span>, start_a: <span class="bu">int</span>, start_b: <span class="bu">int</span>):</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    n <span class="op">=</span> <span class="bu">len</span>(colors)</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    selected <span class="op">=</span> <span class="bu">set</span>()</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>    selected.add(start_a)</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    selected.add(start_b)</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">while</span> <span class="bu">len</span>(selected) <span class="op">&lt;</span> num_colors:</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>        max_min_dist <span class="op">=</span> <span class="op">-</span><span class="dv">1</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>        best_point <span class="op">=</span> <span class="op">-</span><span class="dv">1</span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(n):</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> i <span class="kw">not</span> <span class="kw">in</span> selected:</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>                min_dist <span class="op">=</span> <span class="bu">min</span>(distance_matrix[(i,j)] <span class="cf">for</span> j <span class="kw">in</span> selected)</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> min_dist <span class="op">&gt;</span> max_min_dist:</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>                    max_min_dist <span class="op">=</span> min_dist</span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>                    best_point <span class="op">=</span> i</span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>        selected.add(best_point)</span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="bu">list</span>(selected)</span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a><span class="bu">len</span>(color_df)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
-<div class="cell-output cell-output-stdout">
-<pre><code>5253</code></pre>
+<div class="cell-output cell-output-display" data-execution_count="130">
+<pre><code>103</code></pre>
 </div>
 </div>
+<p>Greedy algorithm steps</p>
+<p>Take current pair Find the point with the greatest minimum distance to the current set</p>
 </section>
 
 
