@@ -12,12 +12,14 @@ format:
     theme: 
       - flatly
 execute: 
+  enabled: true
   cache: true
   freeze: auto
 jupyter: python3
 page-layout: full
 editor: 
   render-on-save: true
+draft: true
 ---
 
  In part one, we determined which team colors would be best to add to the upcoming dodgeball season. We wanted to select colors that would be different from those already chosen, as teams with similar colors are hard to tell apart. We used LAB-Color-Distance formulas to select colors that are most distant and chose from those.
@@ -44,6 +46,30 @@ What we're attempting to do, finding a subset of colors with an optimal distance
 The Maximum Diversity Problem falls into a class of computer science problems that are NP-Hard, or functionally unsolvable. We see the NP-Hard characteristics of our color selection problem when the compute time goes from 10 days to 2175 years by adding 8 additional colors to the number of colors we are selecting.
 
 We can work around the complexity of our problem with a heuristic. A heuristic is a problem-solving technique that uses shortcuts to find an approximate solution quickly. 
+
+### A Note On Scoring
+
+For this article we will score our color palettes based off of the average ∆E distance between all the colors in a set. This maximizes the global diversity of the set - which is exactly what we're trying to tackle with the Maximum diversity problem. 
+
+You can see the scoring function in the cell below: 
+
+```{python}
+def compute_score(color_indices: list[int], distance_matrix) -> float:
+    """
+    Returns the average CIE 2000 distance between input colors.
+    """
+    total_distance = 0
+    for i, j in combinations(color_indices, 2):
+        total_distance += abs(distance_matrix[(i,j)])
+
+    total_pairs = comb(len(color_indices), 2)
+
+    average_distance = total_distance/total_pairs
+
+    return average_distance
+```
+
+Now we can setup our notebook and begin: 
 
 ```{python}
 #| output: false
@@ -74,7 +100,7 @@ setattr(numpy, "asscalar", patch_asscalar)
 
 A simple heuristic we can use is randomly selecting colors from the set of 103. This likely won't yield the best results, but scoring these random selections provides a useful baseline for future algorithms.
 
-I selected 1,000,000 random color combinations and calcualted the average, lowest, and highest score: 
+I selected 1,000,000 random color combinations and calculated the average, lowest, and highest score: 
 
 
 ```{python}
@@ -94,20 +120,6 @@ lab_floats = [[float(x) for x in row] for row in lab_strings]
 lab_colors = [color_objects.LabColor(lab_l=lab_color[0], lab_a=lab_color[1], lab_b=lab_color[2]) for lab_color in lab_floats]
 
 distance_matrix = build_distance_matrix(lab_colors)
-
-def compute_score(color_indices: list[int], distance_matrix) -> float:
-    """
-    Returns the average CIE 2000 distance between input colors.
-    """
-    total_distance = 0
-    for i, j in combinations(color_indices, 2):
-        total_distance += abs(distance_matrix[(i,j)])
-
-    total_pairs = comb(len(color_indices), 2)
-
-    average_distance = total_distance/total_pairs
-
-    return average_distance
 
 cache_file = Path("assets/scored_samples.pkl")
 RERUN = False 
@@ -274,8 +286,8 @@ Here is the score distribution:
 ![Greedy Palette Score Distribution Plot](assets/greedy_score_distribution.svg)
 
 The greedy data isn't as smooth since there's only ~5000 samples instead of 1,000,000. However, we 
-can still see that the greedy curve is shifted to the right of the random curve; on average 
-greedy samples are better.
+can still see that the greedy curve is shifted to the right of the random curve; **on average 
+greedy samples are better.**
 
 Here is the worst greedy palette (avg. ∆E of 32.73)
 
@@ -308,21 +320,34 @@ In 2 dimensions, the convex hull of points is represented by the green line. Eac
 
 We can take the convex hull of the point cloud of league colors:
 
+::: {.grid}
+
+::: {.g-col-6}
+
 ```{python}
-#|cache: true 
+#| cache: true 
+
 from dodgeball_colors_3 import generate_lab_3d_all_colors
 
 generate_lab_3d_all_colors(df=color_df, figure_title="All Colors in 3D")
 ```
 
+:::
+
+::: {.g-col-6}
 ```{python}
+#| cache: true
 
 from scipy.spatial import ConvexHull
 from dodgeball_colors_3 import generate_lab_3d_all_colors_hull
 
 lab_points = color_df['L*a*b Value'].str.split(", ", expand=True).astype(float).values.tolist()
 
+convex_start = time.time()
 hull = ConvexHull(points=lab_points)
+convex_end = time.time()
+
+convex_elapsed = convex_end - convex_start
 
 hull_result = list(int(value) for value in hull.vertices)
 
@@ -330,8 +355,95 @@ hull_df = color_df.iloc[hull.vertices].copy()
 
 generate_lab_3d_all_colors_hull(df=color_df, figure_title="Convex Hull of All Colors", hull_df=hull_df)
 
-#display_palette(selected_colors=hull.vertices, color_df=color_df, filepath='ConvexColors.svg', cols=4, sort_rainbow=True)
-
-
+#display_palette(selected_colors=hull.vertices, color_df=color_df, filepath='assets/convex_colors.svg', cols=4, sort_rainbow=True)
 
 ```
+
+:::
+
+:::
+
+
+```{python}
+convex_score = compute_score(color_indices=hull.vertices, distance_matrix=distance_matrix)
+
+table = f"""
+| Metric | Score | Unit |
+|---|---|---|
+| Total Runtime | {convex_elapsed:.2f} | Seconds |
+| Average Score | {convex_score:.2f} | Perceived LAB Color Distance |
+| Lowest Score | {convex_score:.2f} | Perceived LAB Color Distance |
+| Highest Score | {convex_score:.2f} | Perceived LAB Color Distance |
+"""
+
+display(Markdown(table))
+
+# len(hull.vertices)
+
+```
+
+![Color Palette from the Convex Hull](assets/convex_colors.svg)
+
+This looks great and it already has a greater ∆E score than our previous heuristics. Now all we need to do is remove 5 colors so we can obtain a set of 16. 
+
+```{python}
+
+# Greedily remove each color 
+
+hull_copy = hull_df.copy()
+vertices = list(int(value) for value in hull.vertices)
+for i in range(5):
+    scores = []
+    for index, color in enumerate(vertices):
+        if color == -1:
+            continue
+            
+        current_color_indices = vertices[:index] + vertices[index + 1:]
+
+        current_score = compute_score(
+            color_indices=current_color_indices, 
+            distance_matrix=distance_matrix
+            )
+        
+        scores.append(current_score)
+
+    
+    lowest = max(scores)
+
+    lowest_index = scores.index(lowest)
+
+    vertices[lowest_index] = -1
+
+    vertices = [item for item in vertices if item != -1]
+
+
+pruned_score = compute_score(color_indices=vertices, distance_matrix=distance_matrix)
+print(f"The pruned score is {pruned_score:.2f} ∆E units")
+
+display_palette(selected_colors=vertices, color_df=color_df, filepath="assets/pruned_convex.svg", sort_rainbow=True, hide_output=True)
+
+```
+
+![Pruned Convex Hull Color Palette](assets/pruned_convex.svg)
+
+How vibrant! This palette is the highest scoring out of all of our options with an ∆E of 44.79. This palette is so vibrant because it is composed entirely of colors at the extremes of the LAB space - they contain the most pigment. This hull is basically the exact opposite of the worst random palette. 
+
+## Conclusion
+
+In this article we explored different heuristics for generating an "optimal" color palette for the dodgeball league:
+
+```{python}
+
+table = f"""
+| Heuristic | Score |
+| --- | --- |
+| Highest Random | 40.77 |
+| Highest Greedy | 39.02 |
+| Highest Convex Hull | 44.79 |
+"""
+
+display(Markdown(table))
+
+```
+
+We found that a convex hull is a unique way to determine which colors are the best when colors are roughly distributed evenly through a 3D space and it runs extremely fast. While this palette is great, we can still do better - the scoring metric used in this article maximized global diversity - the colors are broadly different on average. However it's still possible for two colors to be quite similar - such as with Red and Poppy or Orange and Gold in the palette above. We navigate this challenge in the final installment of the dodgeball colors series - Part 3. 
