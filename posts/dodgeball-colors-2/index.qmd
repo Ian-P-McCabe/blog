@@ -4,7 +4,7 @@ subtitle: Working with Heuristics
 author: Ian McCabe
 date: 03/03/2025
 date-modified: 03/15/2026
-image: ""
+image: "assets/cover_image.png"
 categories: ["Dodgeball Colors"]
 format:
   html:
@@ -19,10 +19,10 @@ jupyter: python3
 page-layout: full
 editor: 
   render-on-save: true
-draft: true
+draft: false
 ---
 
- In part one, we determined which team colors would be best to add to the upcoming dodgeball season. We wanted to select colors that would be different from those already chosen, as teams with similar colors are hard to tell apart. We used LAB-Color-Distance formulas to select colors that are most distant and chose from those.
+ In [Part 1](../dodgeball-colors-1/index.qmd), we determined which team colors would be best to add to the upcoming dodgeball season. We wanted to select colors that would be different from those already chosen, teams with similar colors are hard to tell apart. We used LAB-Color-Distance formulas to select colors that are most distant and chose from those.
 
 The similar-color-problem in Part 1 arose because teams are allowed to select from 103 shirt colors. Many of these colors are very similar, so it is easy for teams to select colors that are hard to tell apart. What if we wanted to avoid this situation entirely?
 
@@ -49,7 +49,7 @@ We can work around the complexity of our problem with a heuristic. A heuristic i
 
 ### A Note On Scoring
 
-For this article we will score our color palettes based off of the average ∆E distance between all the colors in a set. This maximizes the global diversity of the set - which is exactly what we're trying to tackle with the Maximum diversity problem. 
+For this article we will score our color palettes based off of the average ∆E distance between all the colors in a set (greatest average distance as mentioned above). This maximizes the global diversity of the set - which is exactly what we're trying to tackle with the Maximum Diversity Problem. 
 
 You can see the scoring function in the cell below: 
 

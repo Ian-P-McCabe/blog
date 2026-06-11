@@ -19,7 +19,7 @@ page-layout: full
 
 # Overview
 
-In [Part 1](https://ian-p-mccabe.github.io/shirt-color-space/) and [Part 2](https://ian-p-mccabe.github.io/shirt-color-space/part_2/) we explored the issues facing the Stonewall Dodgeball league when selecting shirt colors. In Part 1 we found the best way to add additional colors to the league and in Part 2 we explored heuristics for finding the best subset of colors for the league so no two colors are too similar. 
+In [Part 1](../dodgeball-colors-1/index.qmd) and [Part 2](../dodgeball-colors-2/index.qmd) we explored the issues facing the Stonewall Dodgeball league when selecting shirt colors. In Part 1 we found the best way to add additional colors to the league and in Part 2 we explored heuristics for finding the best subset of colors for the league so no two colors are too similar. 
 
 Part 3 will expand on part 2, introducing proper optimization methods for color selection. We will begin by showing how to select the best (most diverse) colors for the league and then expand on this by taking into account team preference.
 
@@ -151,7 +151,7 @@ display_color_swatches([color_df.iloc[6]['Hex'], color_df.iloc[46]['Hex']])
 
 :::
 
-# Finding the best colors
+## Finding the best colors
 
 Now that we have our colors in a format we can properly analyze, we can return to answer our central question:
 
