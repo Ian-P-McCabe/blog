@@ -203,10 +203,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <section id="overview" class="level1">
 <h1>Overview</h1>
-<p>In <a href="https://ian-p-mccabe.github.io/shirt-color-space/">Part 1</a> and <a href="https://ian-p-mccabe.github.io/shirt-color-space/part_2/">Part 2</a> we explored the issues facing the Stonewall Dodgeball league when selecting shirt colors. In Part 1 we found the best way to add additional colors to the league and in Part 2 we explored heuristics for finding the best subset of colors for the league so no two colors are too similar.</p>
+<p>In <a href="../../posts/dodgeball-colors-1/index.html">Part 1</a> and <a href="../../posts/dodgeball-colors-2/index.html">Part 2</a> we explored the issues facing the Stonewall Dodgeball league when selecting shirt colors. In Part 1 we found the best way to add additional colors to the league and in Part 2 we explored heuristics for finding the best subset of colors for the league so no two colors are too similar.</p>
 <p>Part 3 will expand on part 2, introducing proper optimization methods for color selection. We will begin by showing how to select the best (most diverse) colors for the league and then expand on this by taking into account team preference.</p>
 <p>I have decided to keep all code cells hidden for this writeup, but feel free to expand any of the codeblocks on this page (denoted by “&gt; Code”). All the source code can be found on my GitHub.</p>
-<div id="ba5702a0" class="cell" data-execution_count="1">
+<div id="e0fa65b4" class="cell" data-execution_count="1">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy</span>
@@ -228,9 +228,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="there-are-a-lot-of-colors" class="level2">
 <h2 class="anchored" data-anchor-id="there-are-a-lot-of-colors">There are a lot of colors!</h2>
 <p>The dodgeball league provides 103 unique shirt colors to pick from.</p>
-<p>Eagle eyed readers will see that there are 110 colors lsited below, however I have removed a few duplicate colors from the pool.</p>
+<p>Eagle eyed readers will see that there are 110 colors listed below, however I have removed a few duplicate colors from the pool.</p>
 <p><img src="./assets/SolidColors.png" class="img-fluid" alt="Solid Colors"> <img src="./assets/HeatherColors.png" class="img-fluid" alt="Heather Colors"></p>
-<div id="0bcd5c50" class="cell" data-execution_count="2">
+<div id="8755d03a" class="cell" data-execution_count="2">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>lab_string <span class="op">=</span> <span class="bu">list</span>(color_df[<span class="st">"L*a*b Value"</span>])</span>
@@ -309,7 +309,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="g-col-6">
 <hr>
 <p>These two colors are <strong>2</strong> units apart:</p>
-<div id="46e0684e" class="cell" data-execution_count="3">
+<div id="7596ca04" class="cell" data-execution_count="3">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> dodgeball_colors_3 <span class="im">import</span> display_color_swatches</span>
@@ -321,7 +321,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <hr>
 <p>These two colors are <strong>10</strong> units apart:</p>
-<div id="d81d4496" class="cell" data-execution_count="4">
+<div id="72562374" class="cell" data-execution_count="4">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>display_color_swatches([color_df.iloc[<span class="dv">0</span>][<span class="st">'Hex'</span>], color_df.iloc[<span class="dv">46</span>][<span class="st">'Hex'</span>]])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -332,7 +332,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <hr>
 <p>These two colors are <strong>20</strong> units apart:</p>
-<div id="f6793514" class="cell" data-execution_count="5">
+<div id="564c1dfb" class="cell" data-execution_count="5">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>display_color_swatches([color_df.iloc[<span class="dv">1</span>][<span class="st">'Hex'</span>], color_df.iloc[<span class="dv">68</span>][<span class="st">'Hex'</span>]])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -346,7 +346,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="g-col-6">
 <hr>
 <p>These two colors are <strong>30</strong> units apart:</p>
-<div id="0463f691" class="cell" data-execution_count="6">
+<div id="c391cfa6" class="cell" data-execution_count="6">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>display_color_swatches([color_df.iloc[<span class="dv">0</span>][<span class="st">'Hex'</span>], color_df.iloc[<span class="dv">1</span>][<span class="st">'Hex'</span>]])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -357,7 +357,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <hr>
 <p>And these two colors are <strong>80</strong> units apart:</p>
-<div id="a9de0231" class="cell" data-execution_count="7">
+<div id="d86ad404" class="cell" data-execution_count="7">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>display_color_swatches([color_df.iloc[<span class="dv">6</span>][<span class="st">'Hex'</span>], color_df.iloc[<span class="dv">46</span>][<span class="st">'Hex'</span>]])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -371,14 +371,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </section>
 </section>
-</section>
-<section id="finding-the-best-colors" class="level1">
-<h1>Finding the best colors</h1>
+<section id="finding-the-best-colors" class="level2">
+<h2 class="anchored" data-anchor-id="finding-the-best-colors">Finding the best colors</h2>
 <p>Now that we have our colors in a format we can properly analyze, we can return to answer our central question:</p>
 <p><strong>What is the best set of shirt colors for the dodgeball league?</strong></p>
 <p>In part 2 we covered why this isn’t super easy to compute:</p>
 <ul>
-<li>Analyzing the best combinations of 16 colors yeilds <strong>2,245,547,413,628,550,570</strong> possible combinations! (2 quintillion)</li>
+<li>Analyzing the best combinations of 16 colors yields <strong>2,245,547,413,628,550,570</strong> possible combinations! (2 quintillion)</li>
 <li>Analyzing the best combinations of 24 colors, we must score <strong>178,409,928,551,259,450,861,900</strong> possible combinations! (178 sextillion)</li>
 </ul>
 <p>I framed the problem as a a subset of the Maximum Diversity Problem - how can we select the subset of colors that are most distant from each other on average?</p>
@@ -386,7 +385,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>While these are fun approximations (especially the convex hull visual), they pale in comparison to the power of proper optimization methods.</p>
 <p>We will use Google’s <strong>Operations Research Tools Constraint Programming - SAT Solver</strong> to systematically explore solutions to our color diversity problem.</p>
 <p>The CP-SAT solver is flexible enough to enable us to explore the original <strong>maximum pairwise distance</strong> approach as well as other measures such as <strong>maximum minimum distance</strong>.</p>
-<div id="e483cf8b" class="cell" data-execution_count="8">
+<div id="567294f8" class="cell" data-execution_count="8">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> dodgeball_colors_3 <span class="im">import</span> build_distance_matrix</span>
@@ -397,11 +396,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>num_colors_to_select <span class="op">=</span> <span class="dv">16</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
+</section>
 <section id="maximum-pairwise-distance" class="level2">
 <h2 class="anchored" data-anchor-id="maximum-pairwise-distance">Maximum Pairwise Distance</h2>
 <p>Continuing where we left off in part 2, lets find the subset of colors with the greatest pairwise distance. This is the same metric used in the random, greedy, and convex hull approaches.</p>
 <p>After letting the model run for 5 minutes, we get the following:</p>
-<div id="a4c10318" class="cell" data-cache="false" data-execution_count="9">
+<div id="47660ad5" class="cell" data-cache="false" data-execution_count="9">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> dodgeball_colors_3 <span class="im">import</span> ColorModel, display_palette, adjust_hue_for_rainbow, plot_distance_heatmap</span>
@@ -423,7 +423,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <pre><code>Variables created: 103</code></pre>
 </div>
 </div>
-<div id="54562861" class="cell" data-execution_count="10">
+<div id="c8f7b453" class="cell" data-execution_count="10">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># selected_colors.sort(key=lambda c: adjust_hue_for_rainbow(color_df.iloc[c]['Hex']))</span></span>
@@ -458,7 +458,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="maximize-the-minimum-distance" class="level2">
 <h2 class="anchored" data-anchor-id="maximize-the-minimum-distance">Maximize the Minimum Distance</h2>
 <p>We can run a similar optimization to the code above, however we tweak the objective function to maximize the minimum distance between any two points.</p>
-<div id="23d200c4" class="cell" data-execution_count="11">
+<div id="350bd794" class="cell" data-execution_count="11">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> random</span>
@@ -469,14 +469,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>max_minimum_colors <span class="op">=</span> [<span class="dv">8</span>, <span class="dv">12</span>, <span class="dv">13</span>, <span class="dv">16</span>, <span class="dv">17</span>, <span class="dv">19</span>, <span class="dv">23</span>, <span class="dv">31</span>, <span class="dv">37</span>, <span class="dv">47</span>, <span class="dv">53</span>, <span class="dv">70</span>, <span class="dv">72</span>, <span class="dv">86</span>, <span class="dv">97</span>, <span class="dv">100</span>]</span>
 <span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="co"># optimal_paletts = max_minimum_model.max_min_solve_enumerate_optimal(max_solutions = 100000, known_optimal=22)</span></span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="co"># max_minimum_colors = random.choice(optimal_paletts)</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="co"># optimal_palettes = max_minimum_model.max_min_solve_enumerate_optimal(max_solutions = 100000, known_optimal=22)</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="co"># max_minimum_colors = random.choice(optimal_palettes)</span></span>
 <span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a><span class="co"># max_minimum_colors, known_max_min = max_minimum_model.solve(time_limit=5, log_progress=False)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 <p>We now obtain a new palette:</p>
-<div id="a35911f2" class="cell" data-execution_count="12">
+<div id="804d86ca" class="cell" data-execution_count="12">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># max_minimum_colors.sort(key=lambda c: adjust_hue_for_rainbow(color_df.iloc[c]['Hex']))</span></span>
@@ -504,8 +504,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Quite a few ideal palettes to choose from!</p>
 <p>Before moving forward, let’s take a moment and compare the results of our different objective functions:</p>
 <div class="grid">
-<section id="maxmimize-total-distance" class="level3 g-col-6">
-<h3 class="anchored" data-anchor-id="maxmimize-total-distance">Maxmimize Total Distance</h3>
+<section id="maximize-total-distance" class="level3 g-col-6">
+<h3 class="anchored" data-anchor-id="maximize-total-distance">Maximize Total Distance</h3>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="assets/max_pairwise_heatmap.svg" class="img-fluid figure-img"></p>
@@ -514,7 +514,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <ul>
 <li>Colors are broadly more distant (plot is greener)</li>
-<li>Adjacent colors are very close togther</li>
+<li>Adjacent colors are very close together</li>
 <li>Solution is FEASIBLE</li>
 <li>No optimal solution, billions of feasible solutions</li>
 </ul>
@@ -539,7 +539,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h3 class="anchored" data-anchor-id="hybrid-approach---finding-the-best-of-the-best">Hybrid Approach - Finding the Best of the Best</h3>
 <p>Since the solution from the Maximum Minimum approach resulted in a max-min of 22 ∆E units, we can rerun the total distance solver with an additional constraint that all pairs must be at least 22 ∆E units apart.</p>
 <p>After running the solver we get the following result:</p>
-<div id="8b4e7684" class="cell" data-execution_count="13">
+<div id="a601a4ca" class="cell" data-execution_count="13">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>hybrid_solver <span class="op">=</span> ColorModel(num_colors, num_colors_to_select, distance_matrix)</span>
@@ -552,7 +552,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </details>
 </div>
 <p>And we obtain the following new palette</p>
-<div id="278d7cac" class="cell" data-execution_count="14">
+<div id="15ba665a" class="cell" data-execution_count="14">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>best_hybrid_colors.sort(key<span class="op">=</span><span class="kw">lambda</span> c: adjust_hue_for_rainbow(color_df.iloc[c][<span class="st">'Hex'</span>]))</span>

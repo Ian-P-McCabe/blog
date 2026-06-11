@@ -23,10 +23,10 @@
 
 <section id="overview" class="level1">
 <h1>Overview</h1>
-<p>In <a href="https://ian-p-mccabe.github.io/shirt-color-space/">Part 1</a> and <a href="https://ian-p-mccabe.github.io/shirt-color-space/part_2/">Part 2</a> we explored the issues facing the Stonewall Dodgeball league when selecting shirt colors. In Part 1 we found the best way to add additional colors to the league and in Part 2 we explored heuristics for finding the best subset of colors for the league so no two colors are too similar.</p>
+<p>In <a href="../../posts/dodgeball-colors-1/index.html">Part 1</a> and <a href="../../posts/dodgeball-colors-2/index.html">Part 2</a> we explored the issues facing the Stonewall Dodgeball league when selecting shirt colors. In Part 1 we found the best way to add additional colors to the league and in Part 2 we explored heuristics for finding the best subset of colors for the league so no two colors are too similar.</p>
 <p>Part 3 will expand on part 2, introducing proper optimization methods for color selection. We will begin by showing how to select the best (most diverse) colors for the league and then expand on this by taking into account team preference.</p>
 <p>I have decided to keep all code cells hidden for this writeup, but feel free to expand any of the codeblocks on this page (denoted by “&gt; Code”). All the source code can be found on my GitHub.</p>
-<div id="ba5702a0" class="cell" data-execution_count="1">
+<div id="e0fa65b4" class="cell" data-execution_count="1">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
@@ -76,9 +76,9 @@ font-style: inherit;">"../../data/all_colors.csv"</span>)</span></code></pre></d
 <section id="there-are-a-lot-of-colors" class="level2">
 <h2 class="anchored" data-anchor-id="there-are-a-lot-of-colors">There are a lot of colors!</h2>
 <p>The dodgeball league provides 103 unique shirt colors to pick from.</p>
-<p>Eagle eyed readers will see that there are 110 colors lsited below, however I have removed a few duplicate colors from the pool.</p>
+<p>Eagle eyed readers will see that there are 110 colors listed below, however I have removed a few duplicate colors from the pool.</p>
 <p><img src="https://Ian-P-McCabe.github.io/blog/posts/dodgeball-colors-3/assets/SolidColors.png" class="img-fluid" alt="Solid Colors"> <img src="https://Ian-P-McCabe.github.io/blog/posts/dodgeball-colors-3/assets/HeatherColors.png" class="img-fluid" alt="Heather Colors"></p>
-<div id="0bcd5c50" class="cell" data-execution_count="2">
+<div id="8755d03a" class="cell" data-execution_count="2">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1">lab_string <span class="op" style="color: #5E5E5E;
@@ -209,7 +209,7 @@ font-style: inherit;">in</span> lab_floats]</span></code></pre></div></div>
 <div class="g-col-6">
 <hr>
 <p>These two colors are <strong>2</strong> units apart:</p>
-<div id="46e0684e" class="cell" data-execution_count="3">
+<div id="7596ca04" class="cell" data-execution_count="3">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><span class="im" style="color: #00769E;
@@ -235,7 +235,7 @@ font-style: inherit;">'Hex'</span>]])</span></code></pre></div></div>
 </div>
 <hr>
 <p>These two colors are <strong>10</strong> units apart:</p>
-<div id="d81d4496" class="cell" data-execution_count="4">
+<div id="72562374" class="cell" data-execution_count="4">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1">display_color_swatches([color_df.iloc[<span class="dv" style="color: #AD0000;
@@ -254,7 +254,7 @@ font-style: inherit;">'Hex'</span>]])</span></code></pre></div></div>
 </div>
 <hr>
 <p>These two colors are <strong>20</strong> units apart:</p>
-<div id="f6793514" class="cell" data-execution_count="5">
+<div id="564c1dfb" class="cell" data-execution_count="5">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1">display_color_swatches([color_df.iloc[<span class="dv" style="color: #AD0000;
@@ -276,7 +276,7 @@ font-style: inherit;">'Hex'</span>]])</span></code></pre></div></div>
 <div class="g-col-6">
 <hr>
 <p>These two colors are <strong>30</strong> units apart:</p>
-<div id="0463f691" class="cell" data-execution_count="6">
+<div id="c391cfa6" class="cell" data-execution_count="6">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1">display_color_swatches([color_df.iloc[<span class="dv" style="color: #AD0000;
@@ -295,7 +295,7 @@ font-style: inherit;">'Hex'</span>]])</span></code></pre></div></div>
 </div>
 <hr>
 <p>And these two colors are <strong>80</strong> units apart:</p>
-<div id="a9de0231" class="cell" data-execution_count="7">
+<div id="d86ad404" class="cell" data-execution_count="7">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1">display_color_swatches([color_df.iloc[<span class="dv" style="color: #AD0000;
@@ -317,14 +317,13 @@ font-style: inherit;">'Hex'</span>]])</span></code></pre></div></div>
 </div>
 </section>
 </section>
-</section>
-<section id="finding-the-best-colors" class="level1">
-<h1>Finding the best colors</h1>
+<section id="finding-the-best-colors" class="level2">
+<h2 class="anchored" data-anchor-id="finding-the-best-colors">Finding the best colors</h2>
 <p>Now that we have our colors in a format we can properly analyze, we can return to answer our central question:</p>
 <p><strong>What is the best set of shirt colors for the dodgeball league?</strong></p>
 <p>In part 2 we covered why this isn’t super easy to compute:</p>
 <ul>
-<li>Analyzing the best combinations of 16 colors yeilds <strong>2,245,547,413,628,550,570</strong> possible combinations! (2 quintillion)</li>
+<li>Analyzing the best combinations of 16 colors yields <strong>2,245,547,413,628,550,570</strong> possible combinations! (2 quintillion)</li>
 <li>Analyzing the best combinations of 24 colors, we must score <strong>178,409,928,551,259,450,861,900</strong> possible combinations! (178 sextillion)</li>
 </ul>
 <p>I framed the problem as a a subset of the Maximum Diversity Problem - how can we select the subset of colors that are most distant from each other on average?</p>
@@ -332,7 +331,7 @@ font-style: inherit;">'Hex'</span>]])</span></code></pre></div></div>
 <p>While these are fun approximations (especially the convex hull visual), they pale in comparison to the power of proper optimization methods.</p>
 <p>We will use Google’s <strong>Operations Research Tools Constraint Programming - SAT Solver</strong> to systematically explore solutions to our color diversity problem.</p>
 <p>The CP-SAT solver is flexible enough to enable us to explore the original <strong>maximum pairwise distance</strong> approach as well as other measures such as <strong>maximum minimum distance</strong>.</p>
-<div id="e483cf8b" class="cell" data-execution_count="8">
+<div id="567294f8" class="cell" data-execution_count="8">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><span class="im" style="color: #00769E;
@@ -357,11 +356,12 @@ background-color: null;
 font-style: inherit;">16</span></span></code></pre></div></div>
 </details>
 </div>
+</section>
 <section id="maximum-pairwise-distance" class="level2">
 <h2 class="anchored" data-anchor-id="maximum-pairwise-distance">Maximum Pairwise Distance</h2>
 <p>Continuing where we left off in part 2, lets find the subset of colors with the greatest pairwise distance. This is the same metric used in the random, greedy, and convex hull approaches.</p>
 <p>After letting the model run for 5 minutes, we get the following:</p>
-<div id="a4c10318" class="cell" data-cache="false" data-execution_count="9">
+<div id="47660ad5" class="cell" data-cache="false" data-execution_count="9">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><span class="im" style="color: #00769E;
@@ -449,7 +449,7 @@ font-style: inherit;">#max_pairwise_selected_colors = max_pairwise_model.analyze
 <pre><code>Variables created: 103</code></pre>
 </div>
 </div>
-<div id="54562861" class="cell" data-execution_count="10">
+<div id="c8f7b453" class="cell" data-execution_count="10">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><span class="co" style="color: #5E5E5E;
@@ -499,7 +499,7 @@ font-style: inherit;"># plot_distance_heatmap(max_pairwise_selected_colors, dist
 <section id="maximize-the-minimum-distance" class="level2">
 <h2 class="anchored" data-anchor-id="maximize-the-minimum-distance">Maximize the Minimum Distance</h2>
 <p>We can run a similar optimization to the code above, however we tweak the objective function to maximize the minimum distance between any two points.</p>
-<div id="23d200c4" class="cell" data-execution_count="11">
+<div id="350bd794" class="cell" data-execution_count="11">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><span class="im" style="color: #00769E;
@@ -550,10 +550,10 @@ font-style: inherit;">100</span>]</span>
 <span id="cb12-8"></span>
 <span id="cb12-9"><span class="co" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;"># optimal_paletts = max_minimum_model.max_min_solve_enumerate_optimal(max_solutions = 100000, known_optimal=22)</span></span>
+font-style: inherit;"># optimal_palettes = max_minimum_model.max_min_solve_enumerate_optimal(max_solutions = 100000, known_optimal=22)</span></span>
 <span id="cb12-10"><span class="co" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;"># max_minimum_colors = random.choice(optimal_paletts)</span></span>
+font-style: inherit;"># max_minimum_colors = random.choice(optimal_palettes)</span></span>
 <span id="cb12-11"></span>
 <span id="cb12-12"><span class="co" style="color: #5E5E5E;
 background-color: null;
@@ -561,7 +561,7 @@ font-style: inherit;"># max_minimum_colors, known_max_min = max_minimum_model.so
 </details>
 </div>
 <p>We now obtain a new palette:</p>
-<div id="a35911f2" class="cell" data-execution_count="12">
+<div id="804d86ca" class="cell" data-execution_count="12">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><span class="co" style="color: #5E5E5E;
@@ -595,8 +595,8 @@ font-style: inherit;"># plot_distance_heatmap(max_minimum_colors, distance_matri
 <p>Quite a few ideal palettes to choose from!</p>
 <p>Before moving forward, let’s take a moment and compare the results of our different objective functions:</p>
 <div class="grid">
-<section id="maxmimize-total-distance" class="level3 g-col-6">
-<h3 class="anchored" data-anchor-id="maxmimize-total-distance">Maxmimize Total Distance</h3>
+<section id="maximize-total-distance" class="level3 g-col-6">
+<h3 class="anchored" data-anchor-id="maximize-total-distance">Maximize Total Distance</h3>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="https://Ian-P-McCabe.github.io/blog/posts/dodgeball-colors-3/assets/max_pairwise_heatmap.svg" class="img-fluid figure-img"></p>
@@ -605,7 +605,7 @@ font-style: inherit;"># plot_distance_heatmap(max_minimum_colors, distance_matri
 </div>
 <ul>
 <li>Colors are broadly more distant (plot is greener)</li>
-<li>Adjacent colors are very close togther</li>
+<li>Adjacent colors are very close together</li>
 <li>Solution is FEASIBLE</li>
 <li>No optimal solution, billions of feasible solutions</li>
 </ul>
@@ -630,7 +630,7 @@ font-style: inherit;"># plot_distance_heatmap(max_minimum_colors, distance_matri
 <h3 class="anchored" data-anchor-id="hybrid-approach---finding-the-best-of-the-best">Hybrid Approach - Finding the Best of the Best</h3>
 <p>Since the solution from the Maximum Minimum approach resulted in a max-min of 22 ∆E units, we can rerun the total distance solver with an additional constraint that all pairs must be at least 22 ∆E units apart.</p>
 <p>After running the solver we get the following result:</p>
-<div id="8b4e7684" class="cell" data-execution_count="13">
+<div id="a601a4ca" class="cell" data-execution_count="13">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1">hybrid_solver <span class="op" style="color: #5E5E5E;
@@ -683,7 +683,7 @@ font-style: inherit;"># best_hybrid_colors, _ = hybrid_solver.solve()</span></sp
 </details>
 </div>
 <p>And we obtain the following new palette</p>
-<div id="278d7cac" class="cell" data-execution_count="14">
+<div id="15ba665a" class="cell" data-execution_count="14">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1">best_hybrid_colors.sort(key<span class="op" style="color: #5E5E5E;
@@ -753,6 +753,1579 @@ font-style: inherit;"># plot_distance_heatmap(best_hybrid_colors, distance_matri
   <guid>https://Ian-P-McCabe.github.io/blog/posts/dodgeball-colors-3/</guid>
   <pubDate>Mon, 05 Jan 2026 05:00:00 GMT</pubDate>
   <media:content url="https://Ian-P-McCabe.github.io/blog/posts/dodgeball-colors-3/assets/Part3HeaderImage.png" medium="image" type="image/png" height="73" width="144"/>
+</item>
+<item>
+  <title>Shirt Color Selection Problem Part 2</title>
+  <dc:creator>Ian McCabe</dc:creator>
+  <link>https://Ian-P-McCabe.github.io/blog/posts/dodgeball-colors-2/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<p>In <a href="../../posts/dodgeball-colors-1/index.html">Part 1</a>, we determined which team colors would be best to add to the upcoming dodgeball season. We wanted to select colors that would be different from those already chosen, teams with similar colors are hard to tell apart. We used LAB-Color-Distance formulas to select colors that are most distant and chose from those.</p>
+<p>The similar-color-problem in Part 1 arose because teams are allowed to select from 103 shirt colors. Many of these colors are very similar, so it is easy for teams to select colors that are hard to tell apart. What if we wanted to avoid this situation entirely?</p>
+<p>Instead of letting teams pick from 103 colors, we gave them 16 or 24 colors to select from, and we guaranteed that all the colors are far enough apart to not appear too similar.</p>
+<section id="lots-of-combinations" class="level2">
+<h2 class="anchored" data-anchor-id="lots-of-combinations">Lots of Combinations</h2>
+<p>One way to approach this problem is to select the 16 colors that have the greatest average distance between them. This would work, however…</p>
+<p>If we want to pick 16 colors, we must score <strong>2,245,547,413,628,550,570</strong> possible combinations! (2 quintillion)</p>
+<p>And if we want to pick 24 colors, we must score <strong>178,409,928,551,259,450,861,900</strong> possible combinations! (178 sextillion)</p>
+<p>To put those numbers into context, it would take ~10 days of compute time to find the 16 best colors, and <strong>~2175 years, 328 days, and 17 hours of compute time to find the 24 best colors*!</strong><sup>1</sup></p>
+</section>
+<section id="the-maximum-diversity-problem" class="level2">
+<h2 class="anchored" data-anchor-id="the-maximum-diversity-problem">The Maximum Diversity Problem</h2>
+<p>What we’re attempting to do, finding a subset of colors with an optimal distance between them, is a variation of the <a href="https://grafo.etsii.urjc.es/optsicom/mdp.html">Maximum Diversity Problem</a>.</p>
+<p>The Maximum Diversity Problem falls into a class of computer science problems that are NP-Hard, or functionally unsolvable. We see the NP-Hard characteristics of our color selection problem when the compute time goes from 10 days to 2175 years by adding 8 additional colors to the number of colors we are selecting.</p>
+<p>We can work around the complexity of our problem with a heuristic. A heuristic is a problem-solving technique that uses shortcuts to find an approximate solution quickly.</p>
+<section id="a-note-on-scoring" class="level3">
+<h3 class="anchored" data-anchor-id="a-note-on-scoring">A Note On Scoring</h3>
+<p>For this article we will score our color palettes based off of the average ∆E distance between all the colors in a set (greatest average distance as mentioned above). This maximizes the global diversity of the set - which is exactly what we’re trying to tackle with the Maximum Diversity Problem.</p>
+<p>You can see the scoring function in the cell below:</p>
+<div id="c9f2ce47" class="cell" data-execution_count="2">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> compute_score(color_indices: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">list</span>[<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">int</span>], distance_matrix) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-&gt;</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span>:</span>
+<span id="cb1-2">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">"""</span></span>
+<span id="cb1-3"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">    Returns the average CIE 2000 distance between input colors.</span></span>
+<span id="cb1-4"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">    """</span></span>
+<span id="cb1-5">    total_distance <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span></span>
+<span id="cb1-6">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> i, j <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> combinations(color_indices, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>):</span>
+<span id="cb1-7">        total_distance <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+=</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">abs</span>(distance_matrix[(i,j)])</span>
+<span id="cb1-8"></span>
+<span id="cb1-9">    total_pairs <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> comb(<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">len</span>(color_indices), <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>)</span>
+<span id="cb1-10"></span>
+<span id="cb1-11">    average_distance <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> total_distance<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span>total_pairs</span>
+<span id="cb1-12"></span>
+<span id="cb1-13">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> average_distance</span></code></pre></div></div>
+</details>
+</div>
+<p>Now we can setup our notebook and begin:</p>
+<div id="ef98066e" class="cell" data-execution_count="3">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%</span>load_ext autoreload</span>
+<span id="cb2-2"><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%</span>autoreload <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span></span>
+<span id="cb2-3"></span>
+<span id="cb2-4"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># This cell exists just to setup the python environment</span></span>
+<span id="cb2-5"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> pandas <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> pd</span>
+<span id="cb2-6"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> numpy</span>
+<span id="cb2-7"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> colormath <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> color_objects, color_diff</span>
+<span id="cb2-8"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> random</span>
+<span id="cb2-9"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> itertools <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> combinations</span>
+<span id="cb2-10"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> math <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> comb</span>
+<span id="cb2-11"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> time</span>
+<span id="cb2-12"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> IPython.display <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> display, Markdown</span>
+<span id="cb2-13"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> pickle</span>
+<span id="cb2-14"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> pathlib <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> Path</span>
+<span id="cb2-15"></span>
+<span id="cb2-16"></span>
+<span id="cb2-17"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Fixes issue with the colormath library</span></span>
+<span id="cb2-18"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> patch_asscalar(a):</span>
+<span id="cb2-19">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> a.item()</span>
+<span id="cb2-20"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">setattr</span>(numpy, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"asscalar"</span>, patch_asscalar)</span></code></pre></div></div>
+</details>
+</div>
+</section>
+</section>
+<section id="heuristic-1-randomly-select-colors" class="level2">
+<h2 class="anchored" data-anchor-id="heuristic-1-randomly-select-colors">Heuristic 1: Randomly Select Colors</h2>
+<p>A simple heuristic we can use is randomly selecting colors from the set of 103. This likely won’t yield the best results, but scoring these random selections provides a useful baseline for future algorithms.</p>
+<p>I selected 1,000,000 random color combinations and calculated the average, lowest, and highest score:</p>
+<div id="692dd38d" class="cell" data-cache="true" data-execution_count="4">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> dodgeball_colors_3 <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> build_distance_matrix</span>
+<span id="cb3-2"></span>
+<span id="cb3-3">color_df <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pd.read_csv(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"../../data/all_colors.csv"</span>)</span>
+<span id="cb3-4"></span>
+<span id="cb3-5">lab_string <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">list</span>(color_df[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"L*a*b Value"</span>])</span>
+<span id="cb3-6">lab_strings <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [color_string.split(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">", "</span>) <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> color_string <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> lab_string]</span>
+<span id="cb3-7"></span>
+<span id="cb3-8">lab_floats <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [[<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span>(x) <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> x <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> row] <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> row <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> lab_strings]</span>
+<span id="cb3-9"></span>
+<span id="cb3-10">lab_colors <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [color_objects.LabColor(lab_l<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>lab_color[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>], lab_a<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>lab_color[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>], lab_b<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>lab_color[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>]) <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> lab_color <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> lab_floats]</span>
+<span id="cb3-11"></span>
+<span id="cb3-12">distance_matrix <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> build_distance_matrix(lab_colors)</span>
+<span id="cb3-13"></span>
+<span id="cb3-14">cache_file <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> Path(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"assets/scored_samples.pkl"</span>)</span>
+<span id="cb3-15">RERUN <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">False</span> </span>
+<span id="cb3-16"><span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">if</span> cache_file.exists() <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">and</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">not</span> RERUN:</span>
+<span id="cb3-17">    cached <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pickle.loads(cache_file.read_bytes())</span>
+<span id="cb3-18">    scored_samples <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> cached[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"scored_samples"</span>]</span>
+<span id="cb3-19">    elapsed_time <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> cached[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"elapsed_time"</span>]</span>
+<span id="cb3-20"><span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">else</span>:</span>
+<span id="cb3-21">    start_time <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> time.time()</span>
+<span id="cb3-22">    samples <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [random.sample(<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">range</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">103</span>), <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">16</span>) <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> _ <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">range</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1_000_000</span>)]</span>
+<span id="cb3-23">    scored_samples <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> {<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">tuple</span>(s): compute_score(s, distance_matrix) <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> s <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> samples}</span>
+<span id="cb3-24">    elapsed_time <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> time.time() <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> start_time</span>
+<span id="cb3-25">    cache_file.write_bytes(pickle.dumps({</span>
+<span id="cb3-26">        <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"scored_samples"</span>: scored_samples,</span>
+<span id="cb3-27">        <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"elapsed_time"</span>: elapsed_time,</span>
+<span id="cb3-28">    }))</span></code></pre></div></div>
+</details>
+</div>
+<div id="212aad28" class="cell" data-execution_count="5">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> dodgeball_colors_3 <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> display_palette</span>
+<span id="cb4-2"></span>
+<span id="cb4-3">best <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">max</span>(scored_samples, key<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>scored_samples.get)</span>
+<span id="cb4-4">worst <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">min</span>(scored_samples, key<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>scored_samples.get)</span>
+<span id="cb4-5"></span>
+<span id="cb4-6">table <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"""</span></span>
+<span id="cb4-7"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">| Metric | Score | Unit |</span></span>
+<span id="cb4-8"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">|---|---|---|</span></span>
+<span id="cb4-9"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">| Total Runtime | </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>elapsed_time<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:.2f}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;"> | Seconds |</span></span>
+<span id="cb4-10"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">| Average Score | </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">sum</span>(scored_samples.values()) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">len</span>(scored_samples)<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:.2f}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;"> | Perceived LAB Color Distance |</span></span>
+<span id="cb4-11"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">| Lowest Score | </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>scored_samples[worst]<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:.2f}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;"> | Perceived LAB Color Distance |</span></span>
+<span id="cb4-12"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">| Highest Score | </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>scored_samples[best]<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:.2f}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;"> | Perceived LAB Color Distance |</span></span>
+<span id="cb4-13"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"""</span></span>
+<span id="cb4-14"></span>
+<span id="cb4-15">display(Markdown(table))</span>
+<span id="cb4-16"></span>
+<span id="cb4-17">display_palette(selected_colors<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">list</span>(best), color_df<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>color_df, filepath<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"assets/best_random.svg"</span>, sort_rainbow<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>, hide_output<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>)</span>
+<span id="cb4-18"></span>
+<span id="cb4-19">display_palette(selected_colors<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">list</span>(worst), color_df<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>color_df, filepath<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"assets/worst_random.svg"</span>, sort_rainbow<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>, hide_output<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>)</span></code></pre></div></div>
+</details>
+<div class="cell-output cell-output-display cell-output-markdown">
+<table class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th>Metric</th>
+<th>Score</th>
+<th>Unit</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Total Runtime</td>
+<td>10.02</td>
+<td>Seconds</td>
+</tr>
+<tr class="even">
+<td>Average Score</td>
+<td>28.92</td>
+<td>Perceived LAB Color Distance</td>
+</tr>
+<tr class="odd">
+<td>Lowest Score</td>
+<td>17.03</td>
+<td>Perceived LAB Color Distance</td>
+</tr>
+<tr class="even">
+<td>Highest Score</td>
+<td>40.77</td>
+<td>Perceived LAB Color Distance</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Here is the score distribution (in Heather Prism Dusty Blue):</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://Ian-P-McCabe.github.io/blog/posts/dodgeball-colors-2/assets/score_distribution.svg" class="img-fluid figure-img"></p>
+<figcaption>Random Palette Score Distribution Plot</figcaption>
+</figure>
+</div>
+<div id="665fe0de" class="cell" data-execution_count="6">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> dodgeball_colors_3 <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> plot_score_histogram</span>
+<span id="cb5-2"></span>
+<span id="cb5-3">plot_score_histogram(</span>
+<span id="cb5-4">    scores<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">list</span>(scored_samples.values()),</span>
+<span id="cb5-5">    filepath<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"assets/score_distribution.svg"</span>,</span>
+<span id="cb5-6">    bins<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">50</span>,</span>
+<span id="cb5-7">    title<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Distribution of 1,000,000 Random Palette Scores"</span>,</span>
+<span id="cb5-8">    color<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'#92ACA0'</span>,</span>
+<span id="cb5-9">    hide_output<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>,</span>
+<span id="cb5-10">    min_x<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">15</span>,</span>
+<span id="cb5-11">    max_x<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">45</span></span>
+<span id="cb5-12">)  </span></code></pre></div></div>
+</details>
+</div>
+<p>Here is the low scoring palette (avg 17.03 ∆E):</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://Ian-P-McCabe.github.io/blog/posts/dodgeball-colors-2/assets/worst_random.svg" class="img-fluid figure-img"></p>
+<figcaption>Low Scoring Random Palette</figcaption>
+</figure>
+</div>
+<p>How drab.</p>
+<p>Here is the high scoring palette (avg 40.77 ∆E) :</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://Ian-P-McCabe.github.io/blog/posts/dodgeball-colors-2/assets/best_random.svg" class="img-fluid figure-img"></p>
+<figcaption>High Scoring Random Palette</figcaption>
+</figure>
+</div>
+<p>How vibrant! But can we do better? Heather Red, Cardinal, and Heather Raspberry appear quite similar.</p>
+</section>
+<section id="heuristic-2-greedy-algorithms" class="level2">
+<h2 class="anchored" data-anchor-id="heuristic-2-greedy-algorithms">Heuristic 2: Greedy Algorithms</h2>
+<p>Greedy algorithms work by picking the best option at each step of the algorithm. In our case, the greedy algorithm will take two points and then iteratively select the 14 points that have the greatest minimum distance from the current set.</p>
+<p>We can easily run this algorithm on our set of points as there are only <img src="https://latex.codecogs.com/png.latex?%5Cbinom%7B103%7D%7B2%7D%20=%205%7B,%7D253"> possible starting combinations.</p>
+<div id="b3470469" class="cell" data-cache="true" data-execution_count="7">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> parse_lab(lab_string: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">str</span>) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-&gt;</span> color_objects.LabColor:</span>
+<span id="cb6-2">    L, a, b <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> (<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span>(x) <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> x <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> lab_string.split(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">", "</span>))</span>
+<span id="cb6-3">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> color_objects.LabColor(lab_l<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>L, lab_a<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>a, lab_b<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>b)</span>
+<span id="cb6-4"></span>
+<span id="cb6-5">color_df[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"LabColor"</span>] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> color_df[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"L*a*b Value"</span>].<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">apply</span>(parse_lab)</span>
+<span id="cb6-6"></span>
+<span id="cb6-7"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> greedy_search(colors: pd.DataFrame, distance_matrix, num_colors: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">int</span>, start_a: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">int</span>, start_b: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">int</span>):</span>
+<span id="cb6-8">    n <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">len</span>(colors)</span>
+<span id="cb6-9">    selected <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">set</span>()</span>
+<span id="cb6-10">    selected.add(start_a)</span>
+<span id="cb6-11">    selected.add(start_b)</span>
+<span id="cb6-12"></span>
+<span id="cb6-13">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">while</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">len</span>(selected) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&lt;</span> num_colors:</span>
+<span id="cb6-14">        max_min_dist <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span></span>
+<span id="cb6-15">        best_point <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span></span>
+<span id="cb6-16"></span>
+<span id="cb6-17">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> i <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">range</span>(n):</span>
+<span id="cb6-18">            <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">if</span> i <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">not</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> selected:</span>
+<span id="cb6-19">                min_dist <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">min</span>(distance_matrix[(i, j)] <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> j <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> selected)</span>
+<span id="cb6-20">                <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">if</span> min_dist <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&gt;</span> max_min_dist:</span>
+<span id="cb6-21">                    max_min_dist <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> min_dist</span>
+<span id="cb6-22">                    best_point <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> i</span>
+<span id="cb6-23"></span>
+<span id="cb6-24">        selected.add(best_point)</span>
+<span id="cb6-25"></span>
+<span id="cb6-26">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">list</span>(selected)</span>
+<span id="cb6-27"></span>
+<span id="cb6-28"></span>
+<span id="cb6-29">cache_file <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> Path(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"assets/greedy_results.pkl"</span>)</span>
+<span id="cb6-30">GREEDY_RERUN <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">False</span> </span>
+<span id="cb6-31"><span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">if</span> cache_file.exists() <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">and</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">not</span> RERUN:</span>
+<span id="cb6-32">    cached <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pickle.loads(cache_file.read_bytes())</span>
+<span id="cb6-33">    greedy_scores <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> cached[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"greedy_scores"</span>]</span>
+<span id="cb6-34">    greedy_elapsed_time <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> cached[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"greedy_elapsed_time"</span>]</span>
+<span id="cb6-35"><span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">else</span>:</span>
+<span id="cb6-36">    greedy_start_time <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> time.time()</span>
+<span id="cb6-37">    greedy_results <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> []</span>
+<span id="cb6-38">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> i, j <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> combinations(<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">range</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">103</span>),<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>):</span>
+<span id="cb6-39">        result <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> greedy_search(colors<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>color_df, distance_matrix<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>distance_matrix, num_colors<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">16</span>, start_a<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>i, start_b<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>j)</span>
+<span id="cb6-40">        greedy_results.append(result)</span>
+<span id="cb6-41">    greedy_scores <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> {<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">tuple</span>(s): compute_score(s, distance_matrix) <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> s <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> greedy_results}</span>
+<span id="cb6-42">    greedy_elapsed_time <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> time.time() <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> greedy_start_time</span>
+<span id="cb6-43">    cache_file.write_bytes(pickle.dumps({</span>
+<span id="cb6-44">        <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"greedy_scores"</span>: greedy_scores,</span>
+<span id="cb6-45">        <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"greedy_elapsed_time"</span>: greedy_elapsed_time,</span>
+<span id="cb6-46">    }))</span></code></pre></div></div>
+</details>
+</div>
+<div id="c04754bf" class="cell" data-execution_count="8">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1">best <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">max</span>(greedy_scores, key<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>greedy_scores.get)</span>
+<span id="cb7-2">worst <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">min</span>(greedy_scores, key<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>greedy_scores.get)</span>
+<span id="cb7-3"></span>
+<span id="cb7-4">table <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"""</span></span>
+<span id="cb7-5"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">| Metric | Score | Unit |</span></span>
+<span id="cb7-6"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">|---|---|---|</span></span>
+<span id="cb7-7"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">| Total Runtime | </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>greedy_elapsed_time<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:.2f}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;"> | Seconds |</span></span>
+<span id="cb7-8"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">| Average Score | </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">sum</span>(greedy_scores.values()) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">len</span>(greedy_scores)<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:.2f}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;"> | Perceived LAB Color Distance |</span></span>
+<span id="cb7-9"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">| Lowest Score | </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>greedy_scores[worst]<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:.2f}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;"> | Perceived LAB Color Distance |</span></span>
+<span id="cb7-10"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">| Highest Score | </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>greedy_scores[best]<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:.2f}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;"> | Perceived LAB Color Distance |</span></span>
+<span id="cb7-11"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"""</span></span>
+<span id="cb7-12"></span>
+<span id="cb7-13">display(Markdown(table))</span>
+<span id="cb7-14"></span>
+<span id="cb7-15">display_palette(selected_colors<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">list</span>(best), color_df<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>color_df, filepath<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"assets/best_greedy.svg"</span>, sort_rainbow<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>, hide_output<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>)</span>
+<span id="cb7-16"></span>
+<span id="cb7-17">display_palette(selected_colors<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">list</span>(worst), color_df<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>color_df, filepath<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"assets/worst_greedy.svg"</span>, sort_rainbow<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>, hide_output<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>)</span>
+<span id="cb7-18"></span>
+<span id="cb7-19">plot_score_histogram(</span>
+<span id="cb7-20">    scores<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">list</span>(greedy_scores.values()),</span>
+<span id="cb7-21">    filepath<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"assets/greedy_score_distribution.svg"</span>,</span>
+<span id="cb7-22">    bins<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">50</span>,</span>
+<span id="cb7-23">    title<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Distribution of Greedy Palette Scores"</span>,</span>
+<span id="cb7-24">    color<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'#92ACA0'</span>,</span>
+<span id="cb7-25">    hide_output<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>,</span>
+<span id="cb7-26">    min_x<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">15</span>,</span>
+<span id="cb7-27">    max_x<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">45</span></span>
+<span id="cb7-28">)</span></code></pre></div></div>
+</details>
+<div class="cell-output cell-output-display cell-output-markdown">
+<table class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th>Metric</th>
+<th>Score</th>
+<th>Unit</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Total Runtime</td>
+<td>3.99</td>
+<td>Seconds</td>
+</tr>
+<tr class="even">
+<td>Average Score</td>
+<td>36.12</td>
+<td>Perceived LAB Color Distance</td>
+</tr>
+<tr class="odd">
+<td>Lowest Score</td>
+<td>32.73</td>
+<td>Perceived LAB Color Distance</td>
+</tr>
+<tr class="even">
+<td>Highest Score</td>
+<td>39.02</td>
+<td>Perceived LAB Color Distance</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Here is the score distribution:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://Ian-P-McCabe.github.io/blog/posts/dodgeball-colors-2/assets/greedy_score_distribution.svg" class="img-fluid figure-img"></p>
+<figcaption>Greedy Palette Score Distribution Plot</figcaption>
+</figure>
+</div>
+<p>The greedy data isn’t as smooth since there’s only ~5000 samples instead of 1,000,000. However, we can still see that the greedy curve is shifted to the right of the random curve; <strong>on average greedy samples are better.</strong></p>
+<p>Here is the worst greedy palette (avg. ∆E of 32.73)</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://Ian-P-McCabe.github.io/blog/posts/dodgeball-colors-2/assets/worst_greedy.svg" class="img-fluid figure-img"></p>
+<figcaption>Worst Greedy Color Palette</figcaption>
+</figure>
+</div>
+<p>Feels a little washed out.</p>
+<p>Here is the best greedy palette (average ∆E of 39.02)</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://Ian-P-McCabe.github.io/blog/posts/dodgeball-colors-2/assets/best_greedy.svg" class="img-fluid figure-img"></p>
+<figcaption>Best Greedy Color Palette</figcaption>
+</figure>
+</div>
+<p>While not as diverse on average as the random palette, maximizing the minimum distance within the greedy algorithm steps helps keep any two points far apart.<sup>2</sup></p>
+<p>But can we do even better?</p>
+</section>
+<section id="heuristic-3-a-convex-hull" class="level2">
+<h2 class="anchored" data-anchor-id="heuristic-3-a-convex-hull">Heuristic 3: A Convex Hull</h2>
+<p>What is a Convex Hull? The formal definition is “The intersection of all convex sets containing a given subset of Euclidean space.”</p>
+<p>What?</p>
+<p>An image outlining what the convex hull of a set of points looks like is far more intuitive:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://Ian-P-McCabe.github.io/blog/posts/dodgeball-colors-2/assets/Convex-Hull.jpg" class="img-fluid figure-img"></p>
+<figcaption>Convex Hull Example from Geeks for Geeks</figcaption>
+</figure>
+</div>
+<p>In 2 dimensions, the convex hull of points is represented by the green line. Each point that touches the green line is a vertex of the convex hull.</p>
+<p><strong>Can we take the convex hull of our color space and obtain a color set from the vertices?</strong></p>
+<p>We can take the convex hull of the point cloud of league colors:</p>
+<div class="grid">
+<div class="g-col-6">
+<div id="dd29e212" class="cell" data-cache="true" data-execution_count="9">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> dodgeball_colors_3 <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> generate_lab_3d_all_colors</span>
+<span id="cb8-2"></span>
+<span id="cb8-3">generate_lab_3d_all_colors(df<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>color_df, figure_title<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"All Colors in 3D"</span>)</span></code></pre></div></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>            <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_SVG"></script><script type="text/javascript">if (window.MathJax && window.MathJax.Hub && window.MathJax.Hub.Config) {window.MathJax.Hub.Config({SVG: {font: "STIX-Web"}});}</script>                <script type="text/javascript">window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
+        <script charset="utf-8" src="https://cdn.plot.ly/plotly-3.3.0.min.js" integrity="sha256-bO3dS6yCpk9aK4gUpNELtCiDeSYvGYnK7jFI58NQnHI=" crossorigin="anonymous"></script>                <div id="1cd1c049-ca96-4c07-a5b0-46c7806ef242" class="plotly-graph-div" style="height:525px; width:100%;"></div>            <script type="text/javascript">                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("1cd1c049-ca96-4c07-a5b0-46c7806ef242")) {                    Plotly.newPlot(                        "1cd1c049-ca96-4c07-a5b0-46c7806ef242",                        [{"hovertemplate":"\u003cb\u003e%{text}\u003c\u002fb\u003e\u003cbr\u003eL*: %{y:.1f}\u003cbr\u003ea*: %{x:.1f}\u003cbr\u003eb*: %{z:.1f}\u003cbr\u003e","marker":{"color":["#4298B5","#555D51","#BDC4C2","#6C6864","#A05729","#89B2BD","#C6057B","#2D2926","#423A31","#CB6015","#9D2235","#9B2743","#DE5795","#FF8870","#38484E","#4A493B","#005876","#115740","#183029","#FFA400","#007A53","#729364","#A6BBC8","#DEBBD5","#F2CA00","#672E45","#A36D6A","#60705E","#C29951","#E2D0A0","#202A44","#66A5B5","#474C21","#FF6A39","#55394D","#F7CED7","#E10600","#BA0C2F","#9E483F","#C7C9C7","#DECA9E","#EFDAC8","#678096","#757870","#E37F57","#AEA282","#00BFB2","#2E1A47","#4C619C","#00AFD7","#212322","#DFDDD6","#FFFFFF","#F6EB69","#ACB3B8","#454038","#545859","#75726F","#48A9C5","#A26C53","#8E9FBC","#5D4B3C","#651C32","#A26859","#658BCC","#34657F","#DCD2C4","#8FAD9F","#48655B","#447961","#79863C","#BDDDD9","#00965E","#65649E","#603147","#A06A62","#343A4A","#6C6E60","#A8D5BA","#CCA55C","#3B4559","#827752","#AA939C","#F2BD79","#BCC0D2","#92ACA0","#B3D2B5","#CAA0AE","#A0DAB3","#D6D2BE","#EABEB0","#EA905D","#AF4D64","#BF0D3E","#00BAB3","#5C6E76","#908878","#76797A","#E88467","#958A73","#7D55C7","#2B7BBB","#FDD26E"],"opacity":1.0,"size":7},"mode":"markers+text","text":["Aqua","Army","Ash","Asphalt","Autumn","Baby Blue","Berry","Black","Brown","Burnt Orange","Canvas Red","Cardinal","Charity Pink","Coral","Dark Grey","Dark Olive","Deep Teal","Evergreen","Forest","Gold","Kelly","Leaf","Light Blue","Lilac","Maize Yellow","Maroon","Mauve","Military Green","Mustard","Natural","Navy","Ocean Blue","Olive","Orange","Oxblood Black","Pink","Poppy","Red","Rust","Silver","Soft Cream","Soft Pink","Steel Blue","Storm","Sunset","Tan","Teal","Team Purple","True Royal","Turquoise","Vintage Black","Vintage White","White","Yellow","Athletic Heather","Black Heather","Dark Grey Heather","Deep Heather","Heather Aqua","Heather Autumn","Heather Blue","Heather Brown","Heather Cardinal","Heather Clay","Heather Columbia Blue","Heather Deep Teal","Heather Dust","Heather Dusty Blue","Heather Forest","Heather Grass Green","Heather Green","Heather Ice Blue","Heather Kelly","Heather Lapis","Heather Maroon","Heather Mauve","Heather Midnight Navy","Heather Military Green","Heather Mint","Heather Mustard","Heather Navy","Heather Olive","Heather Orchid","Heather Peach","Heather Prism Blue","Heather Prism Dusty Blue","Heather Prism Ice Blue","Heather Prism Lilac","Heather Prism Mint","Heather Prism Natural","Heather Prism Peach","Heather Prism Sunset","Heather Raspberry","Heather Red","Heather Sea Green","Heather Slate","Heather Stone","Heather Storm","Heather Sunset","Heather Tan","Heather Team Purple","Heather True Royal","Heather Yellow Gold"],"textfont":{"size":8},"textposition":"top center","x":{"dtype":"f8","bdata":"pHA9CtdjNMDhehSuR+EOwB+F61G4HgHAhetRuB6F8z\u002f2KFyPwrVCQClcj8L1KCjA9ihcj8L1UUCkcD0K16P0P6RwPQrXowpAhetRuB7FRUD2KFyPwnVKQM3MzMzMDElAcT0K16PQTUCuR+F6FA5HQM3MzMzMzBLA9ihcj8L1AsBxPQrXozA3wKRwPQrX4zrAmpmZmZkZKMCkcD0K1yM\u002fQK5H4XoULkjApHA9CtcjMsBxPQrXo3AUwFyPwvUo3DBACtejcD0KFECPwvUoXE89QHsUrkfhujZAzczMzMzMIMDXo3A9CtcbQK5H4XoUrgFAj8L1KFyPBEDhehSuR2ExwIXrUbgehRvAcT0K16MwTUB7FK5H4TowQAAAAAAAQDBASOF6FK7HUkC4HoXrUWhQQJqZmZmZ+UJAPQrXo3A92r\u002fsUbgehesJQB+F61G4HhhA16NwPQrXEsC4HoXrUbjuv+F6FK5HwUNAKVyPwvUoAEAK16NwPapNwNejcD0KlzFApHA9CtejF0CF61G4HuVAwHsUrkfhevC\u002fmpmZmZmZ4b8AAAAAAAAAAFK4HoXrURvACtejcD0K+7+PwvUoXI8EQBSuR+F6FO6\u002fCtejcD0K+z9cj8L1KNw2wFK4HoXrkTJAj8L1KFyP4r97FK5H4XobQHsUrkfh2kFApHA9CtfjOEDNzMzMzMzcP9ejcD0K1yXASOF6FK5H8T9xPQrXo\u002fAnwBSuR+F6FCrAexSuR+G6NsAfhetRuJ4qwMP1KFyPwibA16NwPQpXUMAzMzMzM7MtQPYoXI\u002fCNTlA7FG4HoXrNkDNzMzMzMz0Pylcj8L1KAbArkfhehTuMsBmZmZmZmYWQAAAAAAAANA\u002f16NwPQrX8z\u002fD9Shcj0IkQIXrUbgehS9AH4XrUbgeAUApXI\u002fC9agmwArXo3A9iizA4XoUrkfhMkCuR+F6FK44wFK4HoXrUQDAFK5H4XoULkDNzMzMzAxBQFK4HoXrUUZAKVyPwvWIUEDXo3A9ChdHwNejcD0K1xXAhetRuB6F+z\u002fhehSuR+HKP1K4HoXr0UNAKVyPwvUozD\u002fhehSuR0FBQDMzMzMzMx3AH4XrUbieIEA="},"y":{"dtype":"f8","bdata":"cT0K16MQTUDhehSuR0FDQAAAAAAAoFNAMzMzMzMzRkBmZmZmZiZIQNejcD0KZ1FAcT0K16OwRkCPwvUoXA8xQM3MzMzMDDlA16NwPQo3S0CamZmZmVlCQK5H4XoUjkJA9ihcj8L1TEAUrkfherRRQHsUrkfhOj1AexSuR+G6PkCamZmZmTlAQGZmZmZm5j9ACtejcD2KMUCuR+F6FB5TQD0K16NwnUVACtejcD2qTECPwvUoXJ9SQMP1KFyP4lNAKVyPwvXIVECF61G4HgU8QJqZmZmZGUpA4XoUrkehRkC4HoXrUWhQQFK4HoXrEVVAPQrXo3D9MEAK16NwPcpPQEjhehSuBz9AXI\u002fC9ShsUEDhehSuRyE8QDMzMzMzs1VAmpmZmZm5SEDXo3A9CrdEQDMzMzMzU0VAXI\u002fC9SgsVEC4HoXrUZhUQKRwPQrXI1ZA9ihcj8IVSkCPwvUoXO9IQGZmZmZmNlBASOF6FK7HUEBcj8L1KJxQQIXrUbgehSxA4XoUrkehREAfhetRuP5PQDMzMzMzsypA9ihcj8IFVkAAAAAAAABZQPYoXI\u002fCBVdAMzMzMzMjUkBI4XoUrkc7QFK4HoXrcUJAKVyPwvUoSEC4HoXrUfhPQD0K16NwXUlAFK5H4Xo0UEBcj8L1KNxAQClcj8L1KDhAZmZmZmZGSUCkcD0K12NMQLgehetR+ENAKVyPwvUoVUAUrkfhevRQQIXrUbgeBURA9ihcj8I1R0AAAAAAAMBKQJqZmZmZaVVAZmZmZmbmSUA9CtejcF1GQMP1KFyPwjtAMzMzMzNzSUAK16NwPUo4QAAAAAAAAEdA16NwPQpHVED2KFyPwnVRQB+F61G43jxAMzMzMzMzSUC4HoXrUZhPQFyPwvUoLFRAmpmZmZl5U0DNzMzMzPxQQB+F61G4TlRASOF6FK6XUUD2KFyPwnVUQOF6FK5HAVVAw\u002fUoXI9CVED2KFyPwlVRQOxRuB6Fi0dAhetRuB5lRUCkcD0K17NQQFK4HoXrkUZA16NwPQqXTECkcD0K10NJQJqZmZmZqVBAzczMzMzsTECamZmZmblGQNejcD0KV0hAexSuR+GqVUA="},"z":{"dtype":"f8","bdata":"rkfhehQuOMB7FK5H4XoVQNejcD0K19O\u002fFK5H4XoUCkDD9ShcjwJIQKRwPQrXIybAMzMzMzMzHcBSuB6F61EEQI\u002fC9ShcjxpAj8L1KFxPTUAzMzMzMzM3QDMzMzMzMy5A16NwPQrXD8AAAAAAAOBBQK5H4XoUrhjAmpmZmZkZIUA9CtejcD07wFK4HoXrURlAMzMzMzMz8z8pXI\u002fC9WhUQOxRuB6F6yNAuB6F61H4M0BmZmZmZmYjwDMzMzMzsyDA4XoUrkdBVUDXo3A9Ctfrv1K4HoXrUSdAPQrXo3A9HkBxPQrXo5BFQKRwPQrXYzpA4XoUrkehMsBcj8L1KBwwwOF6FK5H4TdAMzMzMzNTTUD2KFyPwvUZwArXo3A9Cvc\u002fPQrXo3DNUEAUrkfhehRBQJqZmZmZmThAhetRuB6F2z97FK5H4bo4QFyPwvUo3CZA9ihcj8J1LsApXI\u002fC9SgKQPYoXI\u002fCFURAKVyPwvUoMkCamZmZmRkowK5H4XoULjjA4XoUrkcBQsCamZmZmXlBwM3MzMzMzNw\u002fXI\u002fC9ShcDUAAAAAAAAAAAPYoXI\u002fCNU9ACtejcD0KC8D2KFyPwvUVQI\u002fC9Shcj\u002f6\u002fZmZmZmZm+j\u002f2KFyPwrU4wHsUrkfhujZAj8L1KFzPMcC4HoXrUTgoQB+F61G4HhlA9ihcj8K1MkCamZmZmVlDwOxRuB6FazTA16NwPQpXIEDD9Shcj8IFQOxRuB6F6\u002f0\u002fuB6F61G4GkAfhetRuJ5CQJqZmZmZmQHAmpmZmZkZLUAUrkfhelQ\u002fwOF6FK5H4QbAw\u002fUoXI\u002fCK0AK16NwPQomwD0K16NwPR9ApHA9CtejHEDNzMzMzGxFQFK4HoXr0SvA9ihcj8J1NUAfhetRuB75vxSuR+F69ERAcT0K16PwIsAzMzMzMzMDQIXrUbgeBSRApHA9Ctej8L+amZmZmRkoQM3MzMzMzCRAXI\u002fC9SjcK0AfhetRuD5FQHsUrkfh+iBAw\u002fUoXI\u002fCO0ApXI\u002fC9aglwI\u002fC9ShcjxzAw\u002fUoXI\u002fCIkDXo3A9Ctf3vylcj8L1CEFAKVyPwvWoK0AzMzMzM3NKwJqZmZmZGUXAcT0K16NQS0A="},"type":"scatter3d"}],                        {"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"},"margin":{"b":0,"l":0,"r":0,"t":30}}},"scene":{"aspectratio":{"x":1,"y":1,"z":1},"xaxis":{"title":{"text":"a* (green to red)"},"range":[-128,128]},"yaxis":{"title":{"text":"L* (black to white)"},"range":[0,100]},"zaxis":{"title":{"text":"b* (blue to yellow)"},"range":[-128,128]},"camera":{"up":{"x":0,"y":1,"z":0},"center":{"x":0,"y":0,"z":0},"eye":{"x":1.5,"y":1.5,"z":1.5}}},"title":{"text":"All Colors in 3D"},"showlegend":false},                        {"responsive": true}                    ).then(function(){
+                            
+var gd = document.getElementById('1cd1c049-ca96-4c07-a5b0-46c7806ef242');
+var x = new MutationObserver(function (mutations, observer) {{
+        var display = window.getComputedStyle(gd).display;
+        if (!display || display === 'none') {{
+            console.log([gd, 'removed!']);
+            Plotly.purge(gd);
+            observer.disconnect();
+        }}
+}});
+
+// Listen for the removal of the full notebook cells
+var notebookContainer = gd.closest('#notebook-container');
+if (notebookContainer) {{
+    x.observe(notebookContainer, {childList: true});
+}}
+
+// Listen for the clearing of the current output cell
+var outputEl = gd.closest('.output');
+if (outputEl) {{
+    x.observe(outputEl, {childList: true});
+}}
+
+                        })                };            </script>        </div>
+</div>
+</div>
+</div>
+<div class="g-col-6">
+<div id="130669b2" class="cell" data-cache="true" data-execution_count="10">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> scipy.spatial <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> ConvexHull</span>
+<span id="cb9-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> dodgeball_colors_3 <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> generate_lab_3d_all_colors_hull</span>
+<span id="cb9-3"></span>
+<span id="cb9-4">lab_points <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> color_df[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'L*a*b Value'</span>].<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">str</span>.split(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">", "</span>, expand<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>).astype(<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span>).values.tolist()</span>
+<span id="cb9-5"></span>
+<span id="cb9-6">convex_start <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> time.time()</span>
+<span id="cb9-7">hull <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> ConvexHull(points<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>lab_points)</span>
+<span id="cb9-8">convex_end <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> time.time()</span>
+<span id="cb9-9"></span>
+<span id="cb9-10">convex_elapsed <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> convex_end <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> convex_start</span>
+<span id="cb9-11"></span>
+<span id="cb9-12">hull_result <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">list</span>(<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">int</span>(value) <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> value <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> hull.vertices)</span>
+<span id="cb9-13"></span>
+<span id="cb9-14">hull_df <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> color_df.iloc[hull.vertices].copy()</span>
+<span id="cb9-15"></span>
+<span id="cb9-16">generate_lab_3d_all_colors_hull(df<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>color_df, figure_title<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Convex Hull of All Colors"</span>, hull_df<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>hull_df)</span>
+<span id="cb9-17"></span>
+<span id="cb9-18"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#display_palette(selected_colors=hull.vertices, color_df=color_df, filepath='assets/convex_colors.svg', cols=4, sort_rainbow=True)</span></span></code></pre></div></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>            <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_SVG"></script><script type="text/javascript">if (window.MathJax && window.MathJax.Hub && window.MathJax.Hub.Config) {window.MathJax.Hub.Config({SVG: {font: "STIX-Web"}});}</script>                <script type="text/javascript">window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
+        <script charset="utf-8" src="https://cdn.plot.ly/plotly-3.3.0.min.js" integrity="sha256-bO3dS6yCpk9aK4gUpNELtCiDeSYvGYnK7jFI58NQnHI=" crossorigin="anonymous"></script>                <div id="5a012650-8e96-4e5a-a673-c76dd605a5fd" class="plotly-graph-div" style="height:525px; width:100%;"></div>            <script type="text/javascript">                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("5a012650-8e96-4e5a-a673-c76dd605a5fd")) {                    Plotly.newPlot(                        "5a012650-8e96-4e5a-a673-c76dd605a5fd",                        [{"hovertemplate":"\u003cb\u003e%{text}\u003c\u002fb\u003e\u003cbr\u003eL*: %{y:.1f}\u003cbr\u003ea*: %{x:.1f}\u003cbr\u003eb*: %{z:.1f}\u003cbr\u003e","marker":{"color":["#4298B5","#555D51","#BDC4C2","#6C6864","#A05729","#89B2BD","#C6057B","#2D2926","#423A31","#CB6015","#9D2235","#9B2743","#DE5795","#FF8870","#38484E","#4A493B","#005876","#115740","#183029","#FFA400","#007A53","#729364","#A6BBC8","#DEBBD5","#F2CA00","#672E45","#A36D6A","#60705E","#C29951","#E2D0A0","#202A44","#66A5B5","#474C21","#FF6A39","#55394D","#F7CED7","#E10600","#BA0C2F","#9E483F","#C7C9C7","#DECA9E","#EFDAC8","#678096","#757870","#E37F57","#AEA282","#00BFB2","#2E1A47","#4C619C","#00AFD7","#212322","#DFDDD6","#FFFFFF","#F6EB69","#ACB3B8","#454038","#545859","#75726F","#48A9C5","#A26C53","#8E9FBC","#5D4B3C","#651C32","#A26859","#658BCC","#34657F","#DCD2C4","#8FAD9F","#48655B","#447961","#79863C","#BDDDD9","#00965E","#65649E","#603147","#A06A62","#343A4A","#6C6E60","#A8D5BA","#CCA55C","#3B4559","#827752","#AA939C","#F2BD79","#BCC0D2","#92ACA0","#B3D2B5","#CAA0AE","#A0DAB3","#D6D2BE","#EABEB0","#EA905D","#AF4D64","#BF0D3E","#00BAB3","#5C6E76","#908878","#76797A","#E88467","#958A73","#7D55C7","#2B7BBB","#FDD26E"],"opacity":1.0,"size":7},"mode":"markers+text","text":["Aqua","Army","Ash","Asphalt","Autumn","Baby Blue","Berry","Black","Brown","Burnt Orange","Canvas Red","Cardinal","Charity Pink","Coral","Dark Grey","Dark Olive","Deep Teal","Evergreen","Forest","Gold","Kelly","Leaf","Light Blue","Lilac","Maize Yellow","Maroon","Mauve","Military Green","Mustard","Natural","Navy","Ocean Blue","Olive","Orange","Oxblood Black","Pink","Poppy","Red","Rust","Silver","Soft Cream","Soft Pink","Steel Blue","Storm","Sunset","Tan","Teal","Team Purple","True Royal","Turquoise","Vintage Black","Vintage White","White","Yellow","Athletic Heather","Black Heather","Dark Grey Heather","Deep Heather","Heather Aqua","Heather Autumn","Heather Blue","Heather Brown","Heather Cardinal","Heather Clay","Heather Columbia Blue","Heather Deep Teal","Heather Dust","Heather Dusty Blue","Heather Forest","Heather Grass Green","Heather Green","Heather Ice Blue","Heather Kelly","Heather Lapis","Heather Maroon","Heather Mauve","Heather Midnight Navy","Heather Military Green","Heather Mint","Heather Mustard","Heather Navy","Heather Olive","Heather Orchid","Heather Peach","Heather Prism Blue","Heather Prism Dusty Blue","Heather Prism Ice Blue","Heather Prism Lilac","Heather Prism Mint","Heather Prism Natural","Heather Prism Peach","Heather Prism Sunset","Heather Raspberry","Heather Red","Heather Sea Green","Heather Slate","Heather Stone","Heather Storm","Heather Sunset","Heather Tan","Heather Team Purple","Heather True Royal","Heather Yellow Gold"],"textfont":{"size":8},"textposition":"top center","x":{"dtype":"f8","bdata":"pHA9CtdjNMDhehSuR+EOwB+F61G4HgHAhetRuB6F8z\u002f2KFyPwrVCQClcj8L1KCjA9ihcj8L1UUCkcD0K16P0P6RwPQrXowpAhetRuB7FRUD2KFyPwnVKQM3MzMzMDElAcT0K16PQTUCuR+F6FA5HQM3MzMzMzBLA9ihcj8L1AsBxPQrXozA3wKRwPQrX4zrAmpmZmZkZKMCkcD0K1yM\u002fQK5H4XoULkjApHA9CtcjMsBxPQrXo3AUwFyPwvUo3DBACtejcD0KFECPwvUoXE89QHsUrkfhujZAzczMzMzMIMDXo3A9CtcbQK5H4XoUrgFAj8L1KFyPBEDhehSuR2ExwIXrUbgehRvAcT0K16MwTUB7FK5H4TowQAAAAAAAQDBASOF6FK7HUkC4HoXrUWhQQJqZmZmZ+UJAPQrXo3A92r\u002fsUbgehesJQB+F61G4HhhA16NwPQrXEsC4HoXrUbjuv+F6FK5HwUNAKVyPwvUoAEAK16NwPapNwNejcD0KlzFApHA9CtejF0CF61G4HuVAwHsUrkfhevC\u002fmpmZmZmZ4b8AAAAAAAAAAFK4HoXrURvACtejcD0K+7+PwvUoXI8EQBSuR+F6FO6\u002fCtejcD0K+z9cj8L1KNw2wFK4HoXrkTJAj8L1KFyP4r97FK5H4XobQHsUrkfh2kFApHA9CtfjOEDNzMzMzMzcP9ejcD0K1yXASOF6FK5H8T9xPQrXo\u002fAnwBSuR+F6FCrAexSuR+G6NsAfhetRuJ4qwMP1KFyPwibA16NwPQpXUMAzMzMzM7MtQPYoXI\u002fCNTlA7FG4HoXrNkDNzMzMzMz0Pylcj8L1KAbArkfhehTuMsBmZmZmZmYWQAAAAAAAANA\u002f16NwPQrX8z\u002fD9Shcj0IkQIXrUbgehS9AH4XrUbgeAUApXI\u002fC9agmwArXo3A9iizA4XoUrkfhMkCuR+F6FK44wFK4HoXrUQDAFK5H4XoULkDNzMzMzAxBQFK4HoXrUUZAKVyPwvWIUEDXo3A9ChdHwNejcD0K1xXAhetRuB6F+z\u002fhehSuR+HKP1K4HoXr0UNAKVyPwvUozD\u002fhehSuR0FBQDMzMzMzMx3AH4XrUbieIEA="},"y":{"dtype":"f8","bdata":"cT0K16MQTUDhehSuR0FDQAAAAAAAoFNAMzMzMzMzRkBmZmZmZiZIQNejcD0KZ1FAcT0K16OwRkCPwvUoXA8xQM3MzMzMDDlA16NwPQo3S0CamZmZmVlCQK5H4XoUjkJA9ihcj8L1TEAUrkfherRRQHsUrkfhOj1AexSuR+G6PkCamZmZmTlAQGZmZmZm5j9ACtejcD2KMUCuR+F6FB5TQD0K16NwnUVACtejcD2qTECPwvUoXJ9SQMP1KFyP4lNAKVyPwvXIVECF61G4HgU8QJqZmZmZGUpA4XoUrkehRkC4HoXrUWhQQFK4HoXrEVVAPQrXo3D9MEAK16NwPcpPQEjhehSuBz9AXI\u002fC9ShsUEDhehSuRyE8QDMzMzMzs1VAmpmZmZm5SEDXo3A9CrdEQDMzMzMzU0VAXI\u002fC9SgsVEC4HoXrUZhUQKRwPQrXI1ZA9ihcj8IVSkCPwvUoXO9IQGZmZmZmNlBASOF6FK7HUEBcj8L1KJxQQIXrUbgehSxA4XoUrkehREAfhetRuP5PQDMzMzMzsypA9ihcj8IFVkAAAAAAAABZQPYoXI\u002fCBVdAMzMzMzMjUkBI4XoUrkc7QFK4HoXrcUJAKVyPwvUoSEC4HoXrUfhPQD0K16NwXUlAFK5H4Xo0UEBcj8L1KNxAQClcj8L1KDhAZmZmZmZGSUCkcD0K12NMQLgehetR+ENAKVyPwvUoVUAUrkfhevRQQIXrUbgeBURA9ihcj8I1R0AAAAAAAMBKQJqZmZmZaVVAZmZmZmbmSUA9CtejcF1GQMP1KFyPwjtAMzMzMzNzSUAK16NwPUo4QAAAAAAAAEdA16NwPQpHVED2KFyPwnVRQB+F61G43jxAMzMzMzMzSUC4HoXrUZhPQFyPwvUoLFRAmpmZmZl5U0DNzMzMzPxQQB+F61G4TlRASOF6FK6XUUD2KFyPwnVUQOF6FK5HAVVAw\u002fUoXI9CVED2KFyPwlVRQOxRuB6Fi0dAhetRuB5lRUCkcD0K17NQQFK4HoXrkUZA16NwPQqXTECkcD0K10NJQJqZmZmZqVBAzczMzMzsTECamZmZmblGQNejcD0KV0hAexSuR+GqVUA="},"z":{"dtype":"f8","bdata":"rkfhehQuOMB7FK5H4XoVQNejcD0K19O\u002fFK5H4XoUCkDD9ShcjwJIQKRwPQrXIybAMzMzMzMzHcBSuB6F61EEQI\u002fC9ShcjxpAj8L1KFxPTUAzMzMzMzM3QDMzMzMzMy5A16NwPQrXD8AAAAAAAOBBQK5H4XoUrhjAmpmZmZkZIUA9CtejcD07wFK4HoXrURlAMzMzMzMz8z8pXI\u002fC9WhUQOxRuB6F6yNAuB6F61H4M0BmZmZmZmYjwDMzMzMzsyDA4XoUrkdBVUDXo3A9Ctfrv1K4HoXrUSdAPQrXo3A9HkBxPQrXo5BFQKRwPQrXYzpA4XoUrkehMsBcj8L1KBwwwOF6FK5H4TdAMzMzMzNTTUD2KFyPwvUZwArXo3A9Cvc\u002fPQrXo3DNUEAUrkfhehRBQJqZmZmZmThAhetRuB6F2z97FK5H4bo4QFyPwvUo3CZA9ihcj8J1LsApXI\u002fC9SgKQPYoXI\u002fCFURAKVyPwvUoMkCamZmZmRkowK5H4XoULjjA4XoUrkcBQsCamZmZmXlBwM3MzMzMzNw\u002fXI\u002fC9ShcDUAAAAAAAAAAAPYoXI\u002fCNU9ACtejcD0KC8D2KFyPwvUVQI\u002fC9Shcj\u002f6\u002fZmZmZmZm+j\u002f2KFyPwrU4wHsUrkfhujZAj8L1KFzPMcC4HoXrUTgoQB+F61G4HhlA9ihcj8K1MkCamZmZmVlDwOxRuB6FazTA16NwPQpXIEDD9Shcj8IFQOxRuB6F6\u002f0\u002fuB6F61G4GkAfhetRuJ5CQJqZmZmZmQHAmpmZmZkZLUAUrkfhelQ\u002fwOF6FK5H4QbAw\u002fUoXI\u002fCK0AK16NwPQomwD0K16NwPR9ApHA9CtejHEDNzMzMzGxFQFK4HoXr0SvA9ihcj8J1NUAfhetRuB75vxSuR+F69ERAcT0K16PwIsAzMzMzMzMDQIXrUbgeBSRApHA9Ctej8L+amZmZmRkoQM3MzMzMzCRAXI\u002fC9SjcK0AfhetRuD5FQHsUrkfh+iBAw\u002fUoXI\u002fCO0ApXI\u002fC9aglwI\u002fC9ShcjxzAw\u002fUoXI\u002fCIkDXo3A9Ctf3vylcj8L1CEFAKVyPwvWoK0AzMzMzM3NKwJqZmZmZGUXAcT0K16NQS0A="},"type":"scatter3d"},{"hovertemplate":"\u003cb\u003e%{text}\u003c\u002fb\u003e\u003cbr\u003eL*: %{y:.1f}\u003cbr\u003ea*: %{x:.1f}\u003cbr\u003eb*: %{z:.1f}\u003cbr\u003e","marker":{"color":["#C6057B","#DE5795","#005876","#183029","#FFA400","#F2CA00","#202A44","#474C21","#FF6A39","#E10600","#BA0C2F","#00BFB2","#2E1A47","#00AFD7","#212322","#FFFFFF","#F6EB69","#651C32","#00965E","#7D55C7","#2B7BBB"],"opacity":1.0,"size":7},"mode":"markers+text","text":["Berry","Charity Pink","Deep Teal","Forest","Gold","Maize Yellow","Navy","Olive","Orange","Poppy","Red","Teal","Team Purple","Turquoise","Vintage Black","White","Yellow","Heather Cardinal","Heather Kelly","Heather Team Purple","Heather True Royal"],"textfont":{"size":8},"textposition":"top center","x":{"dtype":"f8","bdata":"9ihcj8L1UUBxPQrXo9BNQHE9CtejMDfAmpmZmZkZKMCkcD0K1yM\u002fQArXo3A9ChRAj8L1KFyPBECF61G4HoUbwHE9CtejME1ASOF6FK7HUkC4HoXrUWhQQArXo3A9qk3A16NwPQqXMUCF61G4HuVAwHsUrkfhevC\u002fAAAAAAAAAABSuB6F61EbwHsUrkfh2kFA16NwPQpXUMDhehSuR0FBQDMzMzMzMx3A"},"y":{"dtype":"f8","bdata":"cT0K16OwRkD2KFyPwvVMQJqZmZmZOUBACtejcD2KMUCuR+F6FB5TQClcj8L1yFRAPQrXo3D9MEBI4XoUrgc\u002fQFyPwvUobFBAmpmZmZm5SEDXo3A9CrdEQFyPwvUonFBAhetRuB6FLEAfhetRuP5PQDMzMzMzsypAAAAAAAAAWUD2KFyPwgVXQClcj8L1KDhAZmZmZmbmSUCamZmZmblGQNejcD0KV0hA"},"z":{"dtype":"f8","bdata":"MzMzMzMzHcDXo3A9CtcPwD0K16NwPTvAMzMzMzMz8z8pXI\u002fC9WhUQOF6FK5HQVVA4XoUrkehMsDhehSuR+E3QDMzMzMzU01APQrXo3DNUEAUrkfhehRBQJqZmZmZGSjArkfhehQuOMCamZmZmXlBwM3MzMzMzNw\u002fAAAAAAAAAAD2KFyPwjVPQB+F61G4HhlAmpmZmZkZLUAzMzMzM3NKwJqZmZmZGUXA"},"type":"scatter3d"},{"alphahull":0,"color":"white","hoverinfo":"skip","opacity":0.75,"x":{"dtype":"f8","bdata":"9ihcj8L1UUBxPQrXo9BNQHE9CtejMDfAmpmZmZkZKMCkcD0K1yM\u002fQArXo3A9ChRAj8L1KFyPBECF61G4HoUbwHE9CtejME1ASOF6FK7HUkC4HoXrUWhQQArXo3A9qk3A16NwPQqXMUCF61G4HuVAwHsUrkfhevC\u002fAAAAAAAAAABSuB6F61EbwHsUrkfh2kFA16NwPQpXUMDhehSuR0FBQDMzMzMzMx3A"},"y":{"dtype":"f8","bdata":"cT0K16OwRkD2KFyPwvVMQJqZmZmZOUBACtejcD2KMUCuR+F6FB5TQClcj8L1yFRAPQrXo3D9MEBI4XoUrgc\u002fQFyPwvUobFBAmpmZmZm5SEDXo3A9CrdEQFyPwvUonFBAhetRuB6FLEAfhetRuP5PQDMzMzMzsypAAAAAAAAAWUD2KFyPwgVXQClcj8L1KDhAZmZmZmbmSUCamZmZmblGQNejcD0KV0hA"},"z":{"dtype":"f8","bdata":"MzMzMzMzHcDXo3A9CtcPwD0K16NwPTvAMzMzMzMz8z8pXI\u002fC9WhUQOF6FK5HQVVA4XoUrkehMsDhehSuR+E3QDMzMzMzU01APQrXo3DNUEAUrkfhehRBQJqZmZmZGSjArkfhehQuOMCamZmZmXlBwM3MzMzMzNw\u002fAAAAAAAAAAD2KFyPwjVPQB+F61G4HhlAmpmZmZkZLUAzMzMzM3NKwJqZmZmZGUXA"},"type":"mesh3d"}],                        {"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"},"margin":{"b":0,"l":0,"r":0,"t":30}}},"scene":{"aspectratio":{"x":1,"y":1,"z":1},"xaxis":{"title":{"text":"a* (green to red)"},"range":[-128,128]},"yaxis":{"title":{"text":"L* (black to white)"},"range":[0,100]},"zaxis":{"title":{"text":"b* (blue to yellow)"},"range":[-128,128]},"camera":{"up":{"x":0,"y":1,"z":0},"center":{"x":0,"y":0,"z":0},"eye":{"x":1.5,"y":1.5,"z":1.5}}},"title":{"text":"Convex Hull of All Colors"},"showlegend":false},                        {"responsive": true}                    ).then(function(){
+                            
+var gd = document.getElementById('5a012650-8e96-4e5a-a673-c76dd605a5fd');
+var x = new MutationObserver(function (mutations, observer) {{
+        var display = window.getComputedStyle(gd).display;
+        if (!display || display === 'none') {{
+            console.log([gd, 'removed!']);
+            Plotly.purge(gd);
+            observer.disconnect();
+        }}
+}});
+
+// Listen for the removal of the full notebook cells
+var notebookContainer = gd.closest('#notebook-container');
+if (notebookContainer) {{
+    x.observe(notebookContainer, {childList: true});
+}}
+
+// Listen for the clearing of the current output cell
+var outputEl = gd.closest('.output');
+if (outputEl) {{
+    x.observe(outputEl, {childList: true});
+}}
+
+                        })                };            </script>        </div>
+</div>
+</div>
+</div>
+</div>
+<div id="f25daa93" class="cell" data-execution_count="11">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1">convex_score <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> compute_score(color_indices<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>hull.vertices, distance_matrix<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>distance_matrix)</span>
+<span id="cb10-2"></span>
+<span id="cb10-3">table <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"""</span></span>
+<span id="cb10-4"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">| Metric | Score | Unit |</span></span>
+<span id="cb10-5"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">|---|---|---|</span></span>
+<span id="cb10-6"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">| Total Runtime | </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>convex_elapsed<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:.2f}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;"> | Seconds |</span></span>
+<span id="cb10-7"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">| Average Score | </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>convex_score<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:.2f}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;"> | Perceived LAB Color Distance |</span></span>
+<span id="cb10-8"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">| Lowest Score | </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>convex_score<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:.2f}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;"> | Perceived LAB Color Distance |</span></span>
+<span id="cb10-9"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">| Highest Score | </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>convex_score<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:.2f}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;"> | Perceived LAB Color Distance |</span></span>
+<span id="cb10-10"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"""</span></span>
+<span id="cb10-11"></span>
+<span id="cb10-12">display(Markdown(table))</span>
+<span id="cb10-13"></span>
+<span id="cb10-14"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># len(hull.vertices)</span></span></code></pre></div></div>
+</details>
+<div class="cell-output cell-output-display cell-output-markdown">
+<table class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th>Metric</th>
+<th>Score</th>
+<th>Unit</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Total Runtime</td>
+<td>0.00</td>
+<td>Seconds</td>
+</tr>
+<tr class="even">
+<td>Average Score</td>
+<td>40.25</td>
+<td>Perceived LAB Color Distance</td>
+</tr>
+<tr class="odd">
+<td>Lowest Score</td>
+<td>40.25</td>
+<td>Perceived LAB Color Distance</td>
+</tr>
+<tr class="even">
+<td>Highest Score</td>
+<td>40.25</td>
+<td>Perceived LAB Color Distance</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://Ian-P-McCabe.github.io/blog/posts/dodgeball-colors-2/assets/convex_colors.svg" class="img-fluid figure-img"></p>
+<figcaption>Color Palette from the Convex Hull</figcaption>
+</figure>
+</div>
+<p>This looks great and it already has a greater ∆E score than our previous heuristics. Now all we need to do is remove 5 colors so we can obtain a set of 16.</p>
+<div id="b2216aa9" class="cell" data-execution_count="12">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Greedily remove each color </span></span>
+<span id="cb11-2"></span>
+<span id="cb11-3">hull_copy <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> hull_df.copy()</span>
+<span id="cb11-4">vertices <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">list</span>(<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">int</span>(value) <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> value <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> hull.vertices)</span>
+<span id="cb11-5"><span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> i <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">range</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5</span>):</span>
+<span id="cb11-6">    scores <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> []</span>
+<span id="cb11-7">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> index, color <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">enumerate</span>(vertices):</span>
+<span id="cb11-8">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">if</span> color <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>:</span>
+<span id="cb11-9">            <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">continue</span></span>
+<span id="cb11-10">            </span>
+<span id="cb11-11">        current_color_indices <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> vertices[:index] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> vertices[index <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>:]</span>
+<span id="cb11-12"></span>
+<span id="cb11-13">        current_score <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> compute_score(</span>
+<span id="cb11-14">            color_indices<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>current_color_indices, </span>
+<span id="cb11-15">            distance_matrix<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>distance_matrix</span>
+<span id="cb11-16">            )</span>
+<span id="cb11-17">        </span>
+<span id="cb11-18">        scores.append(current_score)</span>
+<span id="cb11-19"></span>
+<span id="cb11-20">    </span>
+<span id="cb11-21">    lowest <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">max</span>(scores)</span>
+<span id="cb11-22"></span>
+<span id="cb11-23">    lowest_index <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> scores.index(lowest)</span>
+<span id="cb11-24"></span>
+<span id="cb11-25">    vertices[lowest_index] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span></span>
+<span id="cb11-26"></span>
+<span id="cb11-27">    vertices <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [item <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> item <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> vertices <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">if</span> item <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">!=</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>]</span>
+<span id="cb11-28"></span>
+<span id="cb11-29"></span>
+<span id="cb11-30">pruned_score <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> compute_score(color_indices<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>vertices, distance_matrix<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>distance_matrix)</span>
+<span id="cb11-31"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"The pruned score is </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>pruned_score<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:.2f}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;"> ∆E units"</span>)</span>
+<span id="cb11-32"></span>
+<span id="cb11-33">display_palette(selected_colors<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>vertices, color_df<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>color_df, filepath<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"assets/pruned_convex.svg"</span>, sort_rainbow<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>, hide_output<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>)</span></code></pre></div></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>The pruned score is 44.79 ∆E units</code></pre>
+</div>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://Ian-P-McCabe.github.io/blog/posts/dodgeball-colors-2/assets/pruned_convex.svg" class="img-fluid figure-img"></p>
+<figcaption>Pruned Convex Hull Color Palette</figcaption>
+</figure>
+</div>
+<p>How vibrant! This palette is the highest scoring out of all of our options with an ∆E of 44.79. This palette is so vibrant because it is composed entirely of colors at the extremes of the LAB space - they contain the most pigment. This hull is basically the exact opposite of the worst random palette.</p>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>In this article we explored different heuristics for generating an “optimal” color palette for the dodgeball league:</p>
+<div id="2ffd125e" class="cell" data-execution_count="13">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1">table <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"""</span></span>
+<span id="cb13-2"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">| Heuristic | Score |</span></span>
+<span id="cb13-3"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">| --- | --- |</span></span>
+<span id="cb13-4"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">| Highest Random | 40.77 |</span></span>
+<span id="cb13-5"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">| Highest Greedy | 39.02 |</span></span>
+<span id="cb13-6"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">| Highest Convex Hull | 44.79 |</span></span>
+<span id="cb13-7"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"""</span></span>
+<span id="cb13-8"></span>
+<span id="cb13-9">display(Markdown(table))</span></code></pre></div></div>
+</details>
+<div class="cell-output cell-output-display cell-output-markdown">
+<table class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th>Heuristic</th>
+<th>Score</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Highest Random</td>
+<td>40.77</td>
+</tr>
+<tr class="even">
+<td>Highest Greedy</td>
+<td>39.02</td>
+</tr>
+<tr class="odd">
+<td>Highest Convex Hull</td>
+<td>44.79</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>We found that a convex hull is a unique way to determine which colors are the best when colors are roughly distributed evenly through a 3D space and it runs extremely fast. While this palette is great, we can still do better - the scoring metric used in this article maximized global diversity - the colors are broadly different on average. However it’s still possible for two colors to be quite similar - such as with Red and Poppy or Orange and Gold in the palette above. We navigate this challenge in the final installment of the dodgeball colors series - Part 3.</p>
+
+
+</section>
+
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p>Assuming we’re running on an Apple M1 Chip↩︎</p></li>
+<li id="fn2"><p>You may notice the greedy palettes here are not the same as those found when I originally published this article. When updating the article I opted to use the CIE ∆E distance over the Euclidean ∆E distance.↩︎</p></li>
+</ol>
+</section></div> ]]></description>
+  <category>Dodgeball Colors</category>
+  <guid>https://Ian-P-McCabe.github.io/blog/posts/dodgeball-colors-2/</guid>
+  <pubDate>Mon, 03 Mar 2025 05:00:00 GMT</pubDate>
+  <media:content url="https://Ian-P-McCabe.github.io/blog/posts/dodgeball-colors-2/assets/cover_image.png" medium="image" type="image/png" height="106" width="144"/>
 </item>
 <item>
   <title>Shirt Color Selection Problem Part 1</title>
