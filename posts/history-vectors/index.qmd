@@ -1,8 +1,8 @@
 ---
-title: Language Embedding for Historical Research
+title: DRAFT Language Embedding for Historical Research
 subtitle: Exploring Vector Space
 author: Ian McCabe
-date: 06/11/2026
+date: 07/02/2026
 categories: ["History", "NLP", "RAG"]
 format:
   html: 
@@ -317,6 +317,8 @@ This document set is interesting because document A is a clear direct hit, docum
 
 **Document C is most striking as it's the clearest example of shameful feelings associated with AIDS, but the words "shame", "attached", and "illness" are not present in the identified page.**
 
+
+**End of current draft, below is old content.**
 
 
 But can we come up with a query that has minimal keyword overlap yet hits great sources?
