@@ -14,3 +14,7 @@ Use interactive notebook window for code output and HTML preview for text update
 Ensure the repo has the [proper structure](https://quarto.org/docs/publishing/github-pages.html)
 
 quarto publish gh-pages 
+
+
+Footnotes etc: https://quarto.org/docs/authoring/markdown-basics.html
+
