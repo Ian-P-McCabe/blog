@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.26">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Ian McCabe">
+<meta name="dcterms.date" content="2026-07-02">
+
+<title>DRAFT Language Embedding for Historical Research – Ian’s Blog</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-c0f9c4a576e3a5564aaaba7aa2cae401.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../../styles.css">
+<meta property="og:title" content="DRAFT Language Embedding for Historical Research – Ian’s Blog">
+<meta property="og:description" content="Exploring Vector Space">
+<meta property="og:image" content="https://Ian-P-McCabe.github.io/blog/posts/history-vectors/assets/TulaneLinearFeet.jpg">
+<meta property="og:site_name" content="Ian's Blog">
+</head>
+
+<body class="nav-fixed fullcontent quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Ian’s Blog</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">About Ian</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/Ian-P-McCabe"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/ianpmccabe/"> <i class="bi bi-linkedin" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">DRAFT Language Embedding for Historical Research</h1>
+            <p class="subtitle lead">Exploring Vector Space</p>
+                                <div class="quarto-categories">
+                <div class="quarto-category">History</div>
+                <div class="quarto-category">NLP</div>
+                <div class="quarto-category">RAG</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Ian McCabe </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">July 2, 2026</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+
+<section id="overview" class="level1">
+<h1>Overview</h1>
+<p>The basis of historical research is primary source material. Primary sources provide the foundational evidence necessary for any historical argument. Primary sources come in a variety of formats - letters, meeting minutes, court files, brochures, magazines, newspapers, reports, images, etc. When trying to locate specific pieces of information from the historical record, historians often have to sift through thousands of primary source documents in a collection.</p>
+<p>Historical collections tend to be so large the standard unit of measurement is the Linear Foot - roughly representing the amount of shelf space a collection occupies. There are ~1,800 pages (8.5” x 11”) per linear foot. Large historical archives tend to be hundreds or thousands of linear feet.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="assets/TulaneLinearFeet.jpg" class="img-fluid figure-img"></p>
+<figcaption>~30 Linear Feet of Documents in the Tulane University Library</figcaption>
+</figure>
+</div>
+<p>To help locate documents most archival collections have a finding aid. Finding aids are guides created by archivists to describe the contents of an archival collection. Finding aids are great tools, however they can be just as unwieldy as the collection they’re describing. For example the digital finding aids for the <a href="https://archives.yale.edu/repositories/12/resources/5843/collection_organization">Ronald Dworkin papers</a> or the <a href="https://library.udel.edu/static/purl.php?mss0100">Louis Henry and Marguerite Cohn Hemingway Collection</a> are enormous!</p>
+<p>Finding aids speed up historical research but they are not perfect. Even once you get down to a specific folder (typically folder is the most specific level of a finding aid) there can still be many pages or documents to sort through. For example, in the Eric E. Rofes papers, GLC 60, Box 47 Folder 8 (a collection containing newsletters from Shanti, an AIDS support and political action organization) we find ourselves with 235 pages of newsletters to sort through!</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="assets/DigitalFindingAid.png" class="img-fluid figure-img"></p>
+<figcaption>Snippet of the Digital Finding Aid from the No More Silence Project</figcaption>
+</figure>
+</div>
+<p>There has to be a better way! In this article I will showcase how we can use Natural Language Processing (NLP) techniques to facilitate historical research and find trends in a large body of historical text. I will be using documents from the <a href="https://www.library.ucsf.edu/archives/aids/data-projects/">No More Silence</a> project from the University of California San Francisco.</p>
+<p><strong>Add example here</strong></p>
+</section>
+<section id="a-pipeline" class="level1">
+<h1>A Pipeline</h1>
+<p>Before we can ask historical questions, we need get our documents into a format the computer can understand. To do this we must convert physical documents into a format computers can work with. The steps to perform this conversion are as follows:</p>
+<ol type="1">
+<li><strong>Scan</strong>: Historical documents must be digitized so a computer can interact with them</li>
+<li><strong>Optical Character Recognition (OCR)</strong>: Digitized documents are converted to text the computer can work with</li>
+<li><strong>Chunking</strong>: The text is fragmented into small chunks for the embedding model</li>
+<li><strong>Embedding</strong>: Each chunk becomes a vector representing the meaning of the chunk</li>
+<li><strong>Storage</strong>: We store each chunk, its vector embedding, and metadata into a database we can search</li>
+</ol>
+<p>Once our documents are in a database we can perform some research!</p>
+<section id="step-1-scan" class="level2">
+<h2 class="anchored" data-anchor-id="step-1-scan">Step 1: Scan</h2>
+<p>I’m skipping this step because it’s already been done on No More Silence and is pretty straightforward.</p>
+</section>
+<section id="step-2-optical-character-recognition" class="level2">
+<h2 class="anchored" data-anchor-id="step-2-optical-character-recognition">Step 2: Optical Character Recognition</h2>
+<p>While this step has already been done, advances in OCR technology over the last ~5 years warrant a return to this step. Below is a page from No More Silence along with the OCR done back in 2021:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="assets/OCRExample.png" class="img-fluid figure-img"></p>
+<figcaption>Left: Letter to the FDA from the APA Regarding Psychiatric impact of at-home HIV tests Right: Corresponding OCR of the same page</figcaption>
+</figure>
+</div>
+<p>While it is very clear to humans that the list of board members and assembly members of the American Psychiatric Association are not part of the body of the letter, the computer does not know that. We end up with the lovely OCR on the right where the names of the doctors are mangled into <code>M.mh.:i • I. Kirk .. ~1nd1. . .\1, D .</code> and <code>GLld~ R. &lt;}r~n')'. M.n.</code>. A human doesn’t know who Dr <code>GLld~ R. &lt;}r~n')'. M.n.</code> is, and a computer definitely won’t!</p>
+<p>Fortunately, OCR technology has advanced <strong>significantly</strong> in the last 5 years. I can now OCR the same document on my laptop and get the following result:</p>
+<div id="0a8bc33f" class="cell" data-execution_count="2">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> marker.converters.pdf <span class="im">import</span> PdfConverter</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> marker.models <span class="im">import</span> create_model_dict</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> marker.output <span class="im">import</span> text_from_rendered</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>converter <span class="op">=</span> PdfConverter(</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    artifact_dict<span class="op">=</span>create_model_dict(),</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>rendered <span class="op">=</span> converter(<span class="st">"./assets/ar200515_1_4_apacombined.pdf"</span>)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>text, _, images <span class="op">=</span> text_from_rendered(rendered)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>2.5 minutes later, I get:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="assets/NewOCR.png" class="img-fluid figure-img"></p>
+<figcaption>Snippet of a modern OCR run on the APA letter</figcaption>
+</figure>
+</div>
+<p>This is <strong>much better</strong> than the original scan. I am using the <a href="https://github.com/datalab-to/marker">marker</a> library, which runs a pipeline of deep learning models to pull out text from documents.</p>
+<p>Since there are ~46,000 pages of documents in this archive and I don’t have access to a supercomputer, it would take me about 600 hours for me to re-ocr the entire collection. So I will stick with the original OCR provided by UCSF.</p>
+</section>
+<section id="step-3a-picking-a-model" class="level2">
+<h2 class="anchored" data-anchor-id="step-3a-picking-a-model">Step 3A: Picking a Model</h2>
+<p>Before we chunk, we need to figure out what model we’re going to use to embed our text into searchable vectors. Embedding models have advanced significantly in the past couple of years and there are some very good open source options. Before we select a model, we should understand a little bit about how they work.</p>
+<section id="how-do-embedding-models-work" class="level3">
+<h3 class="anchored" data-anchor-id="how-do-embedding-models-work">How do Embedding Models Work?</h3>
+<p>Embedding models take text, such as</p>
+<div id="16d42307" class="cell" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>text <span class="op">=</span> <span class="st">"""I have long respected you as a political leader with the guts to </span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="st">speak out controversial issues. I write to you as a concerned </span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="st">physician to call your attention to the fact that the position you </span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="st">are taking on needle exchange is dead wrong."""</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>And transforms it into a vector (a very large list of numbers):</p>
+<div id="99cabb69" class="cell" data-execution_count="4">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sentence_transformers <span class="im">import</span> SentenceTransformer</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> SentenceTransformer(<span class="st">"Qwen/Qwen3-Embedding-0.6B"</span>)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>embedding <span class="op">=</span> model.encode(text)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(embedding)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><code>[ 0.01467937  0.01435469 -0.01028924 ...  0.0262527   0.00375003 0.01165906]</code></p>
+<p><strong>The vector above actually contains 1024 values!</strong></p>
+<p>There is a lot of fancy math that goes on behind the scenes, but the general idea of Text In -&gt; Vector out.</p>
+</section>
+<section id="which-model-do-we-pick" class="level3">
+<h3 class="anchored" data-anchor-id="which-model-do-we-pick">Which Model do We Pick?</h3>
+<p>The total amount of text we can put into a model at once is limited by the <strong>maximum sequence length</strong> (aka context window). The sequence length is the number of tokens a model can consume at once.</p>
+<p>You can think of a token as roughly a single word in our block of text. So when the model processes the text above, it is really ingesting “I”, “have”, “long”, “respected” etc. I say <em>roughly</em> because there’s really ~1.3 tokens per word - in the Qwen model we’re using <code>"physician"</code> becomes <code>["phys", "ician"]</code> and <code>"speak out"</code> becomes <code>["s", "peak", "out"]</code></p>
+<p>On older language embedding models the maximum sequence length can be somewhere between ~256 to ~512 tokens, and on newer models the maximum sequence length can be as high as 32,000 tokens.</p>
+<p>We will use <code>Qwen3-Embedding-0.6B</code> as our embedding model because it has an extremely large context window (32,000 tokens), is highly ranked, and can run locally on my laptop.</p>
+<p>Before we can run semantic searches on our collection, we need to break our document into smaller embeddable chunks. When chunking our text, we need to be aware of our models token limit. We are using <code>Qwen3-Embedding-0.6B</code> to embed our documents</p>
+</section>
+</section>
+<section id="step-3b-chunking" class="level2">
+<h2 class="anchored" data-anchor-id="step-3b-chunking">Step 3B: Chunking</h2>
+<p>With such a large maximum sequence length, we have options for how we embed the documents.</p>
+<div class="grid">
+<section id="page-level-chunking" class="level3 g-col-4">
+<h3 class="anchored" data-anchor-id="page-level-chunking">Page Level Chunking</h3>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="assets/PageLevelChunking.png" class="img-fluid figure-img"></p>
+<figcaption>Page Level Chunking</figcaption>
+</figure>
+</div>
+<p>Simplest approach - each page is embedded into its own chunk. This preserves the broader context of the document but loses some precision. We will use this approach since the OCR files already have clean page breaks.</p>
+</section>
+<section id="window-overlap-chunking" class="level3 g-col-4">
+<h3 class="anchored" data-anchor-id="window-overlap-chunking">Window Overlap Chunking</h3>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="assets/Window-Overlap.png" class="img-fluid figure-img"></p>
+<figcaption>Window Overlap Chunking</figcaption>
+</figure>
+</div>
+<p>Overlapping windows are embedded into chunks. Each red or blue square represents a chunk that would be embedded. Windowed chunks overlap to retain context if a chunk splits a paragraph. This approach can lose broader semantic meaning but is very precise.</p>
+</section>
+<section id="context-aware-chunking" class="level3 g-col-4">
+<h3 class="anchored" data-anchor-id="context-aware-chunking">Context Aware Chunking</h3>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="assets/Context-Aware.png" class="img-fluid figure-img"></p>
+<figcaption>Context Aware Chunking</figcaption>
+</figure>
+</div>
+<p>Split document into chunks that contain related information. The content of the letter is a single chunk. The headings, footers, and other information may be put into one large chunk or discarded entirely. This approach typically requires the use of an LLM to determine what is and isn’t important in the document.</p>
+</section>
+</div>
+<p>For embedding the No More Silence dataset, I am using a mix of page and window level chunking. Some documents are already split into pages and others lack page breaks. For documents that lack page breaks I am using 512 tokens per window with 64 tokens of overlap.</p>
+</section>
+<section id="step-4-embed-and-store" class="level2">
+<h2 class="anchored" data-anchor-id="step-4-embed-and-store">Step 4: Embed and Store</h2>
+<p>Embedding the chunks is very straightforward, here is the command to embed a single piece of text:</p>
+<div id="e7b9bde0" class="cell" data-execution_count="5">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>text <span class="op">=</span> <span class="st">"""...1. Information about the PARTNERS' OUTREACH PROJECT, a new research, education</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="st">and counseling program for female sexual partners of male IV drug users..."""</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>embeddings <span class="op">=</span> model.encode(</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    text, <span class="co"># List of chunks we're embedding</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    show_progress_bar<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    convert_to_numpy<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    normalize_embeddings<span class="op">=</span><span class="va">True</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>When we store our chunks, it’s very important that we include metadata so we know what document and page the chunk we’re using comes from.</p>
+<div id="5b21f107" class="cell" data-execution_count="6">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>metadata <span class="op">=</span> {</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"doc_id"</span>:     doc_id, <span class="co"># "ucsf_mss95-04_001_019"</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"title"</span>:      row.get(<span class="st">"Title"</span>), <span class="co"># "Membership Meeting Minutes: August 1987"</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"collection"</span>: row.get(<span class="st">"Collection Title"</span>), <span class="co"># "Women's AIDS Network (WAN) records, MSS 95-04, Carton 1 Folder 19"</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"year"</span>:       _extract_year(row.get(<span class="st">"Date 1"</span>)), <span class="co"># "1987"</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"page_num"</span>: row.get(<span class="st">"Page_Num"</span>) <span class="co"># 1</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>collection.add(</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    document<span class="op">=</span>new_text,</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    embeddings<span class="op">=</span>embedding,</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    metadata<span class="op">=</span>metadata,</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    <span class="bu">id</span><span class="op">=</span>metadata[<span class="st">"doc_id"</span>],</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="step-5-query" class="level2">
+<h2 class="anchored" data-anchor-id="step-5-query">Step 5: Query</h2>
+<p>Now that our documents are chunked and embedded, we can begin querying the database. If we wanted to explore tensions between activist groups we can simply run:</p>
+<div id="e9ee0831" class="cell" data-execution_count="7">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>search(query<span class="op">=</span><span class="st">"tensions between activist groups"</span>, n_results<span class="op">=</span><span class="dv">25</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>And a fraction of a second later we get:</p>
+<div class="grid">
+<div class="g-col-4">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="assets/Why_ACT_UP_Split.png" class="img-fluid figure-img"></p>
+<figcaption>A. Why ACT-UP Split in Two (ACT-UP From Both Sides)</figcaption>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="assets/Work_Together.png" class="img-fluid figure-img"></p>
+<figcaption>D. Let’s Work Together</figcaption>
+</figure>
+</div>
+</div>
+<div class="g-col-4">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="assets/Vancouver_Fight.png" class="img-fluid figure-img"></p>
+<figcaption>B. Vancouver Conference on AIDS Fight Participation of ACT UP</figcaption>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="assets/Immigration_Boycott.png" class="img-fluid figure-img"></p>
+<figcaption>E. Immigration Boycott</figcaption>
+</figure>
+</div>
+</div>
+<div class="g-col-4">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="assets/ACT_UP_SF_Crazy.png" class="img-fluid figure-img"></p>
+<figcaption>C. Stopping a Group Called “ACT UP San Francisco”</figcaption>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="assets/Tug_of_War.png" class="img-fluid figure-img"></p>
+<figcaption>F. What’s Going Down with ACT UP?</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Incredible! We get a wide range of documents detailing the tensions and drama between various activist groups. From highest ranked to lowest ranked:</p>
+<ul>
+<li>Document A: Article on why ACT-UP (AIDS activist group) split into two organizations</li>
+<li>Document B: A press release accusing an AIDS conference of impeding ACT-UP’s participation</li>
+<li>Document C: A press release from one AIDS activist group criticizing ACT-UP SF (one of the offshoots from the split in Document A)</li>
+<li>Document D: A letter to a newspaper encouraging AIDS activist groups to come together</li>
+<li>Document E: A press release about an AIDS conference that notes some are boycotting</li>
+<li>Document F: An editorial about the state of ACT UP</li>
+</ul>
+<p>Some documents are <strong>semantically similar</strong> to our original query meaning they share the same meaning. Documents A, B, and F are great examples, they literally describe tension and disagreement within and between groups. Some documents are <strong>semantically related</strong> documents C, D, E are related to tension between groups. Document C is direct evidence accusing another group of not being effective. Document D is the opposite of the query, it touches upon the tension but it’s calling for unity. And document E touches upon the relationship between activist groups and a formal conference via the mention of a boycott.</p>
+<p>While these results are excellent, you’ve probably noticed that the words “tension”, “activist”, and “group” appear in all of these passages. <strong>If we were to run a similar keyword search on our archive, we would have to comb through ~652 documents with no ranking by relevance.</strong></p>
+<p>Let’s try another query</p>
+<div id="1ecf7afe" class="cell" data-execution_count="8">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>search(query<span class="op">=</span><span class="st">"shame attached to illness"</span>, n_results<span class="op">=</span><span class="dv">25</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Another half second later we get</p>
+<div class="grid">
+<div class="g-col-4">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="assets/DenailofIllness.png" class="img-fluid figure-img"></p>
+<figcaption>A. Excerpt from “When Someone You Know Dies of AIDS”</figcaption>
+</figure>
+</div>
+</div>
+<div class="g-col-4">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="assets/AIDSSignsConcerns.png" class="img-fluid figure-img"></p>
+<figcaption>B. Letter to the Editor of the Bay Area Reporter (B.A.R.)</figcaption>
+</figure>
+</div>
+</div>
+<div class="g-col-4">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="assets/BodyImageShame.png" class="img-fluid figure-img"></p>
+<figcaption>C. Excerpt from a Speech Titled “AIDS Psychological Issues”</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>This document set is interesting because document A is a clear direct hit, documents B is a response to fears about associating the gay community with AIDS, and document C is about the psychological impacts of the changes AIDS brings to the body.</p>
+<p><strong>Document C is most striking as it’s the clearest example of shameful feelings associated with AIDS, but the words “shame”, “attached”, and “illness” are not present in the identified page.</strong></p>
+<p><strong>End of current draft, below is old content.</strong></p>
+<p>But can we come up with a query that has minimal keyword overlap yet hits great sources?</p>
+<p>Denial of Illness .709</p>
+<p>Sick and Tired .623</p>
+<p>AIDS Signage Castro .622</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 81%">
+<col style="width: 7%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Source</th>
+<th>Selection</th>
+<th style="text-align: right;">Score</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Report on Tactics Used by ACT UP from the 6th International AIDS Conference - San Francisco 1990 (ucsf_mss98-47_001_006.pdf page 70)</td>
+<td>“Protests by ACT UP against pharmaceutical companies also have produced important victories for people with AIDS. Burroughs Wellcome, Inc.&nbsp;reduced the price of AZT by 20 percent after ACT UP condemned the exorbitant cost of the antiviral drug.”</td>
+<td style="text-align: right;">.647</td>
+</tr>
+<tr class="even">
+<td>Press Release (sfpl_glc76_010_009.pdf page 132)</td>
+<td>“ACT UP Golden Gate will present a report card on the ethical conduct of five major pharmaceutical companies at a vocal, public demonstration on September 18th at 12:00 noon at the main entrance to the Moscone Center in San Francisco…Activists will rate the ethical policies of Abbott Labs, Merck, Hoffman La Roche, Serono Laboratories, Celgene, and the Food and Drug Administration in their treatment of people with AIDS.”</td>
+<td style="text-align: right;">.640</td>
+</tr>
+<tr class="odd">
+<td>ACT-UP Golden Gate - General Meeting Notes, Letter Regarding Activism Strategy (ucsf_mss98-47_001_002.pdf Page 1)</td>
+<td>“Targeting drug companies has obvious advantages. They profit from AIDS; the more of us that suffer, the more they profit. Naturally, we tend to dislike, envy and mistrust them. It is easy to stir anger against drug ‘profiteers,’ easy to scapegoat them.”</td>
+<td style="text-align: right;">.639</td>
+</tr>
+<tr class="even">
+<td>ACT-UP Golden Gate Treatment Issue Report Volume 2 Number 11 7th International AIDS Conference (sfpl_glc76_009_004.pdf Page 157)</td>
+<td>“The most redundant phrase, often appearing In some form even In those abstracts and presentations which generated the aforementioned ‘no shit’ response was ‘Further research Is needed’ When will researchers realize that such comments, caused by excessive timidity and careerlsm, translate Into ‘Further deaths are needed’ for those of us whose lives hang In the balance.”</td>
+<td style="text-align: right;">.606</td>
+</tr>
+</tbody>
+</table>
+<p>These results are interesting, results #1 and #2 ### Notes</p>
+<p>CU Bolder finding aids: https://libguides.colorado.edu/c.php?g=1154758&amp;p=8428110</p>
+<p>Tulane Finding Aids: https://library.tulane.edu/news/Understanding-Archives</p>
+<p>NVIDIA blog on chunking: https://developer.nvidia.com/blog/how-to-build-a-document-processing-pipeline-for-rag-with-nemotron/?ncid=pa-srch-goog-941486&amp;_bt=811357954537&amp;_bk=rag%20document%20processing&amp;_bm=p&amp;_bn=g&amp;_bg=197653228032&amp;gad_source=1&amp;gad_campaignid=23899020869&amp;gbraid=0AAAAAD4XAoGewtr2zJj3a_OEUVFxduHDs&amp;gclid=EAIaIQobChMI6each9SJlQMVMIjCCB3iYyXJEAAYAiAAEgLUG_D_BwE</p>
+<p>Will use mss201501_12_39_conantcombined.pdf from “Community perspectives on needle exchange programs” (5th result)</p>
+<p>/Users/imccabe/Developer/Personal/no-more-silence/archive/NoMoreSilence_Documents/sfpl_glc76_010_002_Redacted.ocr has a solid PDF but the OCR is empty - need a way to check which docs I’m missing</p>
+<p>brilliant poster is in sfpl_glc76_009_007_Redacted.pdf</p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/Ian-P-McCabe\.github\.io\/blog");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

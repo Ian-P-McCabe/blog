@@ -10,7 +10,468 @@
 <atom:link href="https://Ian-P-McCabe.github.io/blog/index.xml" rel="self" type="application/rss+xml"/>
 <description>A blog built with Quarto</description>
 <generator>quarto-1.8.26</generator>
-<lastBuildDate>Mon, 05 Jan 2026 05:00:00 GMT</lastBuildDate>
+<lastBuildDate>Thu, 02 Jul 2026 05:00:00 GMT</lastBuildDate>
+<item>
+  <title>DRAFT Language Embedding for Historical Research</title>
+  <dc:creator>Ian McCabe</dc:creator>
+  <link>https://Ian-P-McCabe.github.io/blog/posts/history-vectors/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<section id="overview" class="level1">
+<h1>Overview</h1>
+<p>The basis of historical research is primary source material. Primary sources provide the foundational evidence necessary for any historical argument. Primary sources come in a variety of formats - letters, meeting minutes, court files, brochures, magazines, newspapers, reports, images, etc. When trying to locate specific pieces of information from the historical record, historians often have to sift through thousands of primary source documents in a collection.</p>
+<p>Historical collections tend to be so large the standard unit of measurement is the Linear Foot - roughly representing the amount of shelf space a collection occupies. There are ~1,800 pages (8.5” x 11”) per linear foot. Large historical archives tend to be hundreds or thousands of linear feet.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://Ian-P-McCabe.github.io/blog/posts/history-vectors/assets/TulaneLinearFeet.jpg" class="img-fluid figure-img"></p>
+<figcaption>~30 Linear Feet of Documents in the Tulane University Library</figcaption>
+</figure>
+</div>
+<p>To help locate documents most archival collections have a finding aid. Finding aids are guides created by archivists to describe the contents of an archival collection. Finding aids are great tools, however they can be just as unwieldy as the collection they’re describing. For example the digital finding aids for the <a href="https://archives.yale.edu/repositories/12/resources/5843/collection_organization">Ronald Dworkin papers</a> or the <a href="https://library.udel.edu/static/purl.php?mss0100">Louis Henry and Marguerite Cohn Hemingway Collection</a> are enormous!</p>
+<p>Finding aids speed up historical research but they are not perfect. Even once you get down to a specific folder (typically folder is the most specific level of a finding aid) there can still be many pages or documents to sort through. For example, in the Eric E. Rofes papers, GLC 60, Box 47 Folder 8 (a collection containing newsletters from Shanti, an AIDS support and political action organization) we find ourselves with 235 pages of newsletters to sort through!</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://Ian-P-McCabe.github.io/blog/posts/history-vectors/assets/DigitalFindingAid.png" class="img-fluid figure-img"></p>
+<figcaption>Snippet of the Digital Finding Aid from the No More Silence Project</figcaption>
+</figure>
+</div>
+<p>There has to be a better way! In this article I will showcase how we can use Natural Language Processing (NLP) techniques to facilitate historical research and find trends in a large body of historical text. I will be using documents from the <a href="https://www.library.ucsf.edu/archives/aids/data-projects/">No More Silence</a> project from the University of California San Francisco.</p>
+<p><strong>Add example here</strong></p>
+</section>
+<section id="a-pipeline" class="level1">
+<h1>A Pipeline</h1>
+<p>Before we can ask historical questions, we need get our documents into a format the computer can understand. To do this we must convert physical documents into a format computers can work with. The steps to perform this conversion are as follows:</p>
+<ol type="1">
+<li><strong>Scan</strong>: Historical documents must be digitized so a computer can interact with them</li>
+<li><strong>Optical Character Recognition (OCR)</strong>: Digitized documents are converted to text the computer can work with</li>
+<li><strong>Chunking</strong>: The text is fragmented into small chunks for the embedding model</li>
+<li><strong>Embedding</strong>: Each chunk becomes a vector representing the meaning of the chunk</li>
+<li><strong>Storage</strong>: We store each chunk, its vector embedding, and metadata into a database we can search</li>
+</ol>
+<p>Once our documents are in a database we can perform some research!</p>
+<section id="step-1-scan" class="level2">
+<h2 class="anchored" data-anchor-id="step-1-scan">Step 1: Scan</h2>
+<p>I’m skipping this step because it’s already been done on No More Silence and is pretty straightforward.</p>
+</section>
+<section id="step-2-optical-character-recognition" class="level2">
+<h2 class="anchored" data-anchor-id="step-2-optical-character-recognition">Step 2: Optical Character Recognition</h2>
+<p>While this step has already been done, advances in OCR technology over the last ~5 years warrant a return to this step. Below is a page from No More Silence along with the OCR done back in 2021:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://Ian-P-McCabe.github.io/blog/posts/history-vectors/assets/OCRExample.png" class="img-fluid figure-img"></p>
+<figcaption>Left: Letter to the FDA from the APA Regarding Psychiatric impact of at-home HIV tests Right: Corresponding OCR of the same page</figcaption>
+</figure>
+</div>
+<p>While it is very clear to humans that the list of board members and assembly members of the American Psychiatric Association are not part of the body of the letter, the computer does not know that. We end up with the lovely OCR on the right where the names of the doctors are mangled into <code>M.mh.:i • I. Kirk .. ~1nd1. . .\1, D .</code> and <code>GLld~ R. &lt;}r~n')'. M.n.</code>. A human doesn’t know who Dr <code>GLld~ R. &lt;}r~n')'. M.n.</code> is, and a computer definitely won’t!</p>
+<p>Fortunately, OCR technology has advanced <strong>significantly</strong> in the last 5 years. I can now OCR the same document on my laptop and get the following result:</p>
+<div id="0a8bc33f" class="cell" data-execution_count="2">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> marker.converters.pdf <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> PdfConverter</span>
+<span id="cb1-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> marker.models <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> create_model_dict</span>
+<span id="cb1-3"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> marker.output <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> text_from_rendered</span>
+<span id="cb1-4"></span>
+<span id="cb1-5">converter <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> PdfConverter(</span>
+<span id="cb1-6">    artifact_dict<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>create_model_dict(),</span>
+<span id="cb1-7">)</span>
+<span id="cb1-8">rendered <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> converter(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"./assets/ar200515_1_4_apacombined.pdf"</span>)</span>
+<span id="cb1-9">text, _, images <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> text_from_rendered(rendered)</span></code></pre></div></div>
+</div>
+<p>2.5 minutes later, I get:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://Ian-P-McCabe.github.io/blog/posts/history-vectors/assets/NewOCR.png" class="img-fluid figure-img"></p>
+<figcaption>Snippet of a modern OCR run on the APA letter</figcaption>
+</figure>
+</div>
+<p>This is <strong>much better</strong> than the original scan. I am using the <a href="https://github.com/datalab-to/marker">marker</a> library, which runs a pipeline of deep learning models to pull out text from documents.</p>
+<p>Since there are ~46,000 pages of documents in this archive and I don’t have access to a supercomputer, it would take me about 600 hours for me to re-ocr the entire collection. So I will stick with the original OCR provided by UCSF.</p>
+</section>
+<section id="step-3a-picking-a-model" class="level2">
+<h2 class="anchored" data-anchor-id="step-3a-picking-a-model">Step 3A: Picking a Model</h2>
+<p>Before we chunk, we need to figure out what model we’re going to use to embed our text into searchable vectors. Embedding models have advanced significantly in the past couple of years and there are some very good open source options. Before we select a model, we should understand a little bit about how they work.</p>
+<section id="how-do-embedding-models-work" class="level3">
+<h3 class="anchored" data-anchor-id="how-do-embedding-models-work">How do Embedding Models Work?</h3>
+<p>Embedding models take text, such as</p>
+<div id="16d42307" class="cell" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1">text <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"""I have long respected you as a political leader with the guts to </span></span>
+<span id="cb2-2"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">speak out controversial issues. I write to you as a concerned </span></span>
+<span id="cb2-3"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">physician to call your attention to the fact that the position you </span></span>
+<span id="cb2-4"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">are taking on needle exchange is dead wrong."""</span></span></code></pre></div></div>
+</div>
+<p>And transforms it into a vector (a very large list of numbers):</p>
+<div id="99cabb69" class="cell" data-execution_count="4">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> sentence_transformers <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> SentenceTransformer</span>
+<span id="cb3-2"></span>
+<span id="cb3-3">model <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> SentenceTransformer(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Qwen/Qwen3-Embedding-0.6B"</span>)</span>
+<span id="cb3-4"></span>
+<span id="cb3-5">embedding <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> model.encode(text)</span>
+<span id="cb3-6"></span>
+<span id="cb3-7"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(embedding)</span></code></pre></div></div>
+</div>
+<p><code>[ 0.01467937  0.01435469 -0.01028924 ...  0.0262527   0.00375003 0.01165906]</code></p>
+<p><strong>The vector above actually contains 1024 values!</strong></p>
+<p>There is a lot of fancy math that goes on behind the scenes, but the general idea of Text In -&gt; Vector out.</p>
+</section>
+<section id="which-model-do-we-pick" class="level3">
+<h3 class="anchored" data-anchor-id="which-model-do-we-pick">Which Model do We Pick?</h3>
+<p>The total amount of text we can put into a model at once is limited by the <strong>maximum sequence length</strong> (aka context window). The sequence length is the number of tokens a model can consume at once.</p>
+<p>You can think of a token as roughly a single word in our block of text. So when the model processes the text above, it is really ingesting “I”, “have”, “long”, “respected” etc. I say <em>roughly</em> because there’s really ~1.3 tokens per word - in the Qwen model we’re using <code>"physician"</code> becomes <code>["phys", "ician"]</code> and <code>"speak out"</code> becomes <code>["s", "peak", "out"]</code></p>
+<p>On older language embedding models the maximum sequence length can be somewhere between ~256 to ~512 tokens, and on newer models the maximum sequence length can be as high as 32,000 tokens.</p>
+<p>We will use <code>Qwen3-Embedding-0.6B</code> as our embedding model because it has an extremely large context window (32,000 tokens), is highly ranked, and can run locally on my laptop.</p>
+<p>Before we can run semantic searches on our collection, we need to break our document into smaller embeddable chunks. When chunking our text, we need to be aware of our models token limit. We are using <code>Qwen3-Embedding-0.6B</code> to embed our documents</p>
+</section>
+</section>
+<section id="step-3b-chunking" class="level2">
+<h2 class="anchored" data-anchor-id="step-3b-chunking">Step 3B: Chunking</h2>
+<p>With such a large maximum sequence length, we have options for how we embed the documents.</p>
+<div class="grid">
+<section id="page-level-chunking" class="level3 g-col-4">
+<h3 class="anchored" data-anchor-id="page-level-chunking">Page Level Chunking</h3>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://Ian-P-McCabe.github.io/blog/posts/history-vectors/assets/PageLevelChunking.png" class="img-fluid figure-img"></p>
+<figcaption>Page Level Chunking</figcaption>
+</figure>
+</div>
+<p>Simplest approach - each page is embedded into its own chunk. This preserves the broader context of the document but loses some precision. We will use this approach since the OCR files already have clean page breaks.</p>
+</section>
+<section id="window-overlap-chunking" class="level3 g-col-4">
+<h3 class="anchored" data-anchor-id="window-overlap-chunking">Window Overlap Chunking</h3>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://Ian-P-McCabe.github.io/blog/posts/history-vectors/assets/Window-Overlap.png" class="img-fluid figure-img"></p>
+<figcaption>Window Overlap Chunking</figcaption>
+</figure>
+</div>
+<p>Overlapping windows are embedded into chunks. Each red or blue square represents a chunk that would be embedded. Windowed chunks overlap to retain context if a chunk splits a paragraph. This approach can lose broader semantic meaning but is very precise.</p>
+</section>
+<section id="context-aware-chunking" class="level3 g-col-4">
+<h3 class="anchored" data-anchor-id="context-aware-chunking">Context Aware Chunking</h3>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://Ian-P-McCabe.github.io/blog/posts/history-vectors/assets/Context-Aware.png" class="img-fluid figure-img"></p>
+<figcaption>Context Aware Chunking</figcaption>
+</figure>
+</div>
+<p>Split document into chunks that contain related information. The content of the letter is a single chunk. The headings, footers, and other information may be put into one large chunk or discarded entirely. This approach typically requires the use of an LLM to determine what is and isn’t important in the document.</p>
+</section>
+</div>
+<p>For embedding the No More Silence dataset, I am using a mix of page and window level chunking. Some documents are already split into pages and others lack page breaks. For documents that lack page breaks I am using 512 tokens per window with 64 tokens of overlap.</p>
+</section>
+<section id="step-4-embed-and-store" class="level2">
+<h2 class="anchored" data-anchor-id="step-4-embed-and-store">Step 4: Embed and Store</h2>
+<p>Embedding the chunks is very straightforward, here is the command to embed a single piece of text:</p>
+<div id="e7b9bde0" class="cell" data-execution_count="5">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1">text <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"""...1. Information about the PARTNERS' OUTREACH PROJECT, a new research, education</span></span>
+<span id="cb4-2"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">and counseling program for female sexual partners of male IV drug users..."""</span></span>
+<span id="cb4-3"></span>
+<span id="cb4-4">embeddings <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> model.encode(</span>
+<span id="cb4-5">    text, <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># List of chunks we're embedding</span></span>
+<span id="cb4-6">    show_progress_bar<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>,</span>
+<span id="cb4-7">    convert_to_numpy<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>,</span>
+<span id="cb4-8">    normalize_embeddings<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span></span>
+<span id="cb4-9">)</span></code></pre></div></div>
+</div>
+<p>When we store our chunks, it’s very important that we include metadata so we know what document and page the chunk we’re using comes from.</p>
+<div id="5b21f107" class="cell" data-execution_count="6">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1">metadata <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> {</span>
+<span id="cb5-2">    <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"doc_id"</span>:     doc_id, <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># "ucsf_mss95-04_001_019"</span></span>
+<span id="cb5-3">    <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"title"</span>:      row.get(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Title"</span>), <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># "Membership Meeting Minutes: August 1987"</span></span>
+<span id="cb5-4">    <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"collection"</span>: row.get(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Collection Title"</span>), <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># "Women's AIDS Network (WAN) records, MSS 95-04, Carton 1 Folder 19"</span></span>
+<span id="cb5-5">    <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"year"</span>:       _extract_year(row.get(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Date 1"</span>)), <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># "1987"</span></span>
+<span id="cb5-6">    <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"page_num"</span>: row.get(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Page_Num"</span>) <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># 1</span></span>
+<span id="cb5-7">}</span>
+<span id="cb5-8"></span>
+<span id="cb5-9">collection.add(</span>
+<span id="cb5-10">    document<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>new_text,</span>
+<span id="cb5-11">    embeddings<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>embedding,</span>
+<span id="cb5-12">    metadata<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>metadata,</span>
+<span id="cb5-13">    <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">id</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>metadata[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"doc_id"</span>],</span>
+<span id="cb5-14">)</span></code></pre></div></div>
+</div>
+</section>
+<section id="step-5-query" class="level2">
+<h2 class="anchored" data-anchor-id="step-5-query">Step 5: Query</h2>
+<p>Now that our documents are chunked and embedded, we can begin querying the database. If we wanted to explore tensions between activist groups we can simply run:</p>
+<div id="e9ee0831" class="cell" data-execution_count="7">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1">search(query<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"tensions between activist groups"</span>, n_results<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">25</span>)</span></code></pre></div></div>
+</div>
+<p>And a fraction of a second later we get:</p>
+<div class="grid">
+<div class="g-col-4">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://Ian-P-McCabe.github.io/blog/posts/history-vectors/assets/Why_ACT_UP_Split.png" class="img-fluid figure-img"></p>
+<figcaption>A. Why ACT-UP Split in Two (ACT-UP From Both Sides)</figcaption>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://Ian-P-McCabe.github.io/blog/posts/history-vectors/assets/Work_Together.png" class="img-fluid figure-img"></p>
+<figcaption>D. Let’s Work Together</figcaption>
+</figure>
+</div>
+</div>
+<div class="g-col-4">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://Ian-P-McCabe.github.io/blog/posts/history-vectors/assets/Vancouver_Fight.png" class="img-fluid figure-img"></p>
+<figcaption>B. Vancouver Conference on AIDS Fight Participation of ACT UP</figcaption>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://Ian-P-McCabe.github.io/blog/posts/history-vectors/assets/Immigration_Boycott.png" class="img-fluid figure-img"></p>
+<figcaption>E. Immigration Boycott</figcaption>
+</figure>
+</div>
+</div>
+<div class="g-col-4">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://Ian-P-McCabe.github.io/blog/posts/history-vectors/assets/ACT_UP_SF_Crazy.png" class="img-fluid figure-img"></p>
+<figcaption>C. Stopping a Group Called “ACT UP San Francisco”</figcaption>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://Ian-P-McCabe.github.io/blog/posts/history-vectors/assets/Tug_of_War.png" class="img-fluid figure-img"></p>
+<figcaption>F. What’s Going Down with ACT UP?</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Incredible! We get a wide range of documents detailing the tensions and drama between various activist groups. From highest ranked to lowest ranked:</p>
+<ul>
+<li>Document A: Article on why ACT-UP (AIDS activist group) split into two organizations</li>
+<li>Document B: A press release accusing an AIDS conference of impeding ACT-UP’s participation</li>
+<li>Document C: A press release from one AIDS activist group criticizing ACT-UP SF (one of the offshoots from the split in Document A)</li>
+<li>Document D: A letter to a newspaper encouraging AIDS activist groups to come together</li>
+<li>Document E: A press release about an AIDS conference that notes some are boycotting</li>
+<li>Document F: An editorial about the state of ACT UP</li>
+</ul>
+<p>Some documents are <strong>semantically similar</strong> to our original query meaning they share the same meaning. Documents A, B, and F are great examples, they literally describe tension and disagreement within and between groups. Some documents are <strong>semantically related</strong> documents C, D, E are related to tension between groups. Document C is direct evidence accusing another group of not being effective. Document D is the opposite of the query, it touches upon the tension but it’s calling for unity. And document E touches upon the relationship between activist groups and a formal conference via the mention of a boycott.</p>
+<p>While these results are excellent, you’ve probably noticed that the words “tension”, “activist”, and “group” appear in all of these passages. <strong>If we were to run a similar keyword search on our archive, we would have to comb through ~652 documents with no ranking by relevance.</strong></p>
+<p>Let’s try another query</p>
+<div id="1ecf7afe" class="cell" data-execution_count="8">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1">search(query<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"shame attached to illness"</span>, n_results<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">25</span>)</span></code></pre></div></div>
+</div>
+<p>Another half second later we get</p>
+<div class="grid">
+<div class="g-col-4">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://Ian-P-McCabe.github.io/blog/posts/history-vectors/assets/DenailofIllness.png" class="img-fluid figure-img"></p>
+<figcaption>A. Excerpt from “When Someone You Know Dies of AIDS”</figcaption>
+</figure>
+</div>
+</div>
+<div class="g-col-4">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://Ian-P-McCabe.github.io/blog/posts/history-vectors/assets/AIDSSignsConcerns.png" class="img-fluid figure-img"></p>
+<figcaption>B. Letter to the Editor of the Bay Area Reporter (B.A.R.)</figcaption>
+</figure>
+</div>
+</div>
+<div class="g-col-4">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://Ian-P-McCabe.github.io/blog/posts/history-vectors/assets/BodyImageShame.png" class="img-fluid figure-img"></p>
+<figcaption>C. Excerpt from a Speech Titled “AIDS Psychological Issues”</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>This document set is interesting because document A is a clear direct hit, documents B is a response to fears about associating the gay community with AIDS, and document C is about the psychological impacts of the changes AIDS brings to the body.</p>
+<p><strong>Document C is most striking as it’s the clearest example of shameful feelings associated with AIDS, but the words “shame”, “attached”, and “illness” are not present in the identified page.</strong></p>
+<p><strong>End of current draft, below is old content.</strong></p>
+<p>But can we come up with a query that has minimal keyword overlap yet hits great sources?</p>
+<p>Denial of Illness .709</p>
+<p>Sick and Tired .623</p>
+<p>AIDS Signage Castro .622</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 81%">
+<col style="width: 7%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Source</th>
+<th>Selection</th>
+<th style="text-align: right;">Score</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Report on Tactics Used by ACT UP from the 6th International AIDS Conference - San Francisco 1990 (ucsf_mss98-47_001_006.pdf page 70)</td>
+<td>“Protests by ACT UP against pharmaceutical companies also have produced important victories for people with AIDS. Burroughs Wellcome, Inc.&nbsp;reduced the price of AZT by 20 percent after ACT UP condemned the exorbitant cost of the antiviral drug.”</td>
+<td style="text-align: right;">.647</td>
+</tr>
+<tr class="even">
+<td>Press Release (sfpl_glc76_010_009.pdf page 132)</td>
+<td>“ACT UP Golden Gate will present a report card on the ethical conduct of five major pharmaceutical companies at a vocal, public demonstration on September 18th at 12:00 noon at the main entrance to the Moscone Center in San Francisco…Activists will rate the ethical policies of Abbott Labs, Merck, Hoffman La Roche, Serono Laboratories, Celgene, and the Food and Drug Administration in their treatment of people with AIDS.”</td>
+<td style="text-align: right;">.640</td>
+</tr>
+<tr class="odd">
+<td>ACT-UP Golden Gate - General Meeting Notes, Letter Regarding Activism Strategy (ucsf_mss98-47_001_002.pdf Page 1)</td>
+<td>“Targeting drug companies has obvious advantages. They profit from AIDS; the more of us that suffer, the more they profit. Naturally, we tend to dislike, envy and mistrust them. It is easy to stir anger against drug ‘profiteers,’ easy to scapegoat them.”</td>
+<td style="text-align: right;">.639</td>
+</tr>
+<tr class="even">
+<td>ACT-UP Golden Gate Treatment Issue Report Volume 2 Number 11 7th International AIDS Conference (sfpl_glc76_009_004.pdf Page 157)</td>
+<td>“The most redundant phrase, often appearing In some form even In those abstracts and presentations which generated the aforementioned ‘no shit’ response was ‘Further research Is needed’ When will researchers realize that such comments, caused by excessive timidity and careerlsm, translate Into ‘Further deaths are needed’ for those of us whose lives hang In the balance.”</td>
+<td style="text-align: right;">.606</td>
+</tr>
+</tbody>
+</table>
+<p>These results are interesting, results #1 and #2 ### Notes</p>
+<p>CU Bolder finding aids: https://libguides.colorado.edu/c.php?g=1154758&amp;p=8428110</p>
+<p>Tulane Finding Aids: https://library.tulane.edu/news/Understanding-Archives</p>
+<p>NVIDIA blog on chunking: https://developer.nvidia.com/blog/how-to-build-a-document-processing-pipeline-for-rag-with-nemotron/?ncid=pa-srch-goog-941486&amp;_bt=811357954537&amp;_bk=rag%20document%20processing&amp;_bm=p&amp;_bn=g&amp;_bg=197653228032&amp;gad_source=1&amp;gad_campaignid=23899020869&amp;gbraid=0AAAAAD4XAoGewtr2zJj3a_OEUVFxduHDs&amp;gclid=EAIaIQobChMI6each9SJlQMVMIjCCB3iYyXJEAAYAiAAEgLUG_D_BwE</p>
+<p>Will use mss201501_12_39_conantcombined.pdf from “Community perspectives on needle exchange programs” (5th result)</p>
+<p>/Users/imccabe/Developer/Personal/no-more-silence/archive/NoMoreSilence_Documents/sfpl_glc76_010_002_Redacted.ocr has a solid PDF but the OCR is empty - need a way to check which docs I’m missing</p>
+<p>brilliant poster is in sfpl_glc76_009_007_Redacted.pdf</p>
+
+
+</section>
+</section>
+
+ ]]></description>
+  <category>History</category>
+  <category>NLP</category>
+  <category>RAG</category>
+  <guid>https://Ian-P-McCabe.github.io/blog/posts/history-vectors/</guid>
+  <pubDate>Thu, 02 Jul 2026 05:00:00 GMT</pubDate>
+</item>
 <item>
   <title>Shirt Color Selection Problem Part 3</title>
   <dc:creator>Ian McCabe</dc:creator>
@@ -751,7 +1212,7 @@ font-style: inherit;"># plot_distance_heatmap(best_hybrid_colors, distance_matri
  ]]></description>
   <category>Dodgeball Colors</category>
   <guid>https://Ian-P-McCabe.github.io/blog/posts/dodgeball-colors-3/</guid>
-  <pubDate>Mon, 05 Jan 2026 05:00:00 GMT</pubDate>
+  <pubDate>Mon, 05 Jan 2026 06:00:00 GMT</pubDate>
   <media:content url="https://Ian-P-McCabe.github.io/blog/posts/dodgeball-colors-3/assets/Part3HeaderImage.png" medium="image" type="image/png" height="73" width="144"/>
 </item>
 <item>
@@ -2324,7 +2785,7 @@ font-style: inherit;">"""</span></span>
 </section></div> ]]></description>
   <category>Dodgeball Colors</category>
   <guid>https://Ian-P-McCabe.github.io/blog/posts/dodgeball-colors-2/</guid>
-  <pubDate>Mon, 03 Mar 2025 05:00:00 GMT</pubDate>
+  <pubDate>Mon, 03 Mar 2025 06:00:00 GMT</pubDate>
   <media:content url="https://Ian-P-McCabe.github.io/blog/posts/dodgeball-colors-2/assets/cover_image.png" medium="image" type="image/png" height="106" width="144"/>
 </item>
 <item>
@@ -3039,8 +3500,101 @@ if (outputEl) {{
  ]]></description>
   <category>Dodgeball Colors</category>
   <guid>https://Ian-P-McCabe.github.io/blog/posts/dodgeball-colors-1/</guid>
-  <pubDate>Fri, 03 Jan 2025 05:00:00 GMT</pubDate>
+  <pubDate>Fri, 03 Jan 2025 06:00:00 GMT</pubDate>
   <media:content url="https://Ian-P-McCabe.github.io/blog/posts/dodgeball-colors-1/assets/Pantone_Gold.png" medium="image" type="image/png" height="105" width="144"/>
+</item>
+<item>
+  <title></title>
+  <link>https://Ian-P-McCabe.github.io/blog/posts/history-vectors/assets/ar200515_ocr.html</link>
+  <description><![CDATA[ 
+
+
+
+
+<p><img src="https://Ian-P-McCabe.github.io/blog/posts/history-vectors/assets/_page_0_Picture_2.jpeg" class="img-fluid"></p>
+<p>1400 K Street, N.W. Washington, D.C. 20005 Telephone: 202.682.6000 Fax: 202.682.6114</p>
+<section id="board-of-trusters-1994-1995" class="level2">
+<h2 class="anchored" data-anchor-id="board-of-trusters-1994-1995">BOARD OF TRUSTERS 1994-1995</h2>
+<p>Jerry M. Wiener, M.D.&nbsp;President</p>
+<p>Mary Jane England, M.D.&nbsp;President-Fleet</p>
+<p>Martha J. Kirkpatrick, M.D.&nbsp;Vice President</p>
+<p>Herbert S. Sacks, M.D.&nbsp;Vice President</p>
+<p>Steven S. Sharfstein, M.O. Sceretary</p>
+<p>Fred Gottlieb, M.D.&nbsp;Treasurer</p>
+<p>John S. Molintyre, M.D.&nbsp;Joseph T. English, M.D.&nbsp;Lawrence Hartmann, M.D.&nbsp;Past Praidents</p>
+<p>Cerald H. Flamm, M.D.&nbsp;Harvey Bluestone, M.D.&nbsp;Abram M. Hostetter, M.D.&nbsp;Robert J. McDevin, M.D.&nbsp;Charles L. Bowden, M.D.&nbsp;Daniel B. Borenstein, M.D.&nbsp;Robert A. George, M.D.&nbsp;Benjamin Liptzin, M.D.&nbsp;Steven M. Mirin, M.D.&nbsp;Steven M. Mirin, M.D.&nbsp;Gladys R. Gregory, M.D.&nbsp;Mary Kay Smith, M.D.</p>
+</section>
+<section id="assembly-1994-1995" class="level2">
+<h2 class="anchored" data-anchor-id="assembly-1994-1995">ASSEMBLY 1994-1995</h2>
+<p>Norman A. Clemens, M.D.&nbsp;Speaker Richard K. Harding, M.D.&nbsp;Speaker-Elect R. Dale Walker, M.D.&nbsp;Recorder</p>
+<p>Nancy C. Andreasen, M.D., Ph.D.&nbsp;Editor, American Journal of Psychiatry John A. Talborr, M.D.&nbsp;Editor, Harrital et Community Reychiatry Robert J. Campbell, III, M.D.&nbsp;Editor, Psychiatric News Melvin Sabshin, M.D.&nbsp;Medical Director Carolyn B. Robinowitz, M.D.&nbsp;Senior Deputy Medical Director John Blamphin Director, Public Affaire Jay B. Corler, J.D. Special Coursel and Director, Concernment Relations Ronald E. McMillen Director, Publications and Marketing Robert T. M. Phillips, M.D., Ph.D.&nbsp;Deputy Medical Director Harold Alan Pincus, M.D.&nbsp;Deputy Medical Director James H. Scully, Jr., M.D.&nbsp;Deputy Medical Director Jack W. White, D.B.A. Deputy Director, Business Administration</p>
+<p>October 24, 1994</p>
+<p>David Kessler, M.D. Commissioner Food and Drug Administration 5600 Fishers Lane Rockville, MD 20857</p>
+<p>Dear Dr.&nbsp;Kessler:</p>
+<p>We understand the Food and Drug Administration (FDA) has under active consideration the approval of home sample collection (HSC) kits for HIV. On behalf of the American Psychiatric Association Commission on AIDS and the American Psychological Association Committee on Psychology and AIDS, we are writing to express our strong concerns about the design and implementation of the HSC kit as proposed by Johnson and Johnson. We support the aim of increasing individual awareness of HIV sero-status which may contribute to HIV prevention, but feel an acceptable HSC kit must fully address the psychological and behavioral ramifications of this system of testing. We feel the proposed HSC system is unprecedented, untested, and therefore must be subject to the most rigorous assessment of safety.</p>
+<p>Given the gravity of possible adverse psychological reactions to HIV testing and the lack of data concerning the safety of telephone notification of a life-threatening medical condition, we strongly urge careful pilot and post-release evaluation to assess the incidence of untoward reactions. Such reactions include severe states of anxiety and depression, increased suicidal ideation and behavior, and increased high risk behaviors for HIV transmission resulting from misinterpretation of HIV-negative test results, i.e., a false reassurance that current high risk sexual behaviors are low risk, or extreme reactions to HIV-positive status. In addition, it is possible that some consumers who test HIV-positive may re-test themselves to try to disconfirm the result rather than pursue appropriate care.</p>
+<p>Data should therefore be collected that assesses entry into the health care system by individuals testing HIV-positive by HSC kits, so that we may better the risk-benefit ratio of this form of testing. Moreover, baseline and follow-up data should be collected to identify which individuals utilizing HSC kits may be at increased risk for psychological distress during or after the testing process.</p>
+<p>We are also concerned that the proposed HSC system adequately anticipate psychological and behavioral complications of testing by increasing the availability of telephone counseling. These complications can and do occur at any time during the testing process, from the time of deciding to take the test to the receipt of test results. Accordingly, adequate pre- and post-test counseling must be available to consumers. Comprehensive counseling should identify individuals who need referral for additional pre-test counseling, such as consumers who are at elevated risk of serious psychological or behavioral complications of HSC kit testing and those who may be coerced into taking the test.</p>
+<p>An adequate process of informed consent is vital to HIV testing, for both ethical and mental health reasons, and we are concerned that HSC testing kits meet present standards of informed consent. It is well documented that many individuals reading written materials such as those found in package inserts or informed consent statements do not fully comprehend the content of such documents. We feel that, at a minimum, HSC kit counselors should be available to anyone considering home testing to discuss, as objectively as possible, the risks and benefits of home testing prior to purchasing the kit. Additionally, consumers ought to be informed of alternative means of HIV testing, and whether consumers should get additional help before proceeding with HSC testing. For those who are illiterate or speak another language, these issues are exacerbated.</p>
+<p><img src="https://Ian-P-McCabe.github.io/blog/posts/history-vectors/assets/_page_0_Picture_24.jpeg" class="img-fluid"></p>
+<p>David Kessler, M.D.&nbsp;October 24, 1994 Page Two</p>
+<p>We are particularly concerned that adolescents and psychologically or socially isolated individuals are at increased risk for adverse reactions. Although the HSC kit would theoretically be available only to those 18 or older, there are no safeguards in an anonymous, telephone system which prevents access by teenagers who are anxious because of a recent unprotected sexual experience. We have an overriding concern that HSC kit counselors receive adequate training and mental health professional consultative support to identify consumers who present undue risks of adverse effects upon notification of test results, and to help manage consumers who are in an acute crisis at any point of telephone contact.</p>
+<p>Even in non-crisis situations, telephone-based referrals do not generally result in high rates of service utilization. Moreover, under what circumstances, if any, will consumers be evaluated as too unstable to receive telephone notification of HIV serostatus; e.g., intoxication or psychoses? Will HSC test kit counselors be trained to recognize consumers with psychiatric conditions (e.g., obsessive-compulsive disorder or depression) whose multiple HSC kit retesting may reflect somatic preoccupations in need of mental health assessment and treatment? Given the scope of responsibilities even well-trained counselors will assume, we are additionally concerned about psychological support for telephone counselors who are likely to experience significant distress during the course of their duties.</p>
+<p>We believe that face-to-face HIV counseling remains the procedure of choice and that HSC kit testing should be utilized only when the former is unavailable or unacceptable to the consumer. In-person counseling allows for more adequate assessment and management of psychological responses to testing, and, most importantly, provides an unparalleled opportunity to help individuals reduce risk of HIV infection. As such, face-to-face counseling remains an essential component of HIV prevention.</p>
+<p>Members of the American Psychiatric Association Commission on AIDS and American Psychological Committee on Psychology and AIDS are available to the FDA to discuss how HSC systems could more adequately address the prevention of both HIV infection and adverse psychological and behavioral sequelae of HIV testing. We are also prepared to consult in the further development of HSC kit systems as well as in the development of evaluation research to assess HSC kit safety and efficacy.</p>
+<p>We appreciate your consideration of these issues. Please feel free to contact the AIDS Program Office of the American Psychiatric Association at 202.682.6104 should you need any further information.</p>
+<p>Sincerely,</p>
+<p>Melvin Sabshin, M.D.</p>
+<p>Medical Director</p>
+<p>American Psychiatric Association</p>
+<p>Washington, DC</p>
+<p>John Anderson, Ph.D.&nbsp;Director, Office of AIDS</p>
+<p>American Psychological Association</p>
+<p>Washington, DC</p>
+<p>Marshall Forstein, M.D.</p>
+<p>Chair, APA Commission on AIDS</p>
+<p>Director, Zinberg HIV Mental Health Program</p>
+<p>Boston, MA</p>
+<p>Patricia Hawkins, Ph.D.</p>
+<p>Chair, ApA Committee on Psychology &amp; AIDS</p>
+<p>Washington, DC</p>
+<p>David Kessler, M.D.&nbsp;October 24, 1994 Page Three</p>
+<p>Alexandra Beckett, M.D. Director, HIV-Related Programs Beth Israel Hospital Asst. Professor of Psychiatry Harvard Medical School Member, Commission on AIDS Boston, MA</p>
+<p>Anke Ehrhardt, Ph.D.&nbsp;HIV Ctr for Clinical &amp; Behavioral Studies New York, NY</p>
+<p>Eric Gordon Bing, M.D. Clinical Instructor UCLA Dept. of Psychiatry &amp; Behavioral Science Member, Commission on AIDS Los Angeles, CA</p>
+<p>Jacqueline Etemad, M.D. Assoc. Clinical Professor of Psychiatry University of California-San Francisco Member, Commission on AIDS San Francisco, CA</p>
+<p>Robert Cabaj, M.D.</p>
+<p>Medical Director</p>
+<p>Access Team for Mental Health Services</p>
+<p>San Mateo County</p>
+<p>President</p>
+<p>American Association of Physicians for Human Rights (AAPHR)</p>
+<p>Member, Commission on AIDS</p>
+<p>San Francisco, CA</p>
+<p>Francisco Fernandez, M.D. Associate Professor of Psychiatry Dept. of Psychiatry, Baylor College of Medicine Chief, Psychiatric Consultation Service St.&nbsp;Luke’s Episcopal Hospital Houston, TX</p>
+<p>Francine Cournos, M.D.</p>
+<p>Assoc Clinical Professor, Psychiatry Columbia Univ College Physicians &amp; Surgeons New York, NY</p>
+<p>Mindy Jennifer Fullilove, M.D.</p>
+<p>Assoc Professor Clinical Psychiatry &amp; Public Health New York State Psychiatric Institute Columbia University New York, NY</p>
+<p>Don Des Jarlais, Ph.D.&nbsp;American Psychological Association Committee on Psychology and AIDS New York, NY Terry Gock, Ph.D.&nbsp;American Psychological Association Committee on Psychology and AIDS Los Angeles, CA David Kessler, M.D.&nbsp;October 24, 1994 Page Four</p>
+<p>Cynthia A. Gomez, Ph.D.&nbsp;Center for AIDS Prevention Studies San Francisco, CA</p>
+<p>Karl Goodkin, M.D., Ph.D.</p>
+<p>Assoc Professor Dept Psychiatry &amp; Neuropsychiatry University Miami Miami, FL</p>
+<p>Gladys Gregory, M.D.&nbsp;Dept Psychiatry University Miami Miami, FL</p>
+<p>Phillip Hernandez, M.D.&nbsp;Child Psychiatry Fellow Children’s Hospital Boston, MA</p>
+<p>Janice Hutchinson, M.D. Director, Child &amp; Youth Services DC Commission on Mental Health Member, Commission on AIDS Washington, DC</p>
+<p>Robert Kertzner, M.D. Assistant Clinical Professor Dept Psychiatry Columbia University New York, NY</p>
+<p>Joyce Seiko Kobayashi, M.D.&nbsp;Medical Director Department of Neuropsychiatry Denver General Hospital Denver, CO</p>
+<p>Stuart Nichols, M.D. Chair, American Psychiatric Association AIDS Education Project New York, NY</p>
+<p>H. Alexander Robinson, CPA, MBA American Civil Liberties Union Washington, DC</p>
+<p>S. Timothy Stroupe, M.D.&nbsp;Dept Psychiatry Univ North Carolina Hospital Chapel Hill, NC</p>
+
+
+</section>
+
+ ]]></description>
+  <guid>https://Ian-P-McCabe.github.io/blog/posts/history-vectors/assets/ar200515_ocr.html</guid>
+  <pubDate>Fri, 03 Jul 2026 04:08:36 GMT</pubDate>
 </item>
 </channel>
 </rss>
