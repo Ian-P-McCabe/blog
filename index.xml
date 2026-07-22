@@ -10,7 +10,7 @@
 <atom:link href="https://Ian-P-McCabe.github.io/blog/index.xml" rel="self" type="application/rss+xml"/>
 <description>A blog built with Quarto</description>
 <generator>quarto-1.8.26</generator>
-<lastBuildDate>Thu, 02 Jul 2026 05:00:00 GMT</lastBuildDate>
+<lastBuildDate>Thu, 02 Jul 2026 04:00:00 GMT</lastBuildDate>
 <item>
   <title>DRAFT Language Embedding for Historical Research</title>
   <dc:creator>Ian McCabe</dc:creator>
@@ -470,7 +470,7 @@ font-style: inherit;">25</span>)</span></code></pre></div></div>
   <category>NLP</category>
   <category>RAG</category>
   <guid>https://Ian-P-McCabe.github.io/blog/posts/history-vectors/</guid>
-  <pubDate>Thu, 02 Jul 2026 05:00:00 GMT</pubDate>
+  <pubDate>Thu, 02 Jul 2026 04:00:00 GMT</pubDate>
 </item>
 <item>
   <title>Shirt Color Selection Problem Part 3</title>
@@ -1212,7 +1212,7 @@ font-style: inherit;"># plot_distance_heatmap(best_hybrid_colors, distance_matri
  ]]></description>
   <category>Dodgeball Colors</category>
   <guid>https://Ian-P-McCabe.github.io/blog/posts/dodgeball-colors-3/</guid>
-  <pubDate>Mon, 05 Jan 2026 06:00:00 GMT</pubDate>
+  <pubDate>Mon, 05 Jan 2026 05:00:00 GMT</pubDate>
   <media:content url="https://Ian-P-McCabe.github.io/blog/posts/dodgeball-colors-3/assets/Part3HeaderImage.png" medium="image" type="image/png" height="73" width="144"/>
 </item>
 <item>
@@ -2785,7 +2785,7 @@ font-style: inherit;">"""</span></span>
 </section></div> ]]></description>
   <category>Dodgeball Colors</category>
   <guid>https://Ian-P-McCabe.github.io/blog/posts/dodgeball-colors-2/</guid>
-  <pubDate>Mon, 03 Mar 2025 06:00:00 GMT</pubDate>
+  <pubDate>Mon, 03 Mar 2025 05:00:00 GMT</pubDate>
   <media:content url="https://Ian-P-McCabe.github.io/blog/posts/dodgeball-colors-2/assets/cover_image.png" medium="image" type="image/png" height="106" width="144"/>
 </item>
 <item>
@@ -3500,7 +3500,7 @@ if (outputEl) {{
  ]]></description>
   <category>Dodgeball Colors</category>
   <guid>https://Ian-P-McCabe.github.io/blog/posts/dodgeball-colors-1/</guid>
-  <pubDate>Fri, 03 Jan 2025 06:00:00 GMT</pubDate>
+  <pubDate>Fri, 03 Jan 2025 05:00:00 GMT</pubDate>
   <media:content url="https://Ian-P-McCabe.github.io/blog/posts/dodgeball-colors-1/assets/Pantone_Gold.png" medium="image" type="image/png" height="105" width="144"/>
 </item>
 <item>
@@ -3594,7 +3594,7 @@ if (outputEl) {{
 
  ]]></description>
   <guid>https://Ian-P-McCabe.github.io/blog/posts/history-vectors/assets/ar200515_ocr.html</guid>
-  <pubDate>Fri, 03 Jul 2026 04:08:36 GMT</pubDate>
+  <pubDate>Wed, 22 Jul 2026 14:59:13 GMT</pubDate>
 </item>
 </channel>
 </rss>
